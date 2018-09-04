@@ -1,3 +1,5 @@
+#ifndef MESSAGE_H
+#define MESSAGE_H
 #include <sys/types.h>
 
 typedef struct prach_preamble {
@@ -16,3 +18,4 @@ struct message {
         response message_response;
     };
 };
+#endif
