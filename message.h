@@ -11,11 +11,13 @@ typedef struct prach_response {
 
 typedef enum type_of_message {RA_RNTI, C_RNTI} e_message_type;
 
-struct message {
-    e_message_type message_type;
-    union message_value {
+typedef union message_value {
         preamble message_preamble;
         response message_response;
-    };
-};
+} u_message_value;
+
+typedef struct message {
+    e_message_type message_type;
+    u_message_value message_value;
+} s_message;
 #endif
