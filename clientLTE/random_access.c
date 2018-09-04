@@ -10,13 +10,13 @@ void generate_ra_rnti(preamble* s_preamble) {
 }
 
 // This function sends prach preamble to eNodeB
-int send_prach_preamble(int sockfd, s_message* s_message, void (*ra_rnti_generator_func)(preamble*)) {
+int send_prach_preamble(int sockfd, s_message* message, void (*ra_rnti_generator_func)(preamble*)) {
     // First we need to fill preamble structure
-    ra_rnti_generator_func(&s_message->message_value.message_preamble);
+    ra_rnti_generator_func(&message->message_value.message_preamble);
     //Then we need to set message type to RA_RNTI
-    s_message->message_type = RA_RNTI;
+    message->message_type = RA_RNTI;
     //Send struct
-    if(-1 == write(sockfd, &s_message, sizeof(s_message)))
+    if(-1 == write(sockfd, &message, sizeof(message)))
         return -1;
 
     return 0;
