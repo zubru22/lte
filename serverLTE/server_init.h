@@ -1,8 +1,15 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/epoll.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <errno.h>
 
-const int MAX_EVENTS = 100;
-const int MAX_CLIENTS = 10;
-
-server_t server;
+#define MAX_EVENTS 100
+#define MAX_CLIENTS 10
 
 typedef struct {
   int socket;
@@ -19,7 +26,13 @@ typedef struct {
   client_t **clients;
 } server_t;
 
-void server_t__init(server_t* self, int socket, struct sockaddr server_address);
+server_t server;
+
+void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor);
 int servet_t__socket(server_t* self);
 void init_server_address(struct sockaddr_in* server_address, int port);
 void init_server(int port);
+void receive_packets();
+void handle_connection(int number_of_file_descriptors_ready);
+void accept_client();
+void parse_packet();
