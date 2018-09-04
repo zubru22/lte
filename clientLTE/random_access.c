@@ -29,12 +29,3 @@ int receive_prach_response(int socketfd, s_message* message)
         return -1;
     return 0;
 }
-
-int main()
-{
-    s_message message;
-    message.message_type = RA_RNTI;
-    message.message_value.message_preamble.ra_rnti = 44;
-    send_prach_preamble(44, &message, generate_ra_rnti);
-    return 0;
-}
