@@ -6,6 +6,8 @@ server_t server;
 
 typedef struct {
   int socket;
+  struct sockaddr_in client_address;
+  socklen_t client_length;
 } client_t;
 
 typedef struct {

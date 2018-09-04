@@ -46,3 +46,63 @@ void init_server(int port) {
   }
   server_t__init(&server, server_socket, server_address);
 }
+
+void receive_packets() {
+  int number_of_file_descriptors_ready;
+  while(1) {
+      if((number_of_file_descriptors_ready = epoll_wait(server->epoll_file_descriptor, server->events, MAX_EVENTS, -1)) == -1) {
+        error("epoll_wait in init_server");
+      }
+      handle_connection(number_of_file_descriptors_ready);
+  }
+}
+
+void handle_connection(int number_of_file_descriptors_ready) {
+  int n;
+  for (n = 0; n < number_of_file_descriptors_ready; ++n) {
+      if (server->events[n].data.fd == server->socket) {
+        accept_client(n);
+      } else {
+        char buf[128];
+        memset(buf, 0, 128);
+        read (server->events[n].data.fd, buf, 128);
+        if (strcmp(buf, "") == 0 && errno != EAGAIN) {
+          for (int it = 0; it < CLIENTS_LIMIT; it++) {
+            if (newsockfd[it] == events[n].data.fd) {
+              newsockfd[it] = 0;
+              close (events[n].data.fd);
+              break;
+            }
+          }
+        } else {
+          printf ("buf = %s\n", buf);
+        }
+      }
+  }
+}
+
+void accept_client(int event_number) {
+  int it;
+  for (it = 0; it < MAX_CLIENTS; it++) {
+    if (server->clients[it] == NULL) {
+      server->clients[it] = (client_t*)malloc(sizeof(client_t));
+      server->clients[it]->socket = accept(server->socket,
+                         (struct sockaddr *) &server->clients[it]->client_address, &server->clients[it]->client_length);
+      if (server->clients[it]->socket == -1) {
+          perror("accept");
+          exit(EXIT_FAILURE);
+      }
+      server->clients[it]->event.events = EPOLLIN;
+      server->clients[it]->event.data.fd = server->clients[it]->socket;
+      if (epoll_ctl(server->epoll_file_descriptor, EPOLL_CTL_ADD, server->clients[it]->socket,
+                  &server->event) == -1) {
+          perror("epoll_ctl in accept_client");
+          exit(EXIT_FAILURE);
+      }
+      break;
+    }
+  }
+  if (it == MAX_CLIENTS) {
+    // cancel client connection
+  }
+}
