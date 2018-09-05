@@ -1,19 +1,19 @@
     #include "init_connection.h"
     
-    int init_connection(int* socket_fd, struct sockaddr_in* server) {
+    int init_connection(int* socket_fd, struct sockaddr_in* server, int port_number) {
         *socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-        if(socket_fd == -1) {
+        if(*socket_fd == -1) {
             printf("Failed to create socket!");
             return 0;
         }
 
         server->sin_family = AF_INET;
-        server->sin_port = htons(22000);
+        server->sin_port = htons(port_number);
         inet_pton(AF_INET,"127.0.0.1",&(server->sin_addr));
 
         if(connect(*socket_fd, (struct sockaddr *)server, sizeof(*server))< 0) {
             printf("Failed to connect to the server!\n");
-            close(socket_fd);
+            close(*socket_fd);
             return 0;
         }
         else {
