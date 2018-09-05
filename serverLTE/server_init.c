@@ -1,4 +1,10 @@
+#ifndef SERVER_INIT_H
 #include "server_init.h"
+#endif
+
+#ifndef PACKET_HANDLER_H
+#include "packet_handler.h"
+#endif
 
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
@@ -104,24 +110,4 @@ void accept_client() {
   }
 }
 
-void parse_packet(int number_of_event) {
-  printf ("PARSE PACKET!\n");
-  // TODO
-  s_message message;
-  if(read(server.events[number_of_event].data.fd, &message, sizeof(message)) == -1) {
-    perror("read in parse_packet");
-    exit(EXIT_FAILURE);
-  }
-  switch(message.message_type) {
-    case RA_RNTI:
-      // TODO
-      printf ("RA_RNTI\n");
-      break;
-    case C_RNTI:
-      //TODO
-      printf ("C_RNTI\n");
-      break;
-    default:
-      break;
-  }
-}
+
