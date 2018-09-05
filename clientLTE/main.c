@@ -38,15 +38,15 @@ int main(int argc, char* argv[])
 
     s_message received;
 
-    recv(socket_fd, &received, sizeof(received), 0);
-    if (received.message_type == C_RNTI) {
-        printf("response type OK\n");
-        int8_t value_received = received.message_value.message_response.rapid;
-        int8_t value_expected = (message.message_value.message_preamble.ra_rnti & 0b1100000000000000) >> 8;
-        if (value_received == value_expected) {
-            printf("RACH SUCCESS\n");
-        }
-    } else {
-        printf("response not OK\n");
+    int prach_response_func_status = receive_prach_response(socket_fd, &received, &message);
+
+    if(-1 == prach_response_func_status) 
+        printf("Error on recv()\n");
+    else if(1 == prach_response_func_status)
+        printf("Response not OK\n");
+    else {
+        printf("Response type OK\n");
+        printf("RACH SUCCESS\n");
     }
+    return 0;
 }
