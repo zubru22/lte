@@ -43,5 +43,6 @@ void init_server(int port);
 void receive_packets();
 void handle_connection(int number_of_file_descriptors_ready);
 void accept_client();
+void expand_clients();
 
 #endif
