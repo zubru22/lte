@@ -5,7 +5,7 @@
 int main(int argc, char* argv[])
 {
     if(argc < 2){
-        printf("You need to pass porn number as an argument!\n");
+        printf("You need to pass port number as an argument!\n");
         return 0;
     }
     int port_number = atoi(argv[1]);
