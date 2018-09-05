@@ -115,9 +115,11 @@ void parse_packet(int number_of_event) {
   switch(message.message_type) {
     case RA_RNTI:
       // TODO
+      printf ("RA_RNTI\n");
       break;
     case C_RNTI:
       //TODO
+      printf ("C_RNTI\n");
       break;
     default:
       break;
