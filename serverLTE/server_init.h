@@ -1,37 +1,30 @@
-#ifndef SERVER_INIT_H
-#define SERVER_INIT_H
-
-#ifndef SERVER_INIT_H
-#include "server_init.h"
-#endif
-
-#include "../message.h"
-#include <errno.h>
-#include <netinet/in.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <sys/types.h>
 #include <unistd.h>
+#include <sys/epoll.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <errno.h>
+#include "../message.h"
 
 #define MAX_EVENTS 100
 #define MAX_CLIENTS 10
 
 typedef struct {
-    int socket;
-    struct sockaddr_in client_address;
-    socklen_t client_length;
+  int socket;
+  struct sockaddr_in client_address;
+  socklen_t client_length;
 } client_t;
 
 typedef struct {
-    int socket;
-    struct sockaddr_in server_address;
-    int epoll_file_descriptor;
-    struct epoll_event event;
-    struct epoll_event events[MAX_EVENTS];
-    client_t** clients;
+  int socket;
+  struct sockaddr_in server_address;
+  int epoll_file_descriptor;
+  struct epoll_event event;
+  struct epoll_event events[MAX_EVENTS];
+  client_t **clients;
 } server_t;
 
 server_t server;
@@ -43,5 +36,6 @@ void init_server(int port);
 void receive_packets();
 void handle_connection(int number_of_file_descriptors_ready);
 void accept_client();
-
-#endif
+void parse_packet(int number_of_event);
+void cancel_client_connection();
+void remind_about_port();

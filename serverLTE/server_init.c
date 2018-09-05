@@ -110,4 +110,7 @@ void accept_client() {
   }
 }
 
-
+void remind_about_port() {
+  printf ("Run program: ./server PORT_NAME\n");
+  exit(EXIT_FAILURE);
+}
