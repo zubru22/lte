@@ -9,9 +9,11 @@
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
   self->server_address = server_address;
+  self->number_of_clients = 0;
+  self->max_number_of_clients = 2;
   int i;
-  self->clients = (client_t**)malloc(sizeof(client_t*) * MAX_CLIENTS);
-  for (i = 0; i < MAX_CLIENTS; i++) {
+  self->clients = (client_t**)malloc(sizeof(client_t*) * self->max_number_of_clients);
+  for (i = 0; i < self->max_number_of_clients; i++) {
     self->clients[i] = NULL;
   }
   self->event = event;
@@ -41,11 +43,11 @@ void init_server(int port) {
     perror("bind in init_server");
     exit(EXIT_FAILURE);
   }
-  if (listen(server_socket, MAX_CLIENTS) == -1) {
+  if (listen(server_socket, MAX_LISTEN_QUERIED_CONNECTIONS) == -1) {
     perror ("listen in init_server");
     exit(EXIT_FAILURE);
   }
-  struct epoll_event event/*, events[MAX_EVENTS]*/;
+  struct epoll_event event;
   int epoll_file_descriptor;
   if ((epoll_file_descriptor = epoll_create1(0)) == -1) {
     perror("epoll_create1 in init_server");
@@ -84,8 +86,11 @@ void handle_connection(int number_of_file_descriptors_ready) {
 }
 
 void accept_client() {
+  if (server.number_of_clients == server.max_number_of_clients) {
+    expand_clients();
+  }
   int it;
-  for (it = 0; it < MAX_CLIENTS; it++) {
+  for (it = 0; it < server.max_number_of_clients; it++) {
     if (server.clients[it] == NULL) {
       server.clients[it] = (client_t*)malloc(sizeof(client_t));
       server.clients[it]->socket = accept(server.socket,
@@ -105,11 +110,28 @@ void accept_client() {
       break;
     }
   }
-  if (it == MAX_CLIENTS) {
-    // TODO cancel client connection
-  }
+}
+
+void remind_about_port() {
+  printf ("Run program: ./server PORT_NAME\n");
+  exit(EXIT_FAILURE);
 }
 
 void expand_clients() {
-  
+  client_t *temporary_clients = (client_t*)malloc(sizeof(client_t) * server.max_number_of_clients);
+  int i;
+  for (i = 0; i < server.max_number_of_clients; i++) {
+    temporary_clients[i] = *server.clients[i];
+  }
+  for (i = 0; i < server.max_number_of_clients; i++) {
+    free(server.clients[i]);
+  }
+  free(server.clients);
+  server.clients = (client_t**)malloc(sizeof(client_t*) * 2 * server.max_number_of_clients);
+  for (i = 0; i < server.max_number_of_clients; i++) {
+    server.clients[i] = (client_t*)malloc(sizeof(client_t));
+    *server.clients[i] = temporary_clients[i];
+  }
+  server.max_number_of_clients *= 2;
+  free(temporary_clients);
 }

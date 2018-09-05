@@ -1,10 +1,6 @@
 #ifndef SERVER_INIT_H
 #define SERVER_INIT_H
 
-#ifndef SERVER_INIT_H
-#include "server_init.h"
-#endif
-
 #include "../message.h"
 #include <errno.h>
 #include <netinet/in.h>
@@ -15,9 +11,10 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <limits.h>
 
+#define MAX_LISTEN_QUERIED_CONNECTIONS 128 // value suggested as "safe" for most of the systems
 #define MAX_EVENTS 100
-#define MAX_CLIENTS 10
 
 typedef struct {
     int socket;
@@ -32,6 +29,8 @@ typedef struct {
     struct epoll_event event;
     struct epoll_event events[MAX_EVENTS];
     client_t** clients;
+    int number_of_clients;
+    int max_number_of_clients;
 } server_t;
 
 server_t server;
@@ -43,6 +42,7 @@ void init_server(int port);
 void receive_packets();
 void handle_connection(int number_of_file_descriptors_ready);
 void accept_client();
+void remind_about_port();
 void expand_clients();
 
 #endif
