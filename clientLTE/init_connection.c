@@ -11,7 +11,7 @@
         server->sin_port = htons(port_number);
         inet_pton(AF_INET,"127.0.0.1",&(server->sin_addr));
 
-        if(connect(*socket_fd, (struct sockaddr *)server, sizeof(*server))< 0) {
+        if(connect(*socket_fd, (struct sockaddr *)server, sizeof(*server)) < 0) {
             printf("Failed to connect to the server!\n");
             close(*socket_fd);
             return 0;

@@ -1,5 +1,6 @@
 // This functionality is about to create Random Access Preamble (RA-RNTI) and wait for Random Access Response (C-RNTI) from eNB
 #include "random_access.h"
+#include <stdbool.h>
 
 // This function generates and returns ra_rnti for prach preamble and modifies original structure
 void generate_ra_rnti(preamble* s_preamble) {
@@ -21,7 +22,7 @@ int send_prach_preamble(int sockfd, s_message* message, void (*ra_rnti_generator
     return 0;
 }
 
-// This function receives response from eNodeB. Function returns -1 on error and 0 on success
+// This function receives response from eNodeB. Function returns -1 on error #1, 1 on error #2 and 0 on success
 int receive_prach_response(int socketfd, s_message* received, s_message* message) {
     if(-1 == recv(socketfd, (s_message*) received, sizeof(*received), 0))
         return -1;
