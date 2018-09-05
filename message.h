@@ -13,7 +13,7 @@ typedef enum type_of_message {RA_RNTI, C_RNTI, RRC_REQ} e_message_type;
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
 
 typedef struct rrc_req {
-    int ue_identity;
+    int64_t ue_identity;
     e_ec establishment_cause;
 } rrc;
 
