@@ -72,7 +72,7 @@ void handle_connection(int number_of_file_descriptors_ready) {
       if (server.events[n].data.fd == server.socket) {
         accept_client();
       } else {
-        parse_packet();
+        parse_packet(n);
       }
   }
 }
@@ -104,6 +104,22 @@ void accept_client() {
   }
 }
 
-void parse_packet() {
+void parse_packet(int number_of_event) {
+  printf ("PARSE PACKET!\n");
   // TODO
+  s_message message;
+  if(read(server.events[number_of_event].data.fd, &message, sizeof(message)) == -1) {
+    perror("read in parse_packet");
+    exit(EXIT_FAILURE);
+  }
+  switch(message.message_type) {
+    case RA_RNTI:
+      // TODO
+      break;
+    case C_RNTI:
+      //TODO
+      break;
+    default:
+      break;
+  }
 }

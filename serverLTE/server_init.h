@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <errno.h>
+#include "../message.h"
 
 #define MAX_EVENTS 100
 #define MAX_CLIENTS 10
@@ -35,4 +36,4 @@ void init_server(int port);
 void receive_packets();
 void handle_connection(int number_of_file_descriptors_ready);
 void accept_client();
-void parse_packet();
+void parse_packet(int number_of_event);
