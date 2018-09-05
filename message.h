@@ -9,11 +9,18 @@ typedef struct prach_response {
     int8_t rapid; // Get 2 first bits from ra_rnti and send it back to client
 } response;
 
-typedef enum type_of_message {RA_RNTI, C_RNTI} e_message_type;
+typedef struct rrc_req {
+    int ue_identity;
+    e_ec establishment_cause;
+} rrc;
+
+typedef enum type_of_message {RA_RNTI, C_RNTI, RRC_REQ} e_message_type;
+typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO-SIGNALING, MO-DATA} e_ec;
 
 typedef union message_value {
         preamble message_preamble;
         response message_response;
+        rrc message_request;
 } u_message_value;
 
 typedef struct message {
