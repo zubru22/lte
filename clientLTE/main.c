@@ -4,14 +4,20 @@
 
 int main(int argc, char* argv[])
 {
+    if(argc < 2){
+        printf("You need to pass porn number as an argument!\n");
+        return 0;
+    }
+    int port_number = atoi(argv[1]);
     int socket_fd;
     struct sockaddr_in server;
     s_message message;
-
     srand(time(NULL));
+    printf("%i", argc);
+    
 
     //init_connection returns 0 on error, else function returns 1
-    if (init_connection(&socket_fd, &server)) {
+    if (init_connection(&socket_fd, &server, port_number)) {
         printf("Connected!\n");
     } else {
         printf("Failed to connect!\n");

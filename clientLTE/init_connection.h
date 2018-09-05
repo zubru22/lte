@@ -5,4 +5,4 @@
     #include <netdb.h>
     #include <sys/types.h>
     
-    int init_connection(int* socket_fd, struct sockaddr_in* server);
+    int init_connection(int* socket_fd, struct sockaddr_in* server, int port_number);
