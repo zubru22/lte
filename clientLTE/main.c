@@ -12,9 +12,7 @@ int main(int argc, char* argv[])
     int socket_fd;
     struct sockaddr_in server;
     s_message message;
-    srand(time(NULL));
-    printf("%i", argc);
-    
+    srand(time(NULL)); 
 
     //init_connection returns 0 on error, else function returns 1
     if (init_connection(&socket_fd, &server, port_number)) {
