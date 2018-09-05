@@ -37,7 +37,7 @@ void send_CRNTI(int socket, s_message message)
     s_message response;
     response.message_type = C_RNTI;
     response.message_value.message_response.rapid = extractPreambleIndex(received_ra_rnti);
-    
+    response.message_value.message_response.unix_epoch_timestamp = time(NULL);
     printf("sent value: %d\n", response.message_value.message_response.rapid);
     send(socket, &response, sizeof(response), 0);
 }
