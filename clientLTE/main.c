@@ -4,14 +4,18 @@
 
 int main(int argc, char* argv[])
 {
+    if(argc < 2){
+        printf("You need to pass port number as an argument!\n");
+        return 0;
+    }
+    int port_number = atoi(argv[1]);
     int socket_fd;
     struct sockaddr_in server;
     s_message message;
-
-    srand(time(NULL));
+    srand(time(NULL)); 
 
     //init_connection returns 0 on error, else function returns 1
-    if (init_connection(&socket_fd, &server)) {
+    if (init_connection(&socket_fd, &server, port_number)) {
         printf("Connected!\n");
     } else {
         printf("Failed to connect!\n");
@@ -32,15 +36,15 @@ int main(int argc, char* argv[])
 
     s_message received;
 
-    recv(socket_fd, &received, sizeof(received), 0);
-    if (received.message_type == C_RNTI) {
-        printf("response type OK\n");
-        int8_t value_received = received.message_value.message_response.rapid;
-        int8_t value_expected = (message.message_value.message_preamble.ra_rnti & 0b1100000000000000) >> 8;
-        if (value_received == value_expected) {
-            printf("RACH SUCCESS\n");
-        }
-    } else {
-        printf("response not OK\n");
+    int prach_response_func_status = receive_prach_response(socket_fd, &received, &message);
+
+    if(-1 == prach_response_func_status) 
+        printf("Error on recv()\n");
+    else if(1 == prach_response_func_status)
+        printf("Response not OK\n");
+    else {
+        printf("Response type OK\n");
+        printf("RACH SUCCESS\n");
     }
+    return 0;
 }
