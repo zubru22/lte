@@ -26,14 +26,18 @@ void parse_packet(int number_of_event) {
   }
 }
 
+int8_t extractPreambleIndex(int16_t ra_rnti) {
+  return ((ra_rnti & 0b1100000000000000) >> 8);
+}
+
 void send_CRNTI(int socket, s_message message)
 {
     int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
 
     s_message response;
     response.message_type = C_RNTI;
-
-    response.message_value.message_response.rapid = (received_ra_rnti & 0b1100000000000000) >> 8;
+    response.message_value.message_response.rapid = extractPreambleIndex(received_ra_rnti);
+    
     printf("sent value: %d\n", response.message_value.message_response.rapid);
     send(socket, &response, sizeof(response), 0);
 }
