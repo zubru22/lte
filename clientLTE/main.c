@@ -1,6 +1,4 @@
-#ifndef STRING_H
 #include <string.h>
-#endif 
 #include "../message.h"
 #include "init_connection.h"
 #include "random_access.h"
@@ -67,8 +65,8 @@ int main(int argc, char* argv[])
 
 
     while (running) {
-
         
+
     }
 
     return 0;
