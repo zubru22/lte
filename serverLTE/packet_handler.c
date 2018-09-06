@@ -67,7 +67,9 @@ int16_t get_client_rnti(int socket) {
   char key[8];
   sprintf(key, "%d", socket);
   void* searched_client;
-  if (hashmap_get(clients, key, searched_client) == -1) {
+  int clients_size = hashmap_size(clients);
+
+  if (hashmap_get(clients, key, &searched_client) == -1) {
     printf("error retrieving data from clients hashmap - no client %s found\n",key);
     return 0;
   }
@@ -80,7 +82,7 @@ void send_rrc_setup(int socket) {
   response.message_type = rrc_setup;
   response.message_value.rrc_response = generate_rrc_config(client_rnti);
   send(socket, &response, sizeof(response), 0);
-  printf("sent RRC setup");
+  printf("sent RRC setup\n");
 }
 
 int8_t extractPreambleIndex(int16_t ra_rnti) {
