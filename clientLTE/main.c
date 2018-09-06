@@ -8,7 +8,6 @@ int main(int argc, char* argv[])
         printf("You need to pass port number as an argument!\n");
         return 0;
     }
-    int8_t c_rnti;
     int port_number = atoi(argv[1]);
     int socket_fd;
     struct sockaddr_in server;

@@ -14,6 +14,6 @@
 
 void generate_ra_rnti(preamble*);
 int send_prach_preamble(int, s_message*, void (*ra_rnti_generator_func)(preamble*));
-int receive_prach_response(int, s_message*, s_message*, int8_t c_rnti);
+int receive_prach_response(int, s_message*, s_message*);
 
 #endif

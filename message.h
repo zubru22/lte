@@ -20,6 +20,7 @@ typedef struct stmsi {
 } s_stmsi;
 
 typedef struct rrc_req {
+    int8_t c_rnti;
     s_stmsi ue_identity;
     e_ec establishment_cause;
 } rrc;
