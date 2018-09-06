@@ -1,3 +1,5 @@
+#include <math.h>
+#include <stdlib.h>
 #ifndef RRC_H
 #define RRC_H
 
