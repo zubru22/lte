@@ -13,11 +13,11 @@ void parse_packet(int number_of_event) {
     exit(EXIT_FAILURE);
   }
   switch(message.message_type) {
-    case RA_RNTI:
+    case random_access_request:
       send_CRNTI(server.events[number_of_event].data.fd, message);
       printf("CA_RNTI response sent\n");
       break;
-    case C_RNTI:
+    case random_access_request:
       //TODO
       printf ("C_RNTI\n");
       break;
