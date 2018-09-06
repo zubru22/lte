@@ -23,14 +23,14 @@ int send_prach_preamble(int sockfd, s_message* message, void (*ra_rnti_generator
 }
 
 // This function receives response from eNodeB. Function returns -1 on error #1, 1 on error #2 and 0 on success
-int receive_prach_response(int socketfd, s_message* received, s_message* message) {
+int receive_prach_response(int socketfd, s_message* received, s_message* message, int8_t* c_rnti) {
     if(-1 == recv(socketfd, (s_message*) received, sizeof(*received), 0))
         return -1;
 
     if(random_access_response == received->message_type) {
         int8_t value_received = received->message_value.message_response.rapid;
         int8_t value_expected = (message->message_value.message_preamble.ra_rnti & 0b1100000000000000) >> 8;
-
+        c_rnti = (value_expected & 0b11000000) >> 6;
         if (value_received == value_expected)
             return 0;
     }
