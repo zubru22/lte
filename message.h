@@ -24,10 +24,26 @@ typedef struct rrc_req {
     e_ec establishment_cause;
 } rrc;
 
+typedef enum CyclicPrefixUL {Normal, Abnormal} e_CyclicPrefix;
+typedef enum Hopping {Off, On} e_Hopping;
+
+typedef struct rrc_config{
+    int NULRB;
+    int NSubframe;
+    int NCellID;
+    int RNTI;
+    e_CyclicPrefix cyclic_prefix;
+    e_Hopping hopping;
+    int SegGroup;
+    int CyclicShift;
+    int ShortEnd;
+} rrc_config;
+
 typedef union message_value {
         preamble message_preamble;
         response message_response;
         rrc message_request;
+        rrc_config rrc_response;
 } u_message_value;
 
 typedef struct message {
