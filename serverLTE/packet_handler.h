@@ -14,5 +14,5 @@
 #include "server_init.h"
 
 void parse_packet(int number_of_event);
-void send_CRNTI(int socket, s_message message);
+void send_random_access_response(int socket, s_message message);
 #endif
