@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     } else {
         printf("Message sent!\n");
         printf("Message content:\n");
-        if (message.ra_type == RA_RNTI) {
+        if (message.message_type == random_access_request) {
             printf("type: RA_RNTI\n");
         } else {
             printf("type: NOT RA_RNTI\n");
