@@ -19,7 +19,7 @@ int update_battery(ue_battery* battery) {
     if(battery->power_percentage <= 20)
         battery->power_is_low = true;
     
-    const static time_t battery_decrase_time = 15;
+    const static time_t battery_decrase_time = 3;
     time_t time_now;
     time(&time_now);
 

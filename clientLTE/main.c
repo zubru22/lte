@@ -5,6 +5,7 @@
 #include "init_connection.h"
 #include "random_access.h"
 #include "rrc.h"
+#include "user_equipment.h"
 
 int main(int argc, char* argv[])
 {
@@ -16,7 +17,10 @@ int main(int argc, char* argv[])
     int socket_fd, running = 1;
     struct sockaddr_in server;
     s_message message;
+    ue_battery battery;
     srand(time(NULL)); 
+
+    initialize_battery_life(&battery);
 
     //init_connection returns 0 on error, else function returns 1
     if (init_connection(&socket_fd, &server, port_number)) {
@@ -65,9 +69,9 @@ int main(int argc, char* argv[])
         printf("Successfully send rcc setup!\n");
     }
 
-
     while (running) {
-        
+        if(update_battery(&battery) == 2)
+            printf("%i", battery.power_percentage);
 
     }
 
