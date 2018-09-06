@@ -28,7 +28,7 @@ typedef struct rrc_req {
 typedef enum CyclicPrefixUL {Normal, Abnormal} e_CyclicPrefix;
 typedef enum Hopping {Off, On} e_Hopping;
 
-typedef struct rrc_config{
+typedef struct rrc_config {
     int NULRB;
     int NSubframe;
     int NCellID;
@@ -39,6 +39,7 @@ typedef struct rrc_config{
     int CyclicShift;
     int ShortEnd;
 } rrc_config;
+
 typedef struct rrc_setup_complete {
     int16_t mcc;
     int16_t mnc;
