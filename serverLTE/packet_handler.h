@@ -23,8 +23,11 @@
 #include <unistd.h>
 #include <time.h>
 
-
+void save_client(int socket, int8_t preamble_index, time_t current_timestamp);
+void handle_random_access_request(int client_socket, s_message message);
 void parse_packet(int number_of_event);
-void send_random_access_response(int socket, s_message message);
+void send_rrc_setup(int socket);
+int8_t extractPreambleIndex(int16_t ra_rnti);
+void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp);
 void send_rrc_setup(int socket);
 #endif

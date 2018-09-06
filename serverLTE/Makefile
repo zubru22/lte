@@ -1,5 +1,5 @@
 all: server
-server: main.c server_init.c packet_handler.c ../lib/hashmap.c ../lib/MurmurHash3.c
-	gcc -g -Wall main.c server_init.c packet_handler.c ../lib/hashmap.c ../lib/MurmurHash3.c -o server 2> server_output.txt
+server: main.c server_init.c packet_handler.c ../lib/hashmap.c ../lib/MurmurHash3.c client.c
+	gcc -g -Wall main.c server_init.c packet_handler.c ../lib/hashmap.c ../lib/MurmurHash3.c client.c -o server 2> server_output.txt
 run:
 	./server

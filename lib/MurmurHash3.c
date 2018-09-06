@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 // compile and run any of them on any platform, but your performance with the
 // non-native version will be less than optimal.
 
-#ifndef MURMURHASH3_H_
+#ifndef MURMURHASH3_H
 #include "MurmurHash3.h"
 #endif
 
