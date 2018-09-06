@@ -5,7 +5,6 @@
 #include "../message.h"
 #endif
 
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
