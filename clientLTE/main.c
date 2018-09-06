@@ -1,6 +1,8 @@
+#include <string.h>
 #include "../message.h"
 #include "init_connection.h"
 #include "random_access.h"
+#include "rrc.h"
 
 int main(int argc, char* argv[])
 {
@@ -9,7 +11,7 @@ int main(int argc, char* argv[])
         return 0;
     }
     int port_number = atoi(argv[1]);
-    int socket_fd;
+    int socket_fd, running = 1;
     struct sockaddr_in server;
     s_message message;
     srand(time(NULL)); 
@@ -46,5 +48,26 @@ int main(int argc, char* argv[])
         printf("Response type OK\n");
         printf("RACH SUCCESS\n");
     }
+
+    if(send_rrc_connection_request(socket_fd, &message, generate_ue_identity) == -1) {
+        printf("Failed to send rrc connection request!\n");
+    }
+    else {
+        printf("Successfully send rcc connection request!\n");
+    }
+
+    if(send_rrc_setup_complete(socket_fd, &message) == -1) {
+        printf("Failed to send rrc setup!\n");
+    }
+    else {
+        printf("Successfully send rcc setup!\n");
+    }
+
+
+    while (running) {
+
+        
+    }
+
     return 0;
 }
