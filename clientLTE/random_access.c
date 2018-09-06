@@ -14,7 +14,7 @@ int send_prach_preamble(int sockfd, s_message* message, void (*ra_rnti_generator
     // First we need to fill preamble structure
     ra_rnti_generator_func(&message->message_value.message_preamble);
     //Then we need to set message type to RA_RNTI
-    message->message_type = RA_RNTI;
+    message->ra_type = RA_RNTI;
     //Send struct
     if(-1 == write(sockfd, (s_message*)message, sizeof(*message)))
         return -1;
@@ -27,7 +27,7 @@ int receive_prach_response(int socketfd, s_message* received, s_message* message
     if(-1 == recv(socketfd, (s_message*) received, sizeof(*received), 0))
         return -1;
 
-    if(C_RNTI == received->message_type) {
+    if(C_RNTI == received->ra_type) {
         int8_t value_received = received->message_value.message_response.rapid;
         int8_t value_expected = (message->message_value.message_preamble.ra_rnti & 0b1100000000000000) >> 8;
 

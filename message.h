@@ -11,7 +11,7 @@ typedef struct prach_response {
     time_t unix_epoch_timestamp;
 } response;
 
-typedef enum type_of_message {RA_RNTI, C_RNTI, RRC_REQ} e_message_type;
+typedef enum random_access {RA_RNTI, C_RNTI, RRC_REQ} e_random_access;
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
 
 typedef struct stmsi {
@@ -31,7 +31,7 @@ typedef union message_value {
 } u_message_value;
 
 typedef struct message {
-    e_message_type message_type;
+    e_random_access ra_type;
     u_message_value message_value;
 } s_message;
 #endif
