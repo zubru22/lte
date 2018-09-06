@@ -3,12 +3,13 @@
 #endif
 
 
-void save_client(int socket, int8_t preamble_index, time_t current_timestamp) {
+void save_client(int socket, int8_t preamble_index, time_t current_timestamp, int16_t received_ra_rnti) {
   client new_client;
   new_client.preamble_index = preamble_index;
   new_client.last_activity = current_timestamp;
   new_client.first_connection_timestamp = current_timestamp;
   new_client.socket = socket;
+  new_client.rnti = received_ra_rnti;
   // TODO remove conversion after key in hashmap is changed to int
   char key[8];
   sprintf(key, "%d", socket);
@@ -21,7 +22,7 @@ void handle_random_access_request(int client_socket, s_message message){
   time_t current_timestamp = time(NULL);
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
-  save_client(client_socket, preamble_index, current_timestamp);
+  save_client(client_socket, preamble_index, current_timestamp, received_ra_rnti);
   printf("Random Access response sent\n");
 }
 
@@ -47,8 +48,39 @@ void parse_packet(int number_of_event) {
   }
 }
 
+rrc_config generate_rrc_config(int16_t rnti) {
+  rrc_config setup;
+  setup.NULRB = 9;
+  setup.NSubframe = 0;
+  setup.NCellID = 10;
+  setup.RNTI = rnti;
+  setup.cyclic_prefix = Normal;
+  setup.hopping = Off;
+  setup.SegGroup = 0;
+  setup.CyclicShift = 0;
+  setup.ShortEnd = 0;
+  return setup;
+}
+
+int16_t get_client_rnti(int socket) {
+  // TODO remove conversion after key in hashmap is changed to int
+  char key[8];
+  sprintf(key, "%d", socket);
+  void* searched_client;
+  if (hashmap_get(clients, key, searched_client) == -1) {
+    printf("error retrieving data from clients hashmap - no client %s found\n",key);
+    return 0;
+  }
+  return ((client*) searched_client)->rnti;
+}
+
 void send_rrc_setup(int socket) {
-  //TODO
+  int16_t client_rnti = get_client_rnti(socket);
+  s_message response;
+  response.message_type = rrc_setup;
+  response.message_value.rrc_response = generate_rrc_config(client_rnti);
+  send(socket, &response, sizeof(response), 0);
+  printf("sent RRC setup");
 }
 
 int8_t extractPreambleIndex(int16_t ra_rnti) {
