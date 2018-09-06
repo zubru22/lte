@@ -1,6 +1,7 @@
 #include "../message.h"
 #include "init_connection.h"
 #include "random_access.h"
+#include "rrc.h"
 
 int main(int argc, char* argv[])
 {
@@ -46,5 +47,15 @@ int main(int argc, char* argv[])
         printf("Response type OK\n");
         printf("RACH SUCCESS\n");
     }
+
+    if(send_rrc_connection_request(socket_fd, &message, generate_ue_identity) == -1) {
+        printf("Failed to send rrc connection request!\n");
+    }
+    else {
+        printf("Successfully send rcc connection request!");
+    }
+
+    
+
     return 0;
 }
