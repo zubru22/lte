@@ -22,11 +22,15 @@ int send_rrc_connection_request(int socketfd, s_message* message, void (*generat
 
 // This function sends rrc setup complete from UE to eNodeB. Function returns -1 on error and 0 on success
 int send_rrc_setup_complete(int socketfd, s_message* message) {
-    message->message_type = rrc_complete;
-    message->message_value.message_complete.mcc = 234;
-    message->message_value.message_complete.mnc = 15;
+    if (message->message_type == rrc_setup) {
+        message->message_type = rrc_complete;
+        message->message_value.message_complete.mcc = 234;
+        message->message_value.message_complete.mnc = 15;
 
-    if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
+        if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
+            return -1;
+        return 0;
+    }
+    else 
         return -1;
-    return 0;
 }

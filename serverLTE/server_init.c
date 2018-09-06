@@ -2,9 +2,7 @@
 #include "server_init.h"
 #endif
 
-#ifndef PACKET_HANDLER_H
-#include "packet_handler.h"
-#endif
+
 
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
@@ -59,6 +57,9 @@ void init_server(int port) {
     exit(EXIT_FAILURE);
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
+
+  hashmap_init(MAX_CLIENTS, &clients);
+
 }
 
 void receive_packets() {
