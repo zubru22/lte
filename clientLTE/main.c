@@ -1,6 +1,6 @@
 #ifndef STRING_H
 #include <string.h>
-#endif 
+#endif
 #include "../message.h"
 #include "init_connection.h"
 #include "random_access.h"
