@@ -6,6 +6,10 @@
 #include "packet_handler.h"
 #endif
 
+#ifndef HASHMAP_H
+#include "../lib/hashmap.h"
+#endif
+
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
   self->server_address = server_address;

@@ -28,6 +28,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
+#ifndef MURMURHASH3_H
+#include "MurmurHash3.h"
+#endif
+
 /**
  * Opaque hashmap reference
  */

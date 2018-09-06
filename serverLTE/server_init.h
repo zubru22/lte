@@ -5,6 +5,10 @@
 #include "server_init.h"
 #endif
 
+#ifndef HASHMAP_H
+#include "../lib/hashmap.h"
+#endif
+
 #include "../message.h"
 #include <errno.h>
 #include <netinet/in.h>

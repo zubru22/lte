@@ -20,7 +20,7 @@ void parse_packet(int number_of_event) {
       printf("Random Access response sent\n");
       break;
     case rrc_request:
-      send_rrc_setup(client_socket)
+      send_rrc_setup(client_socket);
       break;
     default:
       break;
