@@ -6,13 +6,27 @@
 typedef struct prach_preamble {
     int16_t ra_rnti; // 16bit integer sent to server - first 2 bits are PreambleIndex
 } preamble;
+
 typedef struct prach_response {
     int8_t rapid; // Get 2 first bits from ra_rnti and send it back to client
     time_t unix_epoch_timestamp;
 } response;
 
-typedef enum type_of_message {random_access_request, random_access_response, rrc_request, rrc_setup, rrc_complete} e_message_type;
-typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
+typedef enum type_of_message {
+  random_access_request,
+  random_access_response,
+  rrc_request, rrc_setup,
+  rrc_complete,
+  low_battery // sended while the amount of battery is low
+} e_message_type;
+
+typedef enum establishment_cause {
+  EMERGENCY,
+  HIGH_PRIORITY_ACCESS,
+  MT_ACCESS,
+  MO_SIGNALING,
+  MO_DATA
+} e_ec;
 
 typedef struct stmsi {
     u_int8_t mme_code;
@@ -25,8 +39,15 @@ typedef struct rrc_req {
     e_ec establishment_cause;
 } rrc;
 
-typedef enum CyclicPrefixUL {Normal, Abnormal} e_CyclicPrefix;
-typedef enum Hopping {Off, On} e_Hopping;
+typedef enum CyclicPrefixUL {
+  Normal,
+  Abnormal
+} e_CyclicPrefix;
+
+typedef enum Hopping {
+  Off,
+  On
+} e_Hopping;
 
 typedef struct rrc_config {
     int NULRB;
