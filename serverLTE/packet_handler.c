@@ -29,7 +29,7 @@ void parse_packet(int number_of_event) {
     case rrc_request:
       send_rrc_setup(client_socket);
       break;
-    case low_battery:
+    case ue_battery_low:
       handle_low_battery_request(client_socket);
       break;
     default:
