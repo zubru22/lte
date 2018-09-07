@@ -22,13 +22,11 @@ int update_battery(ue_battery* battery) {
     const static time_t battery_decrase_time = 15;
     time_t time_now;
     time(&time_now);
-
     if((time_now - battery->starting_time) >= battery_decrase_time) {
         battery->power_percentage -= 1;
         // Reset starting_time to current time
         time(&battery->starting_time);
     }
-
     return 1;
 }
 
