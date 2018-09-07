@@ -12,8 +12,14 @@
 #include <time.h>
 #endif
 
+#ifndef TYPES_H
+#define TYPES_H
 #include <sys/types.h>
+#endif
+
+#ifndef UNISTD_H
 #include <unistd.h>
+#endif
 
 #ifndef MESSAGE_H
 #include "../message.h"

@@ -1,7 +1,9 @@
 #ifndef STRING_H
 #include <string.h>
 #endif
+#ifndef MESSAGE_H
 #include "../message.h"
+#endif
 #include "init_connection.h"
 #include "random_access.h"
 #include "rrc.h"
