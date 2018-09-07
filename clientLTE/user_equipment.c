@@ -11,7 +11,7 @@ void initialize_battery_life(ue_battery* battery) {
 }
 // This function updates battery state. Decrases battery power every 'battery_decrase_time' seconds in order
 // to simulate background processes going on in UE. Function oughts to be used in program's main loop.
-// On top of that, function returns zero if battery goes dead and 1 if it is still alive.
+// On top of that, lfunction returns zero if battery goes dead and 1 if it is still alive.
 int update_battery(ue_battery* battery) {
     if(battery->power_percentage <= 0)
         return 0;
@@ -19,7 +19,7 @@ int update_battery(ue_battery* battery) {
     if(battery->power_percentage <= 20)
         battery->power_is_low = true;
     
-    const static time_t battery_decrase_time = 3;
+    const static time_t battery_decrase_time = 15;
     time_t time_now;
     time(&time_now);
 
