@@ -11,23 +11,46 @@ typedef struct prach_response {
     time_t unix_epoch_timestamp;
 } response;
 
-typedef enum type_of_message {RA_RNTI, C_RNTI, RRC_REQ} e_message_type;
+typedef enum type_of_message {random_access_request, random_access_response, rrc_request, rrc_setup, rrc_complete} e_message_type;
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
 
 typedef struct stmsi {
-    int8_t mme_code;
-    int32_t mtmsi;
+    u_int8_t mme_code;
+    u_int32_t mtmsi;
 } s_stmsi;
 
 typedef struct rrc_req {
+    int8_t c_rnti;
     s_stmsi ue_identity;
     e_ec establishment_cause;
 } rrc;
+
+typedef enum CyclicPrefixUL {Normal, Abnormal} e_CyclicPrefix;
+typedef enum Hopping {Off, On} e_Hopping;
+
+typedef struct rrc_config {
+    int NULRB;
+    int NSubframe;
+    int NCellID;
+    int RNTI;
+    e_CyclicPrefix cyclic_prefix;
+    e_Hopping hopping;
+    int SegGroup;
+    int CyclicShift;
+    int ShortEnd;
+} rrc_config;
+
+typedef struct rrc_setup_complete {
+    int16_t mcc;
+    int16_t mnc;
+} rrc_setup_complete;
 
 typedef union message_value {
         preamble message_preamble;
         response message_response;
         rrc message_request;
+        rrc_config rrc_response;
+        rrc_setup_complete message_complete;
 } u_message_value;
 
 typedef struct message {

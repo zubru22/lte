@@ -1,7 +1,22 @@
 #ifndef SERVER_INIT_H
 #define SERVER_INIT_H
 
+#ifndef HASHMAP_H
+#include "../lib/hashmap.h"
+#endif
+
+#ifndef CLIENT_H
+#include "client.h"
+#endif
+
+#ifndef PACKET_HANDLER_H
+#include "packet_handler.h"
+#endif
+
+#ifndef MESSAGE_H
 #include "../message.h"
+#endif
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>
