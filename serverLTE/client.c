@@ -13,3 +13,9 @@ client* get_client_by_socket(hashmap* map_of_clients, int socket) {
     }
     return ((client*) searched_client);
 }
+
+void put_client_in_hashmap(hashmap* map_of_clients, int socket, client* client_inserted) {
+    char key[8];
+    sprintf(key, "%d", socket);
+    hashmap_put(clients, key, client_inserted);
+}

@@ -10,10 +10,8 @@ void save_client(int socket, int8_t preamble_index, time_t current_timestamp, in
   new_client.first_connection_timestamp = current_timestamp;
   new_client.socket = socket;
   new_client.rnti = received_ra_rnti;
-  // TODO remove conversion after key in hashmap is changed to int
-  char key[8];
-  sprintf(key, "%d", socket);
-  hashmap_put(clients, key, &new_client);
+
+  put_client_in_hashmap(clients, socket, &new_client);
 }
 
 void handle_random_access_request(int client_socket, s_message message){
