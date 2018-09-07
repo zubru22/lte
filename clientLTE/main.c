@@ -65,12 +65,9 @@ int main(int argc, char* argv[])
     receive_rrc_setup(socket_fd, &received, &message);
 
     while (running) {
-        update_battery(&battery);
+        update_battery(socket_fd, &message, &battery);
         printf("Battery power: %i\n", battery.power_percentage);
-        
-        if (battery.power_is_low == true)
-            printf("DUPA\n");
-
+        sleep(1);
     }
 
     return 0;

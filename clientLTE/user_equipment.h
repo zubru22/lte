@@ -1,5 +1,6 @@
 #ifndef USER_EQUIPMENT_H
 #define USER_EQUIPMENT_H
+#include <stdio.h>
 
 #ifndef STDBOOL_H
 #define STDBOOL_H
@@ -21,14 +22,14 @@
 typedef struct s_ue_battery {
     int8_t power_percentage;
     bool power_is_low;
+    bool charging;
     time_t starting_time;
 } ue_battery;
 
 void initialize_battery_life(ue_battery*);
-int update_battery(ue_battery*);
+int update_battery(int, s_message*, ue_battery*);
 void decrase_after_ping(ue_battery*);
 int send_low_battery_notification(int, s_message*);
-bool detect_high_battery_state(ue_battery*);
-int send_high_battery_notification(int, s_message*, ue_battery*);
+int send_high_battery_notification(int, s_message*);
 
 #endif
