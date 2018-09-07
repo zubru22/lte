@@ -17,6 +17,10 @@
 #include "../message.h"
 #endif
 
+#ifndef CLIENT_HANDLER_H
+#include "client_handler.h"
+#endif
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>
