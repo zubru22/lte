@@ -63,17 +63,7 @@ rrc_config generate_rrc_config(int16_t rnti) {
 }
 
 int16_t get_client_rnti(int socket) {
-  // TODO remove conversion after key in hashmap is changed to int
-  char key[8];
-  sprintf(key, "%d", socket);
-  void* searched_client;
-  int clients_size = hashmap_size(clients);
-
-  if (hashmap_get(clients, key, &searched_client) == -1) {
-    printf("error retrieving data from clients hashmap - no client %s found\n",key);
-    return 0;
-  }
-  return ((client*) searched_client)->rnti;
+  return get_client_by_socket(clients, socket)->rnti;
 }
 
 void send_rrc_setup(int socket) {
