@@ -23,5 +23,7 @@ void initialize_battery_life(ue_battery*);
 int update_battery(ue_battery*);
 void decrase_after_ping(ue_battery*);
 int send_low_battery_notification(int, s_message*);
+bool detect_high_battery_state(ue_battery*);
+int send_high_battery_notification(int, s_message*);
 
 #endif

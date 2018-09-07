@@ -46,3 +46,22 @@ int send_low_battery_notification(int socketfd, s_message* message) {
         return -1;
     return 0;
 }
+
+// This function returns true if battery power goes from low to high, otherwise false
+bool detect_high_battery_state(ue_battery* battery) {
+    return ((battery->power_is_low) && (20 <= battery->power_percentage));
+}
+
+// This function sends notification to eNodeB if battery state is high again. Function returns 0 if all goes well,
+// -1 in case if sending a message was not possible. If battery didn't change its state from low to high - function returns 1.
+int send_high_battery_notification(int socketfd, s_message* message) {
+    if(detect_high_battery_state()) {
+        message->message_type = ue_battery_high;
+        message->message_value = NULL;
+
+        if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
+            return -1;
+        return 0;
+    }
+    return 1;
+}
