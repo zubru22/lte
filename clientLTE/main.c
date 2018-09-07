@@ -8,6 +8,7 @@
 #include "random_access.h"
 #include "rrc.h"
 #include "user_equipment.h"
+#include "../logs/logs.h"
 
 int main(int argc, char* argv[])
 {
