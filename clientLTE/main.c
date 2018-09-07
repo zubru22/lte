@@ -1,10 +1,11 @@
 #ifndef STRING_H
 #include <string.h>
-#endif 
+#endif
 #include "../message.h"
 #include "init_connection.h"
 #include "random_access.h"
 #include "rrc.h"
+#include "user_equipment.h"
 
 int main(int argc, char* argv[])
 {
@@ -16,7 +17,10 @@ int main(int argc, char* argv[])
     int socket_fd, running = 1;
     struct sockaddr_in server;
     s_message message;
+    ue_battery battery;
     srand(time(NULL)); 
+
+    initialize_battery_life(&battery);
 
     //init_connection returns 0 on error, else function returns 1
     if (init_connection(&socket_fd, &server, port_number)) {
@@ -58,17 +62,15 @@ int main(int argc, char* argv[])
         printf("Successfully send rcc connection request!\n");
     }
 
-    if(send_rrc_setup_complete(socket_fd, &message) == -1) {
-        printf("Failed to send rrc setup!\n");
-    }
-    else {
-        printf("Successfully send rcc setup!\n");
-    }
-
+    receive_rrc_setup(socket_fd, &received, &message);
 
     while (running) {
-
+        update_battery(&battery);
+        printf("Battery power: %i\n", battery.power_percentage);
         
+        if (battery.power_is_low == true)
+            printf("DUPA\n");
+
     }
 
     return 0;

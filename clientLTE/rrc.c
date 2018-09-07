@@ -31,6 +31,25 @@ int send_rrc_setup_complete(int socketfd, s_message* message) {
             return -1;
         return 0;
     }
-    else 
+    return -1;
+}
+
+/* This function receives response from eNodeB. It returns -1 if receiving message failed, returns 0 if received message is rrc_setup, if received message is not 
+    rrc_setup type 0 is returned */
+int receive_rrc_setup(int socketfd, s_message* received, s_message* message) {
+   if(-1 == recv(socketfd, (s_message*) received, sizeof(*received), 0)) {
+        printf("Error on recv() rrc_setup.\n");
         return -1;
+    }
+    else
+        printf("Successfully received rrc setup!\n");
+
+    //after properly receiving rrc setup we call func to sent rrc setup_complete
+    if(send_rrc_setup_complete(socketfd, received) == -1) {
+        printf("Failed to send rrc setup!\n");
+        return -1;
+    }
+    else
+        printf("Successfully send rcc setup complete!\n");
+    return 0;
 }

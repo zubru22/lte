@@ -12,21 +12,8 @@ typedef struct prach_response {
     time_t unix_epoch_timestamp;
 } response;
 
-typedef enum type_of_message {
-  random_access_request,
-  random_access_response,
-  rrc_request, rrc_setup,
-  rrc_complete,
-  low_battery // sended while the amount of battery is low
-} e_message_type;
-
-typedef enum establishment_cause {
-  EMERGENCY,
-  HIGH_PRIORITY_ACCESS,
-  MT_ACCESS,
-  MO_SIGNALING,
-  MO_DATA
-} e_ec;
+typedef enum type_of_message {random_access_request, random_access_response, rrc_request, rrc_setup, rrc_complete, ue_battery_low} e_message_type;
+typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
 
 typedef struct stmsi {
     u_int8_t mme_code;
