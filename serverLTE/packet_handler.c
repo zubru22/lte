@@ -89,6 +89,7 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
     send(socket, &response, sizeof(response), 0);
 }
 
-void handle_low_battery_request() {
-
+void handle_low_battery_request(int client_socket) {
+  client* client_with_low_battery = get_client_by_socket(clients, client_socket);
+  client_with_low_battery->battery_state = LOW;
 }

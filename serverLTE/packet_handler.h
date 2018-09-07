@@ -30,4 +30,5 @@ void send_rrc_setup(int socket);
 int8_t extractPreambleIndex(int16_t ra_rnti);
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp);
 void send_rrc_setup(int socket);
+void handle_low_battery_request(int client_socket);
 #endif
