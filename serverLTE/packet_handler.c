@@ -41,6 +41,9 @@ void parse_packet(int number_of_event) {
     case rrc_request:
       send_rrc_setup(client_socket);
       break;
+    case low_battery:
+      handle_low_battery_request(client_socket);
+      break;
     default:
       break;
   }
@@ -84,4 +87,8 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
     response.message_value.message_response.unix_epoch_timestamp = timestamp;
     printf("sent value: %d\n", response.message_value.message_response.rapid);
     send(socket, &response, sizeof(response), 0);
+}
+
+void handle_low_battery_request() {
+
 }

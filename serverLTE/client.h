@@ -9,6 +9,11 @@
 #include "../lib/hashmap.h"
 #endif
 
+typedef enum {
+  OK,
+  LOW
+} battery_state_t;
+
 typedef struct client {
     int16_t rnti;
     int8_t preamble_index; // RAPID
@@ -16,6 +21,7 @@ typedef struct client {
     time_t last_activity;
     int16_t mcc;
     int16_t mnc;
+    battery_state_t battery_state;
     // is stored as a key of map-element, but might be useful here
     int socket;
 } client;
