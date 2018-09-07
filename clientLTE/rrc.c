@@ -31,9 +31,7 @@ int send_rrc_setup_complete(int socketfd, s_message* message) {
             return -1;
         return 0;
     }
-    else {
-        return -1;
-    }
+    return -1;
 }
 
 /* This function receives response from eNodeB. It returns -1 if receiving message failed, returns 0 if received message is rrc_setup, if received message is not 

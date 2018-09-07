@@ -36,3 +36,13 @@ void decrase_after_ping(ue_battery* battery) {
     
     battery->power_percentage -= decrase_amount;
 }
+
+// This function sends low battery notification to eNodeB in order to induce battery saving mode
+int send_low_battery_notification(int socketfd, s_message* message) {
+    message->message_type = ue_battery_low;
+    message->message_value = NULL;
+
+    if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
+        return -1;
+    return 0;
+}
