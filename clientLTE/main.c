@@ -62,23 +62,7 @@ int main(int argc, char* argv[])
         printf("Successfully send rcc connection request!\n");
     }
 
-    int rrc_setup_complete_status = receive_rrc_setup(socket_fd, &received, &message);
-
-    if (-1 == rrc_setup_complete_status)
-        printf("Error on recv() rrc_setup.\n");
-    else if (1 == rrc_setup_complete_status)
-        printf("Response not OK!\n");
-    else {
-        printf("Response type OK!\n");
-        printf("Sending rrc setup complete message...\n");
-    }
-
-    if(send_rrc_setup_complete(socket_fd, &message) == -1) {
-        printf("Failed to send rrc setup!\n");
-    }
-    else {
-        printf("Successfully send rcc setup!\n");
-    }
+    receive_rrc_setup(socket_fd, &received, &message);
 
     while (running) {
         if(update_battery(&battery) == 2)
