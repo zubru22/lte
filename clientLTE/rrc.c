@@ -20,6 +20,18 @@ int send_rrc_connection_request(int socketfd, s_message* message, void (*generat
     return 0;
 }
 
+/* This function receives response from eNodeB. It returns -1 if receiving message failed, returns 0 if received message is rrc_setup, if received message is not 
+    rrc_setup type 1 is returned */
+int receive_rrc_setup(int socketfd, s_message* received, s_message* message) {
+   if(-1 == recv(socketfd, (s_message*) received, sizeof(*received), 0))
+        return -1;
+
+    if (rrc_setup == received->message_type)
+        return 0;
+
+    return 1;
+}
+
 // This function sends rrc setup complete from UE to eNodeB. Function returns -1 on error and 0 on success
 int send_rrc_setup_complete(int socketfd, s_message* message) {
     if (message->message_type == rrc_setup) {
