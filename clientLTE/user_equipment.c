@@ -40,7 +40,6 @@ void decrase_after_ping(ue_battery* battery) {
 // This function sends low battery notification to eNodeB in order to induce battery saving mode
 int send_low_battery_notification(int socketfd, s_message* message) {
     message->message_type = ue_battery_low;
-    message->message_value = NULL;
 
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
         return -1;
@@ -54,10 +53,9 @@ bool detect_high_battery_state(ue_battery* battery) {
 
 // This function sends notification to eNodeB if battery state is high again. Function returns 0 if all goes well,
 // -1 in case if sending a message was not possible. If battery didn't change its state from low to high - function returns 1.
-int send_high_battery_notification(int socketfd, s_message* message) {
-    if(detect_high_battery_state()) {
+int send_high_battery_notification(int socketfd, s_message* message, ue_battery* battery) {
+    if(detect_high_battery_state(battery)) {
         message->message_type = ue_battery_high;
-        message->message_value = NULL;
 
         if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
             return -1;

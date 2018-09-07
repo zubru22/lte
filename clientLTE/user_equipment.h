@@ -12,6 +12,11 @@
 #endif
 
 #include <sys/types.h>
+#include <unistd.h>
+
+#ifndef MESSAGE_H
+#include "../message.h"
+#endif
 
 typedef struct s_ue_battery {
     int8_t power_percentage;
@@ -24,6 +29,6 @@ int update_battery(ue_battery*);
 void decrase_after_ping(ue_battery*);
 int send_low_battery_notification(int, s_message*);
 bool detect_high_battery_state(ue_battery*);
-int send_high_battery_notification(int, s_message*);
+int send_high_battery_notification(int, s_message*, ue_battery*);
 
 #endif
