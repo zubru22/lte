@@ -13,6 +13,7 @@ void initialize_battery_life(ue_battery* battery) {
 // to simulate background processes going on in UE. Function oughts to be used in program's main loop.
 // On top of that, function returns zero if battery goes dead and 1 if it is still alive.
 int update_battery(ue_battery* battery) {
+    //printf("");
     if(battery->power_percentage <= 0)
         return 0;
     
@@ -22,13 +23,14 @@ int update_battery(ue_battery* battery) {
     const static time_t battery_decrase_time = 3;
     time_t time_now;
     time(&time_now);
-
+    //printf("time now: %i\n", (unsigned int)time_now);
+    //printf("starting time: %i\n", (unsigned int)battery->starting_time);
+    //printf("roznica: %i\n", ((unsigned int)time_now - (unsigned int)battery->starting_time));
     if((time_now - battery->starting_time) >= battery_decrase_time) {
         battery->power_percentage -= 1;
         // Reset starting_time to current time
         time(&battery->starting_time);
     }
-
     return 1;
 }
 
