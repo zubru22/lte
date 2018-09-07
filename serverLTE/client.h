@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include <time.h>
+#include <stdio.h>
 
 #ifndef HASHMAP_H
 #include "../lib/hashmap.h"
@@ -16,9 +17,11 @@ typedef struct client {
     int16_t mcc;
     int16_t mnc;
     // is stored as a key of map-element, but might be useful here
-    int socket; 
+    int socket;
 } client;
 
 hashmap* clients;
 
+client* get_client_by_socket(hashmap* map_of_clients, int socket);
+void put_client_in_hashmap(hashmap* map_of_clients, int socket, client* client_inserted);
 #endif

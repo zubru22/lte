@@ -10,10 +10,8 @@ void save_client(int socket, int8_t preamble_index, time_t current_timestamp, in
   new_client.first_connection_timestamp = current_timestamp;
   new_client.socket = socket;
   new_client.rnti = received_ra_rnti;
-  // TODO remove conversion after key in hashmap is changed to int
-  char key[8];
-  sprintf(key, "%d", socket);
-  hashmap_put(clients, key, &new_client);
+
+  put_client_in_hashmap(clients, socket, &new_client);
 }
 
 void handle_random_access_request(int client_socket, s_message message){
@@ -63,17 +61,7 @@ rrc_config generate_rrc_config(int16_t rnti) {
 }
 
 int16_t get_client_rnti(int socket) {
-  // TODO remove conversion after key in hashmap is changed to int
-  char key[8];
-  sprintf(key, "%d", socket);
-  void* searched_client;
-  int clients_size = hashmap_size(clients);
-
-  if (hashmap_get(clients, key, &searched_client) == -1) {
-    printf("error retrieving data from clients hashmap - no client %s found\n",key);
-    return 0;
-  }
-  return ((client*) searched_client)->rnti;
+  return get_client_by_socket(clients, socket)->rnti;
 }
 
 void send_rrc_setup(int socket) {
