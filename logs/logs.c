@@ -31,7 +31,7 @@ void add_log(const char *log_file_name, int log, const char *str)
             break;
         case 2:
             printf(" [ERROR] ");
-            fprintf(log_file, "[ERROR] ");
+            fprintf(log_file, " [ERROR] ");
             break;
     }
 
