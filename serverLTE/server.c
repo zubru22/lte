@@ -28,8 +28,10 @@ void server_t__destroy(server_t* self) {
     if (self->clients[i] == NULL) {
       continue;
     }
+    close(self->clients[i]->socket);
     free(self->clients[i]);
   }
+  close(self->socket);
   free(self->clients);
 }
 
@@ -62,6 +64,7 @@ void init_server(int port) {
     perror("epoll_create1 in init_server");
     exit(EXIT_FAILURE);
   }
+  memset(&event, 0, sizeof(event));
   event.events = EPOLLIN;
   event.data.fd = server_socket;
   if (epoll_ctl(epoll_file_descriptor, EPOLL_CTL_ADD, server_socket, &event) == -1) {
