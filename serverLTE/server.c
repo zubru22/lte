@@ -22,7 +22,7 @@ int servet_t__socket(server_t* self) {
   return self->socket;
 }
 
-void servet_t__destroy(server_t* self) {
+void server_t__destroy(server_t* self) {
   int i;
   for (i = 0; i < self->max_number_of_clients; i++) {
     if (self->clients[i] == NULL) {
@@ -149,5 +149,6 @@ void expand_clients() {
 }
 
 void clean() {
-  
+    server_t__destroy(&server);
+    hashmap_destroy(clients);
 }

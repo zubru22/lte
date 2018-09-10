@@ -55,8 +55,8 @@ typedef struct {
 server_t server;
 
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor);
-int servet_t__socket(server_t* self);
-void servet_t__destroy(server_t* self);
+int server_t__socket(server_t* self);
+void server_t__destroy(server_t* self);
 void init_server_address(struct sockaddr_in* server_address, int port);
 void init_server(int port);
 void receive_packets();
