@@ -154,6 +154,8 @@ void clean() {
 
 void error(const char* error_message) {
   perror(error_message);
-  clean();
+  if (errno != EINTR) {
+    clean();
+  }
   exit(EXIT_FAILURE);
 }
