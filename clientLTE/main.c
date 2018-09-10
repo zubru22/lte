@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
         update_battery(socket_fd, &message, &battery);
         printf("Battery power: %i\n", battery.power_percentage);
         if (receive_ping(socket_fd, &message) == 0)
-            if (send_pong(socket_fd, &message))
+            if (send_pong(socket_fd, &message) == -1)
                 add_log(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
             else
                 add_log(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
