@@ -22,6 +22,17 @@ int servet_t__socket(server_t* self) {
   return self->socket;
 }
 
+void servet_t__destroy(server_t* self) {
+  int i;
+  for (i = 0; i < self->max_number_of_clients; i++) {
+    if (self->clients[i] == NULL) {
+      continue;
+    }
+    free(self->clients[i]);
+  }
+  free(self->clients);
+}
+
 void init_server_address(struct sockaddr_in* server_address, int port) {
   bzero((char *) server_address, sizeof(*server_address));
   server_address->sin_family = AF_INET;
