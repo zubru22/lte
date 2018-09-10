@@ -14,11 +14,9 @@ void handle_random_access_request(int client_socket, s_message message){
 
 void parse_packet(int number_of_event) {
   printf ("PARSE PACKET!\n");
-  // TODO
   s_message message;
   if(read(server.events[number_of_event].data.fd, &message, sizeof(message)) == -1) {
-    perror("read in parse_packet");
-    exit(EXIT_FAILURE);
+    error("read in parse_packet");
   }
 
   int client_socket = server.events[number_of_event].data.fd;
@@ -66,6 +64,7 @@ int8_t extractPreambleIndex(int16_t ra_rnti) {
 
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp) {
     s_message response;
+    memset(&response, 0, sizeof(response));
     response.message_type = random_access_response;
     response.message_value.message_response.rapid = preamble_index;
     response.message_value.message_response.unix_epoch_timestamp = timestamp;

@@ -1,11 +1,14 @@
-#include "server_init.h"
+#include "server.h"
 #include <stdio.h>
+#include <signal.h>
 
 #ifndef CLIENT_H
 #include "client.h"
 #endif
 
+
 int main(int argc, char** argv) {
+  signal(SIGINT, clean);
   if (argc < 2) {
     remind_about_port();
   }

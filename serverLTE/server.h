@@ -1,5 +1,5 @@
-#ifndef SERVER_INIT_H
-#define SERVER_INIT_H
+#ifndef SERVER_H
+#define SERVER_H
 
 #ifndef HASHMAP_H
 #include "../lib/hashmap.h"
@@ -55,7 +55,8 @@ typedef struct {
 server_t server;
 
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor);
-int servet_t__socket(server_t* self);
+int server_t__socket(server_t* self);
+void server_t__destroy(server_t* self);
 void init_server_address(struct sockaddr_in* server_address, int port);
 void init_server(int port);
 void receive_packets();
@@ -63,5 +64,7 @@ void handle_connection(int number_of_file_descriptors_ready);
 void accept_client();
 void remind_about_port();
 void expand_clients();
+void clean();
+void error(const char* error_message);
 
 #endif
