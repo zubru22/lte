@@ -63,5 +63,6 @@ void handle_connection(int number_of_file_descriptors_ready);
 void accept_client();
 void remind_about_port();
 void expand_clients();
+void clean();
 
 #endif

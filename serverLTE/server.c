@@ -136,3 +136,7 @@ void expand_clients() {
   server.max_number_of_clients *= 2;
   free(temporary_clients);
 }
+
+void clean() {
+  
+}
