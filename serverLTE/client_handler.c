@@ -2,8 +2,8 @@
 #include "client_handler.h"
 #endif
 
-#ifndef SERVER_INIT_H
-#include "server_init.h"
+#ifndef SERVER_H
+#include "server.h"
 #endif
 
 void save_client(int socket, int8_t preamble_index, time_t current_timestamp, int16_t received_ra_rnti) {

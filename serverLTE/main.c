@@ -1,4 +1,4 @@
-#include "server_init.h"
+#include "server.h"
 #include <stdio.h>
 
 #ifndef CLIENT_H

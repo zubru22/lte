@@ -5,8 +5,8 @@
 #include "packet_handler.h"
 #endif
 
-#ifndef SERVER_INIT_H
-#include "server_init.h"
+#ifndef SERVER_H
+#include "server.h"
 #endif
 
 #ifndef HASHMAP_H

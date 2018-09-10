@@ -1,5 +1,5 @@
-#ifndef SERVER_INIT_H
-#include "server_init.h"
+#ifndef SERVER_H
+#include "server.h"
 #endif
 
 

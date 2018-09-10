@@ -1,5 +1,5 @@
-#ifndef SERVER_INIT_H
-#define SERVER_INIT_H
+#ifndef SERVER_H
+#define SERVER_H
 
 #ifndef HASHMAP_H
 #include "../lib/hashmap.h"
