@@ -22,6 +22,7 @@ void parse_packet(int number_of_event) {
   }
 
   int client_socket = server.events[number_of_event].data.fd;
+
   switch(message.message_type) {
     case random_access_request:
       handle_random_access_request(client_socket, message);
@@ -76,4 +77,31 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
 void handle_low_battery_request(int client_socket) {
   client* client_with_low_battery = get_client_by_socket(clients, client_socket);
   client_with_low_battery->battery_state = LOW;
+}
+
+void send_pings() {
+  bool done = false;
+  while (!done) {
+    sleep(1);
+    hashmap_iter(clients, ping_client, NULL);
+  }
+}
+
+hashmap_callback ping_client(void *data, const char *key, void *value) {
+
+  int client_socket = atoi(key);
+  client* current_client = (client*) value;
+
+  time_t current_time = time(NULL);
+  time_t time_since_last_activity = current_client->last_activity - current_time;
+  bool should_ping = (current_client->battery_state == OK && time_since_last_activity > PING_TIME_NORMAL) \
+  || (current_client->battery_state == LOW && time_since_last_activity > PING_TIME_LOW_BATTERY); 
+
+  if (should_ping) {
+    s_message ping_message;
+    ping_message.message_type = ping;
+    send(client_socket, &ping_message, sizeof(ping_message), 0);
+
+  }
+
 }

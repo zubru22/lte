@@ -1,6 +1,9 @@
 #ifndef PACKET_HANDLER_H
 #define PACKET_HANDLER_H
 
+#define PING_TIME_NORMAL 5
+#define PING_TIME_LOW_BATTERY 10
+
 #ifndef PACKET_HANDLER_H
 #include "packet_handler.h"
 #endif
@@ -23,6 +26,8 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/types.h>
+#include <stdbool.h>
+
 
 void handle_random_access_request(int client_socket, s_message message);
 void parse_packet(int number_of_event);
@@ -31,4 +36,6 @@ void send_rrc_setup(int socket);
 int8_t extractPreambleIndex(int16_t ra_rnti);
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp);
 void handle_low_battery_request(int client_socket);
+void send_pings();
+hashmap_callback ping_client(void *data, const char *key, void *value);
 #endif
