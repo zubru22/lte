@@ -1,6 +1,8 @@
 // This functionality is about to create Random Access Preamble (RA-RNTI) and wait for Random Access Response (C-RNTI) from eNB
 #include "random_access.h"
+#ifndef STDBOOL_H
 #include <stdbool.h>
+#endif
 
 // This function generates and returns ra_rnti for prach preamble and modifies original structure
 void generate_ra_rnti(preamble* s_preamble) {
