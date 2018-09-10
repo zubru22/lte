@@ -20,6 +20,10 @@
 #include "../message.h"
 #endif
 
+#ifndef CLIENT_H
+#include "client.h"
+#endif
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>

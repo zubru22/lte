@@ -23,6 +23,8 @@ void handle_random_access_request(int client_socket, s_message message){
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   save_client(client_socket, preamble_index, current_timestamp, received_ra_rnti);
+  print_clients();
+  printf("\n___________________\n");
   printf("Random Access response sent\n");
 }
 
@@ -39,6 +41,8 @@ void parse_packet(int number_of_event) {
   switch(message.message_type) {
     case random_access_request:
       handle_random_access_request(client_socket, message);
+      print_clients();
+      printf("\n___________________\n");
       break;
     case rrc_request:
       send_rrc_setup(client_socket);

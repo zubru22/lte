@@ -5,6 +5,8 @@
 #include "client.h"
 #endif
 
+hashmap* clients;
+
 int main(int argc, char** argv) {
   if (argc < 2) {
     remind_about_port();
