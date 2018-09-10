@@ -11,6 +11,7 @@ client* get_client_by_socket(hashmap* map_of_clients, int socket) {
         printf("error retrieving data from clients hashmap - no client %s found\n", key);
         return NULL;
     }
+    
     return ((client*) searched_client);
 }
 

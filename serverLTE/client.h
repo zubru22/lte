@@ -10,7 +10,7 @@
 #endif
 
 typedef enum {
-  OK,
+  OK = 0,
   LOW
 } battery_state_t;
 

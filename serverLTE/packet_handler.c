@@ -2,6 +2,20 @@
 #include "packet_handler.h"
 #endif
 
+int print_client(void *data, const char *key, void *value) {
+  client* c = (client*) value;
+  printf("client: key: %s\n",key);
+  printf("socket read from struct: %d\n", c->socket);
+  printf("last activity timestamp: %ld\n", c->last_activity);
+  printf("battery state: %d\n", c->battery_state);
+  return 0;
+}
+
+void print_clients() {
+  hashmap_callback print_each = print_client;
+  hashmap_iter(clients, print_each, NULL);
+}
+
 void handle_random_access_request(int client_socket, s_message message){
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
   uint8_t preamble_index = extractPreambleIndex(received_ra_rnti);
@@ -14,7 +28,6 @@ void handle_random_access_request(int client_socket, s_message message){
 
 void parse_packet(int number_of_event) {
   printf ("PARSE PACKET!\n");
-  // TODO
   s_message message;
   if(read(server.events[number_of_event].data.fd, &message, sizeof(message)) == -1) {
     perror("read in parse_packet");
@@ -79,29 +92,40 @@ void handle_low_battery_request(int client_socket) {
   client_with_low_battery->battery_state = LOW;
 }
 
+void* pinging_in_thread(void* arg){
+  send_pings();
+  return NULL;
+}
+
 void send_pings() {
   bool done = false;
+  hashmap_callback ping_each_client = ping_client;
   while (!done) {
+    printf ("SEND_PINGS!\n");
     sleep(1);
-    hashmap_iter(clients, ping_client, NULL);
+    hashmap_iter(clients, ping_each_client, NULL);
   }
 }
 
-hashmap_callback ping_client(void *data, const char *key, void *value) {
-
+int ping_client(void *data, const char *key, void *value) {
+  time_t current_time = time(NULL);
   int client_socket = atoi(key);
   client* current_client = (client*) value;
-
-  time_t current_time = time(NULL);
+  printf("ping_client of socket: %s\n", key);
+  printf("socket read from struct: %d\n",current_client->socket);
+  printf("his timestamp of last activity: %ld\n",current_client->last_activity);
+  printf("current timestamp: %ld\n", current_time);
+  printf("delta time: %ld\n\n", current_client->last_activity-current_time);
   time_t time_since_last_activity = current_client->last_activity - current_time;
-  bool should_ping = (current_client->battery_state == OK && time_since_last_activity > PING_TIME_NORMAL) \
-  || (current_client->battery_state == LOW && time_since_last_activity > PING_TIME_LOW_BATTERY); 
+  bool should_ping = (current_client->battery_state == OK && (time_since_last_activity > PING_TIME_NORMAL))
+  || (current_client->battery_state == LOW && (time_since_last_activity > PING_TIME_LOW_BATTERY)); 
 
   if (should_ping) {
     s_message ping_message;
     ping_message.message_type = ping;
     send(client_socket, &ping_message, sizeof(ping_message), 0);
-
+    printf("sent ping to client on socket: %d\n", client_socket);
   }
+  return 0;
 
 }

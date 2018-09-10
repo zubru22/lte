@@ -61,7 +61,8 @@ void init_server(int port) {
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
   hashmap_init(0, &clients);
-
+  pthread_t thread_id;
+  pthread_create(&thread_id, NULL, pinging_in_thread, NULL);   
 }
 
 void receive_packets() {
