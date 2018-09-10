@@ -65,5 +65,6 @@ void accept_client();
 void remind_about_port();
 void expand_clients();
 void clean();
+void error(const char* error_message);
 
 #endif

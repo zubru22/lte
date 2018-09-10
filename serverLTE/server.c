@@ -45,32 +45,27 @@ void init_server_address(struct sockaddr_in* server_address, int port) {
 void init_server(int port) {
   int server_socket;
   if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    perror("socket in init_server");
-    exit(EXIT_FAILURE);
+    error("socket in init_server");
   }
   struct sockaddr_in server_address;
   init_server_address(&server_address, port);
   if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
-    perror("bind in init_server");
-    exit(EXIT_FAILURE);
+    error("bind in init_server");
   }
   if (listen(server_socket, MAX_LISTEN_QUERIED_CONNECTIONS) == -1) {
-    perror ("listen in init_server");
-    exit(EXIT_FAILURE);
+    error ("listen in init_server");
   }
   struct epoll_event event;
   int epoll_file_descriptor;
   if ((epoll_file_descriptor = epoll_create1(0)) == -1) {
-    perror("epoll_create1 in init_server");
-    exit(EXIT_FAILURE);
+    error("epoll_create1 in init_server");
   }
   memset(&event, 0, sizeof(event));
   event.events = EPOLLIN;
   event.data.fd = server_socket;
   if (epoll_ctl(epoll_file_descriptor, EPOLL_CTL_ADD, server_socket, &event) == -1) {
     close(epoll_file_descriptor);
-    perror("epoll_ctl in init_server");
-    exit(EXIT_FAILURE);
+    error("epoll_ctl in init_server");
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
@@ -82,8 +77,7 @@ void receive_packets() {
   int number_of_file_descriptors_ready;
   while(1) {
       if((number_of_file_descriptors_ready = epoll_wait(server.epoll_file_descriptor, server.events, MAX_EVENTS, -1)) == -1) {
-        perror("epoll_wait in init_server");
-        exit(EXIT_FAILURE);
+        error("epoll_wait in init_server");
       }
       handle_connection(number_of_file_descriptors_ready);
   }
@@ -108,19 +102,20 @@ void accept_client() {
   for (it = 0; it < server.max_number_of_clients; it++) {
     if (server.clients[it] == NULL) {
       server.clients[it] = (client_t*)malloc(sizeof(client_t));
-      server.clients[it]->socket = accept(server.socket,
-                         (struct sockaddr *) &server.clients[it]->client_address, &server.clients[it]->client_length);
+      server.clients[it]->client_length = sizeof(server.clients[it]->client_address);
+      server.clients[it]->socket = accept(
+                                    server.socket,
+                                    (struct sockaddr *) &server.clients[it]->client_address,
+                                    &server.clients[it]->client_length);
       if (server.clients[it]->socket == -1) {
-          perror("accept");
-          exit(EXIT_FAILURE);
+          error("accept in accept_client");
       }
       printf ("ACCEPTED SOCK: %d\n", server.clients[it]->socket);
       server.event.events = EPOLLIN;
       server.event.data.fd = server.clients[it]->socket;
       if (epoll_ctl(server.epoll_file_descriptor, EPOLL_CTL_ADD, server.clients[it]->socket,
                   &server.event) == -1) {
-          perror("epoll_ctl in accept_client");
-          exit(EXIT_FAILURE);
+          error("epoll_ctl in accept_client");
       }
       break;
     }
@@ -152,6 +147,13 @@ void expand_clients() {
 }
 
 void clean() {
+    printf ("CLEAN");
     server_t__destroy(&server);
     hashmap_destroy(clients);
+}
+
+void error(const char* error_message) {
+  perror(error_message);
+  clean();
+  exit(EXIT_FAILURE);
 }
