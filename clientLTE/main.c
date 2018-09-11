@@ -12,6 +12,14 @@
 #ifndef HANDLE_MESSAGES
 #include "handle_messages.h"
 #endif
+#include <signal.h>
+#include <stdbool.h>
+
+volatile bool running = true;
+
+void signal_handler(int signum) {
+    running = false;
+}
 
 int main(int argc, char* argv[])
 {
@@ -20,11 +28,16 @@ int main(int argc, char* argv[])
         return 0;
     }
     int port_number = atoi(argv[1]);
-    int socket_fd, running = 1;
+    int socket_fd;
     struct sockaddr_in server;
     s_message message;
     ue_battery battery;
     srand(time(NULL)); 
+
+    struct sigaction s_signal;
+    s_signal.sa_handler = signal_handler;
+    sigemptyset(&s_signal.sa_mask);
+    s_signal.sa_flags = 0;
 
     initialize_battery_life(&battery);
 
@@ -80,6 +93,7 @@ int main(int argc, char* argv[])
     }
 
     receive_rrc_setup(socket_fd, &received, &message);
+    sigaction(SIGINT, &s_signal, NULL);
 
     while (running) {
         update_battery(socket_fd, &message, &battery);
@@ -93,6 +107,11 @@ int main(int argc, char* argv[])
             }
         sleep(1);
     }
+
+    if(-1 == send_ue_off_signal(socket_fd, &message))
+        add_log(client_log_filename, LOG_ERROR, "Client failed to send ue_off notification!");
+    else
+        add_log(client_log_filename, LOG_SUCCESS, "Client successfully disconnected from server!");
 
     return 0;
 }
