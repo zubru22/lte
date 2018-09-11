@@ -1,5 +1,11 @@
 #include "logs.h"
-
+/**
+ * @brief This function prints out message to stdout as well as to the file specified by first parameter. 
+ * 
+ * @param log_file_name is path to file in which logs should be saved. File will be created if it does not exist yet.
+ * @param log is enum flag which adds tag next to log date, e.g. [SUCCESS] or [FAIL]
+ * @param str is message displayed to stdout and written to file, new line character is added automatically
+ */
 void add_log(const char *log_file_name, int log, const char *str)
 {
     FILE *log_file;
