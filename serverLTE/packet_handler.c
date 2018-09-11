@@ -30,6 +30,9 @@ void parse_packet(int number_of_event) {
     case ue_battery_low:
       handle_low_battery_request(client_socket);
       break;
+    case ue_battery_high:
+      handle_high_battery_request(client_socket);
+      break;
     default:
       break;
   }
@@ -75,4 +78,9 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
 void handle_low_battery_request(int client_socket) {
   client* client_with_low_battery = get_client_by_socket(clients, client_socket);
   client_with_low_battery->battery_state = LOW;
+}
+
+void handle_high_battery_request(int client_socket) {
+  client* client_with_high_battery = get_client_by_socket(clients, client_socket);
+  client_with_high_battery->battery_state = OK;
 }
