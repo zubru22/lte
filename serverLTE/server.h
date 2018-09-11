@@ -21,6 +21,10 @@
 #include "client_handler.h"
 #endif
 
+#ifndef PACKET_HANDLER_H
+#include "packet_handler.h"
+#endif
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -31,6 +35,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <limits.h>
+#include <pthread.h> 
 
 #define MAX_LISTEN_QUERIED_CONNECTIONS 128 // value suggested as "safe" for most of the systems
 #define MAX_EVENTS 100

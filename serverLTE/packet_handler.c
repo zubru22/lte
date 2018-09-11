@@ -2,6 +2,20 @@
 #include "packet_handler.h"
 #endif
 
+int print_client(void *data, const char *key, void *value) {
+  client* c = (client*) value;
+  printf("client: key: %s\n",key);
+  printf("socket read from struct: %d\n", c->socket);
+  printf("last activity timestamp: %ld\n", c->last_activity);
+  printf("battery state: %d\n", c->battery_state);
+  return 0;
+}
+
+void print_clients() {
+  hashmap_callback print_each = print_client;
+  hashmap_iter(clients, print_each, NULL);
+}
+
 void handle_random_access_request(int client_socket, s_message message){
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
   uint8_t preamble_index = extractPreambleIndex(received_ra_rnti);
@@ -9,7 +23,15 @@ void handle_random_access_request(int client_socket, s_message message){
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   save_client(client_socket, preamble_index, current_timestamp, received_ra_rnti);
+  print_clients();
   printf("Random Access response sent\n");
+}
+
+void handle_pong(int client_socket) {
+  //update client's lst activity timestamp
+  client* to_be_updated = get_client_by_socket(clients, client_socket);
+  to_be_updated->last_activity = time(NULL);
+  printf("\nGOT PONG\n");
 }
 
 void parse_packet(int number_of_event) {
@@ -20,6 +42,7 @@ void parse_packet(int number_of_event) {
   }
 
   int client_socket = server.events[number_of_event].data.fd;
+
   switch(message.message_type) {
     case random_access_request:
       handle_random_access_request(client_socket, message);
@@ -32,6 +55,8 @@ void parse_packet(int number_of_event) {
       break;
     case ue_battery_high:
       handle_high_battery_request(client_socket);
+    case pong:
+      handle_pong(client_socket);
       break;
     default:
       break;
@@ -83,4 +108,38 @@ void handle_low_battery_request(int client_socket) {
 void handle_high_battery_request(int client_socket) {
   client* client_with_high_battery = get_client_by_socket(clients, client_socket);
   client_with_high_battery->battery_state = OK;
+}
+
+void* pinging_in_thread(void* arg){
+  send_pings();
+  return NULL;
+}
+
+void send_pings() {
+  bool done = false;
+  hashmap_callback ping_each_client = ping_client;
+  while (!done) {
+    printf ("SEND_PINGS!\n");
+    sleep(1);
+    hashmap_iter(clients, ping_each_client, NULL);
+  }
+}
+
+int ping_client(void *data, const char *key, void *value) {
+  time_t current_time = time(NULL);
+  int client_socket = atoi(key);
+  client* current_client = (client*) value;
+  printf("ping_client of socket: %d\n", current_client->socket);
+  time_t time_since_last_activity = current_time - current_client->last_activity;
+  bool should_ping = (current_client->battery_state == OK && (time_since_last_activity > PING_TIME_NORMAL))
+  || (current_client->battery_state == LOW && (time_since_last_activity > PING_TIME_LOW_BATTERY)); 
+
+  if (should_ping) {
+    s_message ping_message;
+    ping_message.message_type = ping;
+    send(client_socket, &ping_message, sizeof(ping_message), 0);
+    printf("sent ping to client on socket: %d\n", client_socket);
+  }
+  return 0;
+
 }
