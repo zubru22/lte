@@ -35,11 +35,11 @@
 #define MAX_LISTEN_QUERIED_CONNECTIONS 128 // value suggested as "safe" for most of the systems
 #define MAX_EVENTS 100
 
-typedef struct {
+/*typedef struct {
     int socket;
     struct sockaddr_in client_address;
     socklen_t client_length;
-} client_t;
+} client_t;*/
 
 typedef struct {
     int socket;
