@@ -1,0 +1,9 @@
+<map id="message" name="message">
+<area shape="rect" id="node2" href="$unionmessage__value.html" title="message_value" alt="" coords="267,184,380,211"/>
+<area shape="rect" id="node3" href="$structrrc__req.html" title="rrc_req" alt="" coords="5,95,68,121"/>
+<area shape="rect" id="node4" href="$structstmsi.html" title="stmsi" alt="" coords="9,5,64,32"/>
+<area shape="rect" id="node5" href="$structprach__preamble.html" title="prach_preamble" alt="" coords="117,95,231,121"/>
+<area shape="rect" id="node6" href="$structrrc__setup__complete.html" title="rrc_setup_complete" alt="" coords="255,95,391,121"/>
+<area shape="rect" id="node7" href="$structrrc__config.html" title="rrc_config" alt="" coords="432,95,511,121"/>
+<area shape="rect" id="node8" href="$structprach__response.html" title="prach_response" alt="" coords="535,95,650,121"/>
+</map>
