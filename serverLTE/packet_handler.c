@@ -14,7 +14,7 @@ void handle_random_access_request(int client_socket, s_message message){
 
 void handle_pong(int client_socket) {
   //update client's lst activity timestamp
-  client* to_be_updated = get_client_by_socket(clients, client_socket);
+  client_t* to_be_updated = get_client_by_socket(server.clients, client_socket);
   to_be_updated->last_activity = time(NULL);
   printf("\nGOT PONG\n");
 }
@@ -87,13 +87,13 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
 
 void handle_low_battery_request(int client_socket) {
   printf("battery LOW on client: %d \n", client_socket);
-  client* client_with_low_battery = get_client_by_socket(clients, client_socket);
+  client_t* client_with_low_battery = get_client_by_socket(server.clients, client_socket);
   client_with_low_battery->battery_state = LOW;
 }
 
 void handle_high_battery_request(int client_socket) {
   printf("battery HIGH on client: %d \n", client_socket);
-  client* client_with_high_battery = get_client_by_socket(clients, client_socket);
+  client_t* client_with_high_battery = get_client_by_socket(server.clients, client_socket);
   client_with_high_battery->battery_state = OK;
 }
 
@@ -107,17 +107,17 @@ void send_pings() {
   hashmap_callback ping_each_client = ping_client;
   while (!done) {
     sleep(1);
-    hashmap_iter(clients, ping_each_client, NULL);
+    hashmap_iter(server.clients, ping_each_client, NULL);
   }
 }
 
 int ping_client(void *data, const char *key, void *value) {
   time_t current_time = time(NULL);
   int client_socket = atoi(key);
-  client* current_client = (client*) value;
+  client_t* current_client = (client_t*) value;
   time_t time_since_last_activity = current_time - current_client->last_activity;
   bool should_ping = (current_client->battery_state == OK && (time_since_last_activity > PING_TIME_NORMAL))
-  || (current_client->battery_state == LOW && (time_since_last_activity > PING_TIME_LOW_BATTERY)); 
+  || (current_client->battery_state == LOW && (time_since_last_activity > PING_TIME_LOW_BATTERY));
 
   if (should_ping) {
     s_message ping_message;

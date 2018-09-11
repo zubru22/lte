@@ -7,9 +7,9 @@
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
   self->server_address = server_address;
-  self->number_of_clients = 0;
-  self->max_number_of_clients = 2;
-  int i;
+  //self->number_of_clients = 0;
+  //self->max_number_of_clients = 2;
+  //int i;
   /*self->clients = (client_t**)malloc(sizeof(client_t*) * self->max_number_of_clients);
   for (i = 0; i < self->max_number_of_clients; i++) {
     self->clients[i] = NULL;
@@ -103,7 +103,7 @@ void accept_client() {
   client_t* client = (client_t*)malloc(sizeof(client));
   struct sockaddr_in client_address;
   socklen_t client_length;
-  client_length = sizeof(client->client_address);
+  client_length = sizeof(client_address);
   client->socket = accept(
                          server.socket,
                          (struct sockaddr *) &client_address,
@@ -152,7 +152,7 @@ void remind_about_port() {
   exit(EXIT_FAILURE);
 }
 
-void expand_clients() {
+/*void expand_clients() {
   client_t *temporary_clients = (client_t*)malloc(sizeof(client_t) * server.max_number_of_clients);
   int i;
   for (i = 0; i < server.max_number_of_clients; i++) {
@@ -169,7 +169,7 @@ void expand_clients() {
   }
   server.max_number_of_clients *= 2;
   free(temporary_clients);
-}
+}*/
 
 void clean() {
     printf ("CLEAN");
