@@ -24,8 +24,13 @@ void parse_packet(int number_of_event) {
 
   add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
   s_message message;
-  if(read(client_socket, &message, sizeof(message)) == -1) {
+  int number_of_bytes_read = read(client_socket, &message, sizeof(message));
+  if (number_of_bytes_read == -1) {
     error("read in parse_packet");
+  } else if (number_of_bytes_read == 0) {
+    add_logf(server_log_filename, LOG_INFO, "Client disconnected: %d", client_socket);
+    close(client_socket);
+    delete_client_from_hashmap(clients, client_socket);
   }
 
   switch(message.message_type) {
