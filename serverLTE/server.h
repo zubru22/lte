@@ -25,6 +25,10 @@
 #include "packet_handler.h"
 #endif
 
+#ifndef LOGS_H
+#include "../logs/logs.h"
+#endif
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>

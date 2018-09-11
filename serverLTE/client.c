@@ -8,9 +8,8 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
     char key[8];
     sprintf(key, "%d", socket);
     void* searched_client;
-
     if (hashmap_get(server.clients, key, &searched_client) == -1) {
-        printf("error retrieving data from clients hashmap - no client %s found\n", key);
+        add_logf(server_log_filename, LOG_ERROR, "error retrieving data from clients hashmap - no client %s found", key);
         return NULL;
     }
 

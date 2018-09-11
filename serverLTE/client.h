@@ -9,6 +9,10 @@
 #include "../lib/hashmap.h"
 #endif
 
+#ifndef LOGS_H
+#include "../logs/logs.h"
+#endif
+
 typedef enum {
   OK = 0,
   LOW

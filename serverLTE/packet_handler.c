@@ -9,24 +9,24 @@ void handle_random_access_request(int client_socket, s_message message){
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   save_client(client_socket, preamble_index, current_timestamp, received_ra_rnti);
-  printf("Random Access response sent\n");
+  add_log(server_log_filename, LOG_INFO, "Random Access response sent");
 }
 
 void handle_pong(int client_socket) {
   //update client's lst activity timestamp
   client_t* to_be_updated = get_client_by_socket(server.clients, client_socket);
   to_be_updated->last_activity = time(NULL);
-  printf("\nGOT PONG\n");
+  add_log(server_log_filename, LOG_INFO, "Received pong");
 }
 
 void parse_packet(int number_of_event) {
-  printf ("PARSE PACKET!\n");
+  int client_socket = server.events[number_of_event].data.fd;
+
+  add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
   s_message message;
-  if(read(server.events[number_of_event].data.fd, &message, sizeof(message)) == -1) {
+  if(read(client_socket, &message, sizeof(message)) == -1) {
     error("read in parse_packet");
   }
-
-  int client_socket = server.events[number_of_event].data.fd;
 
   switch(message.message_type) {
     case random_access_request:
@@ -68,7 +68,7 @@ void send_rrc_setup(int socket) {
   response.message_type = rrc_setup;
   response.message_value.rrc_response = generate_rrc_config(client_rnti);
   send(socket, &response, sizeof(response), 0);
-  printf("sent RRC setup\n");
+  add_log(server_log_filename, LOG_INFO, "Sent RRC setup");
 }
 
 int8_t extractPreambleIndex(int16_t ra_rnti) {
@@ -81,18 +81,18 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
     response.message_type = random_access_response;
     response.message_value.message_response.rapid = preamble_index;
     response.message_value.message_response.unix_epoch_timestamp = timestamp;
-    printf("sent value: %d\n", response.message_value.message_response.rapid);
+    add_logf(server_log_filename, LOG_INFO, "Sent value: %d", preamble_index);
     send(socket, &response, sizeof(response), 0);
 }
 
 void handle_low_battery_request(int client_socket) {
-  printf("battery LOW on client: %d \n", client_socket);
+  add_logf(server_log_filename, LOG_INFO, "Battery LOW on client: %d", client_socket);
   client_t* client_with_low_battery = get_client_by_socket(server.clients, client_socket);
   client_with_low_battery->battery_state = LOW;
 }
 
 void handle_high_battery_request(int client_socket) {
-  printf("battery HIGH on client: %d \n", client_socket);
+  add_logf(server_log_filename, LOG_INFO, "Battery HIGH on client: %d", client_socket);
   client_t* client_with_high_battery = get_client_by_socket(server.clients, client_socket);
   client_with_high_battery->battery_state = OK;
 }
@@ -123,7 +123,7 @@ int ping_client(void *data, const char *key, void *value) {
     s_message ping_message;
     ping_message.message_type = ping;
     send(client_socket, &ping_message, sizeof(ping_message), 0);
-    printf("sent ping to client on socket: %d\n", client_socket);
+    add_logf(server_log_filename, LOG_INFO, "Sent ping to client on socket: %d", client_socket);
   }
   return 0;
 

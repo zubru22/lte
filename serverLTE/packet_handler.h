@@ -4,6 +4,10 @@
 #define PING_TIME_NORMAL 2
 #define PING_TIME_LOW_BATTERY 5
 
+#ifndef LOGS_H
+#include "../logs/logs.h"
+#endif
+
 #ifndef PACKET_HANDLER_H
 #include "packet_handler.h"
 #endif
