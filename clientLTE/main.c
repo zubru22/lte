@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
         //printf("Message content:\n");
         
         if (message.message_type == random_access_request) {
-            add_log(client_log_filename, LOG_SUCCESS, "type: RA_RNTI.");
+            add_log(client_log_filename, LOG_INFO, "type: RA_RNTI.");
         }
         else {
             add_log(client_log_filename, LOG_WARNING, "type: NOT RA_RNTI.");
