@@ -34,6 +34,7 @@
 
 
 void handle_random_access_request(int client_socket, s_message message);
+void handle_pong(client_socket);
 void parse_packet(int number_of_event);
 rrc_config generate_rrc_config(int16_t rnti);
 void send_rrc_setup(int socket);

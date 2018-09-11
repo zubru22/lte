@@ -24,8 +24,14 @@ void handle_random_access_request(int client_socket, s_message message){
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   save_client(client_socket, preamble_index, current_timestamp, received_ra_rnti);
   print_clients();
-  printf("\n___________________\n");
   printf("Random Access response sent\n");
+}
+
+void handle_pong(int client_socket) {
+  //update client's lst activity timestamp
+  client* to_be_updated = get_client_by_socket(clients, client_socket);
+  to_be_updated->last_activity = time(NULL);
+  printf("\nGOT PONG\n");
 }
 
 void parse_packet(int number_of_event) {
@@ -41,14 +47,15 @@ void parse_packet(int number_of_event) {
   switch(message.message_type) {
     case random_access_request:
       handle_random_access_request(client_socket, message);
-      print_clients();
-      printf("\n___________________\n");
       break;
     case rrc_request:
       send_rrc_setup(client_socket);
       break;
     case ue_battery_low:
       handle_low_battery_request(client_socket);
+      break;
+    case pong:
+      handle_pong(client_socket);
       break;
     default:
       break;
@@ -115,12 +122,8 @@ int ping_client(void *data, const char *key, void *value) {
   time_t current_time = time(NULL);
   int client_socket = atoi(key);
   client* current_client = (client*) value;
-  printf("ping_client of socket: %s\n", key);
-  printf("socket read from struct: %d\n",current_client->socket);
-  printf("his timestamp of last activity: %ld\n",current_client->last_activity);
-  printf("current timestamp: %ld\n", current_time);
-  printf("delta time: %ld\n\n", current_client->last_activity-current_time);
-  time_t time_since_last_activity = current_client->last_activity - current_time;
+  printf("ping_client of socket: %d\n", current_client->socket);
+  time_t time_since_last_activity = current_time - current_client->last_activity;
   bool should_ping = (current_client->battery_state == OK && (time_since_last_activity > PING_TIME_NORMAL))
   || (current_client->battery_state == LOW && (time_since_last_activity > PING_TIME_LOW_BATTERY)); 
 
