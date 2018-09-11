@@ -1,8 +1,8 @@
 #ifndef PACKET_HANDLER_H
 #define PACKET_HANDLER_H
 
-#define PING_TIME_NORMAL 5
-#define PING_TIME_LOW_BATTERY 10
+#define PING_TIME_NORMAL 2
+#define PING_TIME_LOW_BATTERY 5
 
 #ifndef PACKET_HANDLER_H
 #include "packet_handler.h"
