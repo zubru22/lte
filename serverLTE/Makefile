@@ -8,12 +8,11 @@ DEPS= client_handler.h client.h packet_handler.h server.h
 
 all: server
 
-
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(SFLAGS)
 
-server: main.o server.o packet_handler.o hashmap.o MurmurHash3.o client.o client_handler.o $(DEPS)
-		$(CC) $(SFLAGS) main.o server.o packet_handler.o hashmap.o MurmurHash3.o client.o client_handler.o -lpthread -o server 2> server_output.txt -I $(DEPS)
+server: main.o server.o packet_handler.o hashmap.o MurmurHash3.o client.o client_handler.o logs.o $(DEPS)
+		$(CC) $(SFLAGS) main.o server.o packet_handler.o hashmap.o MurmurHash3.o client.o client_handler.o logs.o -lpthread -o server 2> server_output.txt -I $(DEPS)
 
 main.o: main.c
 		$(CC) $(CFLAGS) main.c
@@ -38,6 +37,9 @@ client.o: client.c
 
 client_handler.o: client_handler.c
 		$(CC) $(CFLAGS) client_handler.c
+
+logs.o: ../logs/logs.c
+	$(CC) $(CFLAGS) ../logs/logs.c
 
 
 run:	
