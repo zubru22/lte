@@ -8,7 +8,7 @@ void handle_random_access_request(int client_socket, s_message message){
   time_t current_timestamp = time(NULL);
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
-  save_client(client_socket, preamble_index, current_timestamp, received_ra_rnti);
+  update_client_by_ra_rnti_data(client_socket, preamble_index, current_timestamp, received_ra_rnti);
   add_log(server_log_filename, LOG_INFO, "Random Access response sent");
 }
 

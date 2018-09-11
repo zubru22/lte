@@ -16,7 +16,7 @@ int servet_t__socket(server_t* self) {
   return self->socket;
 }
 
-void server_t__destroy(server_t* self) {
+void server_t__destroy(server_t* self) { // TODO
   /*int i;
   for (i = 0; i < self->max_number_of_clients; i++) {
     if (self->clients[i] == NULL) { // TODO
@@ -117,7 +117,7 @@ void accept_client() {
   }
   put_client_in_hashmap(server.clients, client->socket, client);
   /*int it;
-  for (it = 0; it < server.max_number_of_clients; it++) {
+  for (it = 0; it < server.max_number_of_clients; it++) { // TODO
     if (server.clients[it] == NULL) {
       server.number_of_clients++;
       server.clients[it] = (client_t*)malloc(sizeof(client_t));
@@ -146,7 +146,7 @@ void remind_about_port() {
   exit(EXIT_FAILURE);
 }
 
-/*void expand_clients() {
+/*void expand_clients() { // TODO
   client_t *temporary_clients = (client_t*)malloc(sizeof(client_t) * server.max_number_of_clients);
   int i;
   for (i = 0; i < server.max_number_of_clients; i++) {
