@@ -1,3 +1,16 @@
+/**
+    @file logs.h
+    @brief Functions for handling logs both on server and client side 
+*/
+/**
+    @fn void add_log(const char *log_file_name, int log, const char *str)
+    @brief This function prints log to stdout as well as to log file
+    @param log_file_name Path to log file in which logs will be saved
+*/
+/**
+    @enum logs
+    @brief Type of log which occurs, adds [FLAG] to output e.g.
+*/
 #ifndef LOGS_H
 #define LOGS_H
 
