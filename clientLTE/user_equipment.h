@@ -34,8 +34,9 @@ typedef struct s_ue_battery {
 
 void initialize_battery_life(ue_battery*);
 int update_battery(int, s_message*, ue_battery*);
-void decrease_after_ping(ue_battery*);
+void decrease_after_ping(int socketfd, s_message* message, ue_battery* battery);
 int send_low_battery_notification(int, s_message*);
 int send_high_battery_notification(int, s_message*);
+void check_battery_status(int socketfd, int step, s_message* message, ue_battery* battery);
 
 #endif
