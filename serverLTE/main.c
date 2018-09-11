@@ -6,6 +6,7 @@
 #include "client.h"
 #endif
 
+hashmap* clients;
 
 int main(int argc, char** argv) {
   signal(SIGINT, clean);

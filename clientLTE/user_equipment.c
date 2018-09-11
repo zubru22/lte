@@ -2,6 +2,9 @@
 #ifndef USER_EQUIPMENT_H
 #include "user_equipment.h"
 #endif 
+#ifndef LOGS_H
+#include "../logs/logs.h"
+#endif 
 
 // This function initializes battery. Should only be used once.
 void initialize_battery_life(ue_battery* battery) {
@@ -10,22 +13,26 @@ void initialize_battery_life(ue_battery* battery) {
     battery->charging = false;
     time(&battery->starting_time);
 }
+void check_battery_status(int socketfd, int step, s_message* message, ue_battery* battery) {
+    if(battery->power_percentage <= 20 && (20-step) < battery->power_percentage && !battery->charging) {
+        battery->power_is_low = true;
+        send_low_battery_notification(socketfd, message);
+        add_log(client_log_filename, LOG_INFO, "Send low bettery note!");
+    }
+    else if (battery->power_percentage >= 20 && (20+step) > battery->power_percentage && battery->charging) {
+        battery->power_is_low = false;
+        send_high_battery_notification(socketfd, message);
+        add_log(client_log_filename, LOG_INFO, "Send high bettery note!");
+    }
+}
+
 // This function updates battery state. Decrases battery power every 'battery_decrase_time' seconds in order
 // to simulate background processes going on in UE. Function oughts to be used in program's main loop.
 // On top of that, lfunction returns zero if battery goes dead and 1 if it is still alive.
 int update_battery(int socketfd, s_message* message, ue_battery* battery) {
     const int step = 12;
     
-    if(battery->power_percentage <= 20 && (20-step) < battery->power_percentage && !battery->charging) {
-        battery->power_is_low = true;
-        send_low_battery_notification(socketfd, message);
-        printf("Send low bettery note!\n");
-    }
-    else if (battery->power_percentage >= 20 && (20+step) > battery->power_percentage && battery->charging) {
-        battery->power_is_low = false;
-        send_high_battery_notification(socketfd, message);
-        printf("Send high bettery note!\n");
-    }
+    check_battery_status(socketfd, step, message, battery);
 
     const static time_t battery_decrase_time = 1;
     time_t time_now;
@@ -52,10 +59,16 @@ int update_battery(int socketfd, s_message* message, ue_battery* battery) {
 }
 
 // This function decrases battery life by 'decrase_amount' every time ping comes in
-void decrase_after_ping(ue_battery* battery) {
+void decrease_after_ping(int socketfd, s_message* message, ue_battery* battery) {
     const static int8_t decrase_amount = 2;
     
-    battery->power_percentage -= decrase_amount;
+    check_battery_status(socketfd, decrase_amount, message, battery);
+
+    if (battery->power_percentage - decrase_amount < 0)
+        battery->power_percentage = 0;
+    else if((battery->power_percentage != 0) && ((battery->power_percentage - decrase_amount) >= 0))
+        battery->power_percentage -= decrase_amount;
+
 }
 
 // This function sends low battery notification to eNodeB in order to induce battery saving mode
@@ -66,7 +79,6 @@ int send_low_battery_notification(int socketfd, s_message* message) {
         return -1;
     return 0;
 }
-
 // This function sends notification to eNodeB if battery state is high again. Function returns 0 if all goes well,
 // -1 in case if sending a message was not possible.
 int send_high_battery_notification(int socketfd, s_message* message) {

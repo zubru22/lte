@@ -10,7 +10,7 @@
 #endif
 
 typedef enum {
-  OK,
+  OK = 0,
   LOW
 } battery_state_t;
 
@@ -27,8 +27,6 @@ typedef struct client {
     // is stored as a key of map-element, but might be useful here
     int socket;
 } client_t;
-
-//hashmap* clients;
 
 client_t* get_client_by_socket(hashmap* map_of_clients, int socket);
 void put_client_in_hashmap(hashmap* map_of_clients, int socket, client_t* client_inserted);

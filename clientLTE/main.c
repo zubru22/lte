@@ -9,6 +9,9 @@
 #include "rrc.h"
 #include "user_equipment.h"
 #include "../logs/logs.h"
+#ifndef HANDLE_MESSAGES
+#include "handle_messages.h"
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -43,7 +46,7 @@ int main(int argc, char* argv[])
         //printf("Message content:\n");
         
         if (message.message_type == random_access_request) {
-            add_log(client_log_filename, LOG_SUCCESS, "type: RA_RNTI.");
+            add_log(client_log_filename, LOG_INFO, "type: RA_RNTI.");
         }
         else {
             add_log(client_log_filename, LOG_WARNING, "type: NOT RA_RNTI.");
@@ -81,6 +84,13 @@ int main(int argc, char* argv[])
     while (running) {
         update_battery(socket_fd, &message, &battery);
         printf("Battery power: %i\n", battery.power_percentage);
+        if (receive_ping(socket_fd, &message) == 0)
+            if (send_pong(socket_fd, &message) == -1)
+                add_log(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
+            else {
+                decrease_after_ping(socket_fd, &message, &battery);
+                add_log(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
+            }
         sleep(1);
     }
 

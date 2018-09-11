@@ -33,6 +33,10 @@ void add_log(const char *log_file_name, int log, const char *str)
             printf(" [ERROR] ");
             fprintf(log_file, " [ERROR] ");
             break;
+        case 3:
+            printf(" [INFO] ");
+            fprintf(log_file, " [INFO] ");
+            break;
     }
 
     // Print message description to terminal and to log file
