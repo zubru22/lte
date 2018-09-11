@@ -47,9 +47,10 @@ typedef struct {
     int epoll_file_descriptor;
     struct epoll_event event;
     struct epoll_event events[MAX_EVENTS];
-    client_t** clients;
-    int number_of_clients;
-    int max_number_of_clients;
+    //client_t** clients;
+    //int number_of_clients;
+    //int max_number_of_clients;
+    hashmap* clients;
 } server_t;
 
 server_t server;

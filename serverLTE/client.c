@@ -19,3 +19,4 @@ void put_client_in_hashmap(hashmap* map_of_clients, int socket, client* client_i
     sprintf(key, "%d", socket);
     hashmap_put(clients, key, client_inserted);
 }
+
