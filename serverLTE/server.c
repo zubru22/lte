@@ -71,7 +71,7 @@ void init_server(int port) {
 
   hashmap_init(0, &clients);
   pthread_t thread_id;
-  pthread_create(&thread_id, NULL, pinging_in_thread, NULL);   
+  pthread_create(&thread_id, NULL, pinging_in_thread, NULL);
 }
 
 void receive_packets() {
@@ -102,6 +102,7 @@ void accept_client() {
   int it;
   for (it = 0; it < server.max_number_of_clients; it++) {
     if (server.clients[it] == NULL) {
+      server.number_of_clients++;
       server.clients[it] = (client_t*)malloc(sizeof(client_t));
       server.clients[it]->client_length = sizeof(server.clients[it]->client_address);
       server.clients[it]->socket = accept(
