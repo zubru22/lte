@@ -2,6 +2,9 @@
 #ifndef USER_EQUIPMENT_H
 #include "user_equipment.h"
 #endif 
+#ifndef LOGS_H
+#include "../logs/logs.h"
+#endif 
 
 // This function initializes battery. Should only be used once.
 void initialize_battery_life(ue_battery* battery) {
@@ -14,12 +17,12 @@ void check_battery_status(int socketfd, int step, s_message* message, ue_battery
     if(battery->power_percentage <= 20 && (20-step) < battery->power_percentage && !battery->charging) {
         battery->power_is_low = true;
         send_low_battery_notification(socketfd, message);
-        printf("Send low bettery note!\n");
+        add_log(client_log_filename, LOG_INFO, "Send low bettery note!");
     }
     else if (battery->power_percentage >= 20 && (20+step) > battery->power_percentage && battery->charging) {
         battery->power_is_low = false;
         send_high_battery_notification(socketfd, message);
-        printf("Send high bettery note!\n");
+        add_log(client_log_filename, LOG_INFO, "Send high bettery note!");
     }
 }
 
