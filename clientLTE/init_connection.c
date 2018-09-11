@@ -18,7 +18,7 @@
             return 0;
         }
         else {
-            add_log(client_log_filename, LOG_ERROR, "Connected to the server!");
+            add_log(client_log_filename, LOG_SUCCESS, "Connected to the server!");
         }
         return 1;
     }
