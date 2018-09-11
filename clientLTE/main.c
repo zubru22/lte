@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
             if (send_pong(socket_fd, &message) == -1)
                 add_log(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
             else {
-                decrease_after_ping(&battery);
+                decrease_after_ping(socket_fd, &message, &battery);
                 add_log(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
             }
         sleep(1);
