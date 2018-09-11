@@ -100,7 +100,7 @@ void accept_client() {
   /*if (server.number_of_clients == server.max_number_of_clients) {
     expand_clients();
   }*/
-  client_t* client = (client_t*)malloc(sizeof(client));
+  client_t* client = (client_t*)malloc(sizeof(client_t));
   struct sockaddr_in client_address;
   socklen_t client_length;
   client_length = sizeof(client_address);
