@@ -2,20 +2,6 @@
 #include "packet_handler.h"
 #endif
 
-int print_client(void *data, const char *key, void *value) {
-  client* c = (client*) value;
-  printf("client: key: %s\n",key);
-  printf("socket read from struct: %d\n", c->socket);
-  printf("last activity timestamp: %ld\n", c->last_activity);
-  printf("battery state: %d\n", c->battery_state);
-  return 0;
-}
-
-void print_clients() {
-  hashmap_callback print_each = print_client;
-  hashmap_iter(clients, print_each, NULL);
-}
-
 void handle_random_access_request(int client_socket, s_message message){
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
   uint8_t preamble_index = extractPreambleIndex(received_ra_rnti);
@@ -23,7 +9,6 @@ void handle_random_access_request(int client_socket, s_message message){
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   save_client(client_socket, preamble_index, current_timestamp, received_ra_rnti);
-  print_clients();
   printf("Random Access response sent\n");
 }
 
@@ -101,11 +86,13 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
 }
 
 void handle_low_battery_request(int client_socket) {
+  printf("battery LOW on client: %d \n", client_socket);
   client* client_with_low_battery = get_client_by_socket(clients, client_socket);
   client_with_low_battery->battery_state = LOW;
 }
 
 void handle_high_battery_request(int client_socket) {
+  printf("battery HIGH on client: %d \n", client_socket);
   client* client_with_high_battery = get_client_by_socket(clients, client_socket);
   client_with_high_battery->battery_state = OK;
 }
@@ -119,7 +106,6 @@ void send_pings() {
   bool done = false;
   hashmap_callback ping_each_client = ping_client;
   while (!done) {
-    printf ("SEND_PINGS!\n");
     sleep(1);
     hashmap_iter(clients, ping_each_client, NULL);
   }
@@ -129,7 +115,6 @@ int ping_client(void *data, const char *key, void *value) {
   time_t current_time = time(NULL);
   int client_socket = atoi(key);
   client* current_client = (client*) value;
-  printf("ping_client of socket: %d\n", current_client->socket);
   time_t time_since_last_activity = current_time - current_client->last_activity;
   bool should_ping = (current_client->battery_state == OK && (time_since_last_activity > PING_TIME_NORMAL))
   || (current_client->battery_state == LOW && (time_since_last_activity > PING_TIME_LOW_BATTERY)); 
