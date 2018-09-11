@@ -11,7 +11,7 @@ void server_t__init(server_t* self, int socket, struct sockaddr_in server_addres
   self->max_number_of_clients = 2;
   int i;
   self->clients = (client_t**)malloc(sizeof(client_t*) * self->max_number_of_clients);
-  for (i = 0; i < self->max_number_of_clients; i++) {
+  for (i = 0; i < self->max_number_of_clients;   i++) {
     self->clients[i] = NULL;
   }
   self->event = event;
@@ -71,7 +71,7 @@ void init_server(int port) {
 
   hashmap_init(0, &clients);
   pthread_t thread_id;
-  pthread_create(&thread_id, NULL, pinging_in_thread, NULL);   
+  pthread_create(&thread_id, NULL, pinging_in_thread, NULL);
 }
 
 void receive_packets() {
@@ -102,6 +102,7 @@ void accept_client() {
   int it;
   for (it = 0; it < server.max_number_of_clients; it++) {
     if (server.clients[it] == NULL) {
+      server.number_of_clients++;
       server.clients[it] = (client_t*)malloc(sizeof(client_t));
       server.clients[it]->client_length = sizeof(server.clients[it]->client_address);
       server.clients[it]->socket = accept(
@@ -111,7 +112,7 @@ void accept_client() {
       if (server.clients[it]->socket == -1) {
           error("accept in accept_client");
       }
-      printf ("ACCEPTED SOCK: %d\n", server.clients[it]->socket);
+      add_logf(server_log_filename, LOG_SUCCESS, "ACCEPTED SOCK: %d", server.clients[it]->socket);
       server.event.events = EPOLLIN;
       server.event.data.fd = server.clients[it]->socket;
       if (epoll_ctl(server.epoll_file_descriptor, EPOLL_CTL_ADD, server.clients[it]->socket,
@@ -124,7 +125,7 @@ void accept_client() {
 }
 
 void remind_about_port() {
-  printf ("Run program: ./server PORT_NAME\n");
+  add_log(server_log_filename, LOG_ERROR, "Run program: ./server PORT_NAME\n");
   exit(EXIT_FAILURE);
 }
 
@@ -148,13 +149,14 @@ void expand_clients() {
 }
 
 void clean() {
-    printf ("CLEAN");
+    add_log(server_log_filename, LOG_INFO, "CLEAN");
     server_t__destroy(&server);
     hashmap_destroy(clients);
 }
 
 void error(const char* error_message) {
-  perror(error_message);
+  add_log(server_log_filename, LOG_ERROR, error_message);
+
   if (errno != EINTR) {
     clean();
   }

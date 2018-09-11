@@ -4,6 +4,10 @@
 #define PING_TIME_NORMAL 2
 #define PING_TIME_LOW_BATTERY 5
 
+#ifndef LOGS_H
+#include "../logs/logs.h"
+#endif
+
 #ifndef PACKET_HANDLER_H
 #include "packet_handler.h"
 #endif
@@ -34,7 +38,7 @@
 
 
 void handle_random_access_request(int client_socket, s_message message);
-void handle_pong(client_socket);
+void handle_pong(int client_socket);
 void parse_packet(int number_of_event);
 rrc_config generate_rrc_config(int16_t rnti);
 void send_rrc_setup(int socket);
