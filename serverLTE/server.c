@@ -2,7 +2,7 @@
 #include "server.h"
 #endif
 
-
+bool threads_done = false;
 
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
@@ -27,6 +27,9 @@ void server_t__destroy(server_t* self) { // TODO
   }
   close(self->socket);
   free(self->clients);*/
+  close_clients_sockets();
+  hashmap_destroy(self->clients);
+  close(self->socket);
 }
 
 void init_server_address(struct sockaddr_in* server_address, int port) {
@@ -63,7 +66,6 @@ void init_server(int port) {
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
-
   pthread_t thread_id;
   pthread_create(&thread_id, NULL, pinging_in_thread, NULL);
 }
@@ -90,7 +92,7 @@ void handle_connection(int number_of_file_descriptors_ready) {
 }
 
 void accept_client() {
-  /*if (server.number_of_clients == server.max_number_of_clients) {
+  /*if (server.number_of_clients == server.max_number_of_clients) { // TODO
     expand_clients();
   }*/
   client_t* client = (client_t*)malloc(sizeof(client_t));
@@ -167,8 +169,9 @@ void remind_about_port() {
 
 void clean() {
     add_log(server_log_filename, LOG_INFO, "CLEAN");
+    threads_done = true;
     server_t__destroy(&server);
-    //hashmap_destroy(clients);
+    //exit(EXIT_SUCCESS);
 }
 
 void error(const char* error_message) {

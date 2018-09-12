@@ -1,12 +1,12 @@
+#ifndef SERVER_H
 #include "server.h"
+#endif
 #include <stdio.h>
 #include <signal.h>
 
 #ifndef CLIENT_H
 #include "client.h"
 #endif
-
-hashmap* clients;
 
 int main(int argc, char** argv) {
   signal(SIGINT, clean);

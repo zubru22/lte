@@ -1,7 +1,9 @@
 #ifndef CLIENT_H
 #include "client.h"
 #endif
+#ifndef SERVER_H
 #include "server.h"
+#endif
 #include <stdlib.h>
 
 client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
@@ -23,7 +25,7 @@ void put_client_in_hashmap(hashmap* map_of_clients, int socket, client_t* client
 }
 
 void close_clients_sockets() {
-    while(hashmap_iter(server.clients, (hashmap_callback)close_client_socket, NULL) != 1);
+    hashmap_iter(server.clients, (hashmap_callback)close_client_socket, NULL);
 }
 
 void close_client_socket(void *data, const char *key, void *value) {

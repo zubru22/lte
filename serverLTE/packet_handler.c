@@ -65,6 +65,7 @@ rrc_config generate_rrc_config(int16_t rnti) {
 void send_rrc_setup(int socket) {
   int16_t client_rnti = get_client_rnti(socket);
   s_message response;
+  memset(&response, 0, sizeof(response));
   response.message_type = rrc_setup;
   response.message_value.rrc_response = generate_rrc_config(client_rnti);
   send(socket, &response, sizeof(response), 0);
@@ -97,15 +98,14 @@ void handle_high_battery_request(int client_socket) {
   client_with_high_battery->battery_state = OK;
 }
 
-void* pinging_in_thread(void* arg){
+void* pinging_in_thread(void* arg) {
   send_pings();
   return NULL;
 }
 
 void send_pings() {
-  bool done = false;
   hashmap_callback ping_each_client = ping_client;
-  while (!done) {
+  while (!threads_done) {
     sleep(1);
     hashmap_iter(server.clients, ping_each_client, NULL);
   }

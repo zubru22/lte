@@ -26,7 +26,7 @@ typedef struct client {
     int16_t mcc;
     int16_t mnc;
     battery_state_t battery_state;
-    //struct sockaddr_in client_address;
+    //struct sockaddr_in client_address; // TODO
     //socklen_t client_length;
     // is stored as a key of map-element, but might be useful here
     int socket;

@@ -21,10 +21,6 @@
 #include "client_handler.h"
 #endif
 
-#ifndef PACKET_HANDLER_H
-#include "packet_handler.h"
-#endif
-
 #ifndef LOGS_H
 #include "../logs/logs.h"
 #endif
@@ -39,12 +35,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <limits.h>
-#include <pthread.h> 
+#include <pthread.h>
+#include <stdbool.h>
 
 #define MAX_LISTEN_QUERIED_CONNECTIONS 128 // value suggested as "safe" for most of the systems
 #define MAX_EVENTS 100
 
-/*typedef struct {
+/*typedef struct { TODO
     int socket;
     struct sockaddr_in client_address;
     socklen_t client_length;
@@ -56,13 +53,14 @@ typedef struct {
     int epoll_file_descriptor;
     struct epoll_event event;
     struct epoll_event events[MAX_EVENTS];
-    //client_t** clients;
+    //client_t** clients; TODO
     //int number_of_clients;
     //int max_number_of_clients;
     hashmap* clients;
 } server_t;
 
 server_t server;
+extern bool threads_done;
 
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor);
 int server_t__socket(server_t* self);

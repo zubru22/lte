@@ -8,10 +8,6 @@
 #include "../logs/logs.h"
 #endif
 
-#ifndef PACKET_HANDLER_H
-#include "packet_handler.h"
-#endif
-
 #ifndef SERVER_H
 #include "server.h"
 #endif
@@ -27,15 +23,14 @@
 #ifndef CLIENT_H
 #include "client.h"
 #endif
-
 #include <errno.h>
 #include <stdio.h>
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
 #include <sys/types.h>
 #include <stdbool.h>
-
 
 void handle_random_access_request(int client_socket, s_message message);
 void handle_pong(int client_socket);
