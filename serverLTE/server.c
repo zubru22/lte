@@ -126,7 +126,7 @@ void accept_client() {
 }
 
 void remind_about_port() {
-  add_log(server_log_filename, LOG_ERROR, "Run program: ./server PORT_NAME\n");
+  add_logf(server_log_filename, LOG_ERROR, "Run program: ./server PORT_NAME");
   exit(EXIT_FAILURE);
 }
 
@@ -150,13 +150,13 @@ void expand_clients() {
 }
 
 void clean() {
-    add_log(server_log_filename, LOG_INFO, "CLEAN");
+    add_logf(server_log_filename, LOG_INFO, "CLEAN");
     server_t__destroy(&server);
     hashmap_destroy(clients);
 }
 
 void error(const char* error_message) {
-  add_log(server_log_filename, LOG_ERROR, error_message);
+  add_logf(server_log_filename, LOG_ERROR, error_message);
 
   if (errno != EINTR) {
     clean();
