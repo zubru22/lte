@@ -5,12 +5,13 @@
 #include "../message.h"
 #endif
 
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#ifndef UNISTD_H
 #include <unistd.h>
+#endif
 
 void generate_ra_rnti(preamble*);
 int send_prach_preamble(int, s_message*, void (*ra_rnti_generator_func)(preamble*));
