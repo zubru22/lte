@@ -6,10 +6,12 @@
     @fn void add_log(const char *log_file_name, int log, const char *str)
     @brief This function prints log to stdout as well as to log file
     @param log_file_name Path to log file in which logs will be saved
+    @param log Flag for type event which occured, e.g. [SUCCESS]
+    @param str Message to be displayed and saved to log file
 */
 /**
     @enum logs
-    @brief Type of log which occurs, adds [FLAG] to output e.g.
+    @brief Flag for type event which occured, e.g. [SUCCESS]
 */
 #ifndef LOGS_H
 #define LOGS_H
@@ -31,7 +33,16 @@
 
 #include <stdarg.h>
 
-enum logs {LOG_SUCCESS, LOG_WARNING, LOG_ERROR, LOG_INFO} type_of_log;
+enum logs {
+    /** Flag for successful events */
+    LOG_SUCCESS,
+    /** Flag for warnings events */ 
+    LOG_WARNING, 
+    /** Flag for error events */
+    LOG_ERROR, 
+    /** Flag for neutral events */
+    LOG_INFO
+} type_of_log;
 static char client_log_filename[] = "../logs/client.log";
 static char server_log_filename[] = "../logs/server.log";
 void add_log(const char *log_file_name, int log, const char *str);
