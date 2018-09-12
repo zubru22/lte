@@ -27,7 +27,6 @@ int notify_client_of_shutdown(void *data, const char *key, void *value) {
   s_message shutdown_notification;
   memset(&shutdown_notification, 0, sizeof(shutdown_notification));
   shutdown_notification.message_type = enb_off;
-  add_logf(server_log_filename, LOG_INFO, "Sent shutdown notification to %d",client_notified->socket);
 
   send(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0);
   return 0;
