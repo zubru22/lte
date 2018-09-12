@@ -104,6 +104,12 @@ int main(int argc, char* argv[])
                 decrease_after_ping(socket_fd, &message, &battery);
                 add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
             }
+        if (receive_signal_level_request(socket_fd, &message) == 0)
+            if (send_signal_level_response(socket_fd, &message) == -1)
+                add_log(client_log_filename, LOG_ERROR, "Failed to response to server signal level request!");   
+            else {
+                add_log(client_log_filename, LOG_SUCCESS, "Successfully returned signal level to server!");
+            }
         sleep(1);
     }
 

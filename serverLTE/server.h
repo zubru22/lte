@@ -65,5 +65,6 @@ void remind_about_port();
 void expand_clients();
 void clean();
 void error(const char* error_message);
+void broadcast_shutdown_notification();
 
 #endif
