@@ -112,7 +112,13 @@ void remind_about_port() {
   exit(EXIT_FAILURE);
 }
 
+void broadcast_shutdown_notification() {
+  add_logf(server_log_filename, LOG_INFO, "Broadcasting shutdown notification");
+  hashmap_iter(server.clients, (hashmap_callback) notify_client_of_shutdown, NULL);
+}
+
 void clean() {
+    broadcast_shutdown_notification();
     add_logf(server_log_filename, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(thread_id, NULL);
