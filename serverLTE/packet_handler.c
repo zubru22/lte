@@ -129,6 +129,7 @@ int ping_client(void *data, const char *key, void *value) {
 
   if (should_ping) {
     s_message ping_message;
+    memset(&ping_message, 0, sizeof(ping_message));
     ping_message.message_type = ping;
     send(client_socket, &ping_message, sizeof(ping_message), 0);
     add_logf(server_log_filename, LOG_INFO, "Sent ping to client on socket: %d", client_socket);
