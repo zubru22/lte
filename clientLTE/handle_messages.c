@@ -23,3 +23,11 @@ int send_pong(int socketfd, s_message* message) {
 
     return 0;
 }
+
+int send_ue_off_signal(int socketfd, s_message* message) {
+    message->message_type = ue_off;
+
+    if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
+        return -1;
+    return 0;
+}

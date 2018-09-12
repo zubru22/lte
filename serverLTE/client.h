@@ -34,4 +34,5 @@ extern hashmap* clients;
 
 client* get_client_by_socket(hashmap* map_of_clients, int socket);
 void put_client_in_hashmap(hashmap* map_of_clients, int socket, client* client_inserted);
+void delete_client_from_hashmap(hashmap* map_of_clients, int socket);
 #endif
