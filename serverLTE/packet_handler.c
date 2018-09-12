@@ -19,6 +19,12 @@ void handle_pong(int client_socket) {
   add_logf(server_log_filename, LOG_INFO, "Received pong");
 }
 
+void handle_client_power_off(int client_socket) {
+  close(client_socket);
+  delete_client_from_hashmap(server.clients, client_socket);
+}
+
+
 void parse_packet(int number_of_event) {
   int client_socket = server.events[number_of_event].data.fd;
 
@@ -50,6 +56,9 @@ void parse_packet(int number_of_event) {
       break;
     case pong:
       handle_pong(client_socket);
+      break;
+    case ue_off:
+      handle_client_power_off(client_socket);
       break;
     default:
       break;

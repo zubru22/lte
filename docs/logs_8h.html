@@ -108,11 +108,8 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a885e8475639acfab2b428d7c1ae7085a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="logs_8h.html#a885e8475639acfab2b428d7c1ae7085a">add_log</a> (const char *log_file_name, int log, const char *str)</td></tr>
-<tr class="memdesc:a885e8475639acfab2b428d7c1ae7085a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function prints log to stdout as well as to log file.  <a href="#a885e8475639acfab2b428d7c1ae7085a">More...</a><br /></td></tr>
-<tr class="separator:a885e8475639acfab2b428d7c1ae7085a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43ac6cedd73727a582a97f1def406a4e"><td class="memItemLeft" align="right" valign="top"><a id="a43ac6cedd73727a582a97f1def406a4e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>add_logf</b> (const char *log_file_name, int log, const char *str,...)</td></tr>
+<tr class="memitem:a43ac6cedd73727a582a97f1def406a4e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="logs_8h.html#a43ac6cedd73727a582a97f1def406a4e">add_logf</a> (const char *log_file_name, int log, const char *str,...)</td></tr>
+<tr class="memdesc:a43ac6cedd73727a582a97f1def406a4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function prints log to stdout as well as to log file.  <a href="#a43ac6cedd73727a582a97f1def406a4e">More...</a><br /></td></tr>
 <tr class="separator:a43ac6cedd73727a582a97f1def406a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -151,14 +148,14 @@ enum <a class="el" href="logs_8h.html#a37d874d1d45bc2e5bfa013cddacb8e68">logs</a
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a885e8475639acfab2b428d7c1ae7085a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a885e8475639acfab2b428d7c1ae7085a">&#9670;&nbsp;</a></span>add_log()</h2>
+<a id="a43ac6cedd73727a582a97f1def406a4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43ac6cedd73727a582a97f1def406a4e">&#9670;&nbsp;</a></span>add_logf()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void add_log </td>
+          <td class="memname">void add_logf </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>log_file_name</em>, </td>
@@ -173,7 +170,13 @@ enum <a class="el" href="logs_8h.html#a37d874d1d45bc2e5bfa013cddacb8e68">logs</a
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>str</em>&#160;</td>
+          <td class="paramname"><em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -187,8 +190,8 @@ enum <a class="el" href="logs_8h.html#a37d874d1d45bc2e5bfa013cddacb8e68">logs</a
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">log_file_name</td><td>Path to log file in which logs will be saved </td></tr>
-    <tr><td class="paramname">log</td><td>Flag for type event which occured, e.g. [SUCCESS] </td></tr>
-    <tr><td class="paramname">str</td><td>Message to be displayed and saved to log file </td></tr>
+    <tr><td class="paramname">log</td><td>Enum value for describing type of event </td></tr>
+    <tr><td class="paramname">str</td><td>Message to be displayed and saved to log file (can be formatted as printf()) </td></tr>
   </table>
   </dd>
 </dl>

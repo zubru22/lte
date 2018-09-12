@@ -1,3 +1,8 @@
+/**
+    @file rrc.h
+    @brief Functions for handling RRC step of communication between UE and eNodeB
+*/
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
