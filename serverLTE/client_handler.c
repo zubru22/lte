@@ -20,3 +20,15 @@ void update_client_by_ra_rnti_data(int socket, int8_t preamble_index, time_t cur
 int16_t get_client_rnti(int socket) {
   return get_client_by_socket(server.clients, socket)->rnti;
 }
+
+int notify_client_of_shutdown(void *data, const char *key, void *value) {
+  client_t* client_notified = (client_t*) value;
+  
+  s_message shutdown_notification;
+  memset(&shutdown_notification, 0, sizeof(shutdown_notification));
+  shutdown_notification.message_type = enb_off;
+  add_logf(server_log_filename, LOG_INFO, "Sent shutdown notification to %d",client_notified->socket);
+
+  send(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0);
+  return 0;
+}
