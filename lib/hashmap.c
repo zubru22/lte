@@ -106,7 +106,7 @@ int hashmap_destroy(hashmap *map) {
 
             // Clear the objects
             free(old->key);
-
+            free(old->value);
             // The initial entry is in the table
             // and we should not free that one.
             if (!in_table) {
@@ -315,6 +315,7 @@ int hashmap_delete(hashmap *map, char *key) {
         if (strcmp(entry->key, key) == 0) {
             // Free the key
             free(entry->key);
+            free(entry->value);
             map->count -= 1;
 
             // Check if we are in the table

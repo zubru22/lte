@@ -8,10 +8,6 @@
 #include "../logs/logs.h"
 #endif
 
-#ifndef PACKET_HANDLER_H
-#include "packet_handler.h"
-#endif
-
 #ifndef SERVER_H
 #include "server.h"
 #endif
@@ -49,4 +45,5 @@ void handle_high_battery_request(int client_socket);
 void* pinging_in_thread(void* arg);
 void send_pings();
 int ping_client(void *data, const char *key, void *value);
+void handle_client_power_off(int client_socket);
 #endif

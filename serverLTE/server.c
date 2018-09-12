@@ -80,7 +80,6 @@ void receive_packets() {
       if((number_of_file_descriptors_ready = epoll_wait(server.epoll_file_descriptor, server.events, MAX_EVENTS, -1)) == -1) {
         error("epoll_wait in init_server");
       }
-      printf("number of file descriptors ready: %d\n", number_of_file_descriptors_ready);
       handle_connection(number_of_file_descriptors_ready);
   }
 }
