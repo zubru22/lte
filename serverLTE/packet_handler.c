@@ -9,14 +9,14 @@ void handle_random_access_request(int client_socket, s_message message){
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   update_client_by_ra_rnti_data(client_socket, preamble_index, current_timestamp, received_ra_rnti);
-  add_log(server_log_filename, LOG_INFO, "Random Access response sent");
+  add_logf(server_log_filename, LOG_INFO, "Random Access response sent");
 }
 
 void handle_pong(int client_socket) {
   //update client's lst activity timestamp
   client_t* to_be_updated = get_client_by_socket(server.clients, client_socket);
   to_be_updated->last_activity = time(NULL);
-  add_log(server_log_filename, LOG_INFO, "Received pong");
+  add_logf(server_log_filename, LOG_INFO, "Received pong");
 }
 
 void parse_packet(int number_of_event) {
@@ -24,8 +24,13 @@ void parse_packet(int number_of_event) {
 
   add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
   s_message message;
-  if(read(client_socket, &message, sizeof(message)) == -1) {
+  int number_of_bytes_read = read(client_socket, &message, sizeof(message));
+  if (number_of_bytes_read == -1) {
     error("read in parse_packet");
+  } else if (number_of_bytes_read == 0) {
+    add_logf(server_log_filename, LOG_INFO, "Client disconnected: %d", client_socket);
+    close(client_socket);
+    delete_client_from_hashmap(clients, client_socket);
   }
 
   switch(message.message_type) {
@@ -69,7 +74,7 @@ void send_rrc_setup(int socket) {
   response.message_type = rrc_setup;
   response.message_value.rrc_response = generate_rrc_config(client_rnti);
   send(socket, &response, sizeof(response), 0);
-  add_log(server_log_filename, LOG_INFO, "Sent RRC setup");
+  add_logf(server_log_filename, LOG_INFO, "Sent RRC setup");
 }
 
 int8_t extractPreambleIndex(int16_t ra_rnti) {

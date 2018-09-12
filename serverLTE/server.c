@@ -144,7 +144,7 @@ void accept_client() {
 }
 
 void remind_about_port() {
-  add_log(server_log_filename, LOG_ERROR, "Run program: ./server PORT_NAME\n");
+  add_logf(server_log_filename, LOG_ERROR, "Run program: ./server PORT_NAME");
   exit(EXIT_FAILURE);
 }
 
@@ -168,14 +168,14 @@ void remind_about_port() {
 }*/
 
 void clean() {
-    add_log(server_log_filename, LOG_INFO, "CLEAN");
+    add_logf(server_log_filename, LOG_INFO, "CLEAN");
     threads_done = true;
     server_t__destroy(&server);
     //exit(EXIT_SUCCESS);
 }
 
 void error(const char* error_message) {
-  add_log(server_log_filename, LOG_ERROR, error_message);
+  add_logf(server_log_filename, LOG_ERROR, error_message);
 
   if (errno != EINTR) {
     clean();

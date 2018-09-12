@@ -36,4 +36,5 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket);
 void put_client_in_hashmap(hashmap* map_of_clients, int socket, client_t* client_inserted);
 void close_clients_sockets();
 void close_client_socket(void *data, const char *key, void *value);
+void delete_client_from_hashmap(hashmap* map_of_clients, int socket);
 #endif

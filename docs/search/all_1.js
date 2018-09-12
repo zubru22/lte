@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['hashmap',['hashmap',['../structhashmap.html',1,'']]],
-  ['hashmap_5fentry',['hashmap_entry',['../structhashmap__entry.html',1,'']]]
+  ['client',['client',['../structclient.html',1,'']]],
+  ['client_5ft',['client_t',['../structclient__t.html',1,'']]]
 ];
