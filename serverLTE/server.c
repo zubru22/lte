@@ -3,6 +3,7 @@
 #endif
 
 bool threads_done = false;
+pthread_t thread_id;
 
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
@@ -66,7 +67,7 @@ void init_server(int port) {
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
-  pthread_t thread_id;
+  //pthread_t thread_id;
   pthread_create(&thread_id, NULL, pinging_in_thread, NULL);
 }
 
@@ -95,7 +96,7 @@ void accept_client() {
   /*if (server.number_of_clients == server.max_number_of_clients) { // TODO
     expand_clients();
   }*/
-  client_t* client = (client_t*)malloc(sizeof(client_t));
+  client_t* client = (client_t*)malloc(sizeof(client_t)); // TODO
   struct sockaddr_in client_address;
   socklen_t client_length;
   client_length = sizeof(client_address);
@@ -170,13 +171,13 @@ void remind_about_port() {
 void clean() {
     add_logf(server_log_filename, LOG_INFO, "CLEAN");
     threads_done = true;
+    pthread_join(thread_id, NULL);
     server_t__destroy(&server);
     //exit(EXIT_SUCCESS);
 }
 
 void error(const char* error_message) {
   add_logf(server_log_filename, LOG_ERROR, error_message);
-
   if (errno != EINTR) {
     clean();
   }

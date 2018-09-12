@@ -24,13 +24,15 @@ void parse_packet(int number_of_event) {
 
   add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
   s_message message;
+  memset(&message, 0, sizeof(message));
   int number_of_bytes_read = read(client_socket, &message, sizeof(message));
   if (number_of_bytes_read == -1) {
     error("read in parse_packet");
   } else if (number_of_bytes_read == 0) {
     add_logf(server_log_filename, LOG_INFO, "Client disconnected: %d", client_socket);
     close(client_socket);
-    delete_client_from_hashmap(clients, client_socket);
+    delete_client_from_hashmap(server.clients, client_socket);
+    return;
   }
 
   switch(message.message_type) {
@@ -45,6 +47,7 @@ void parse_packet(int number_of_event) {
       break;
     case ue_battery_high:
       handle_high_battery_request(client_socket);
+      break;
     case pong:
       handle_pong(client_socket);
       break;
@@ -117,7 +120,8 @@ void send_pings() {
 }
 
 int ping_client(void *data, const char *key, void *value) {
-  time_t current_time = time(NULL);
+  //time_t current_time = time(NULL);
+  time_t current_time = 1;
   int client_socket = atoi(key);
   client_t* current_client = (client_t*) value;
   time_t time_since_last_activity = current_time - current_client->last_activity;
