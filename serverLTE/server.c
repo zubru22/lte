@@ -93,7 +93,7 @@ void accept_client() {
   if (client->socket == -1) {
     error("accept in accept_client");
   }
-  printf ("ACCEPTED SOCK: %d\n", client->socket);
+  add_logf(server_log_filename, LOG_INFO, "ACCEPTED SOCK: %d", client->socket);
   server.event.events = EPOLLIN;
   server.event.data.fd = client->socket;
   if (epoll_ctl(
