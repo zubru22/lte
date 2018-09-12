@@ -13,6 +13,7 @@ void save_client(int socket, int8_t preamble_index, time_t current_timestamp, in
   new_client->first_connection_timestamp = current_timestamp;
   new_client->socket = socket;
   new_client->rnti = received_ra_rnti;
+  new_client->battery_state = OK;
 
   put_client_in_hashmap(clients, socket, new_client);
 }
