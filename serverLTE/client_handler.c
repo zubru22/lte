@@ -6,18 +6,17 @@
 #include "server.h"
 #endif
 
-void save_client(int socket, int8_t preamble_index, time_t current_timestamp, int16_t received_ra_rnti) {
-  client* new_client = (client*) malloc(sizeof(client));
-  new_client->preamble_index = preamble_index;
-  new_client->last_activity = current_timestamp;
-  new_client->first_connection_timestamp = current_timestamp;
-  new_client->socket = socket;
-  new_client->rnti = received_ra_rnti;
-  new_client->battery_state = OK;
-
-  put_client_in_hashmap(clients, socket, new_client);
+void update_client_by_ra_rnti_data(int socket, int8_t preamble_index, time_t current_timestamp, int16_t received_ra_rnti) { // TODO
+  client_t* client_to_update = get_client_by_socket(server.clients, socket);
+  if (client_to_update) {
+    client_to_update->preamble_index = preamble_index;
+    client_to_update->last_activity = current_timestamp;
+    client_to_update->first_connection_timestamp = current_timestamp;
+    client_to_update->rnti = received_ra_rnti;
+    client_to_update->battery_state = OK;
+  }
 }
 
 int16_t get_client_rnti(int socket) {
-  return get_client_by_socket(clients, socket)->rnti;
+  return get_client_by_socket(server.clients, socket)->rnti;
 }
