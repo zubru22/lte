@@ -1,12 +1,12 @@
+#ifndef SERVER_H
 #include "server.h"
+#endif
 #include <stdio.h>
 #include <signal.h>
 
 #ifndef CLIENT_H
 #include "client.h"
 #endif
-
-hashmap* clients;
 
 int main(int argc, char** argv) {
   signal(SIGINT, clean);
@@ -15,6 +15,5 @@ int main(int argc, char** argv) {
   }
   init_server(atoi(argv[1]));
   receive_packets();
-  // TODO move to kind of "clean" or "destroy" method
-  hashmap_destroy(clients);
+  clean();
 }

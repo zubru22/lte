@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['s_5fue_5fbattery',['s_ue_battery',['../structs__ue__battery.html',1,'']]],
-  ['server_5ft',['server_t',['../structserver__t.html',1,'']]],
-  ['stmsi',['stmsi',['../structstmsi.html',1,'']]]
+  ['prach_5fpreamble',['prach_preamble',['../structprach__preamble.html',1,'']]],
+  ['prach_5fresponse',['prach_response',['../structprach__response.html',1,'']]]
 ];
