@@ -3,15 +3,19 @@
     @brief Functions for handling logs both on server and client side 
 */
 /**
-    @fn void add_log(const char *log_file_name, int log, const char *str)
+    @fn void add_logf(const char *log_file_name, int log, const char *str, ...)
     @brief This function prints log to stdout as well as to log file
     @param log_file_name Path to log file in which logs will be saved
-    @param log Flag for type event which occured, e.g. [SUCCESS]
-    @param str Message to be displayed and saved to log file
+    @param log Enum value for describing type of event
+    @param str Message to be displayed and saved to log file (can be formatted as printf())
 */
 /**
     @enum logs
     @brief Flag for type event which occured, e.g. [SUCCESS]
+*/
+/**
+    @var static char client_log_filename
+    @brief Relative path to file where logs should be saved
 */
 #ifndef LOGS_H
 #define LOGS_H
