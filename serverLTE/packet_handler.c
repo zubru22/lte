@@ -120,8 +120,7 @@ void send_pings() {
 }
 
 int ping_client(void *data, const char *key, void *value) {
-  //time_t current_time = time(NULL);
-  time_t current_time = 1;
+  time_t current_time = time(NULL);
   int client_socket = atoi(key);
   client_t* current_client = (client_t*) value;
   time_t time_since_last_activity = current_time - current_client->last_activity;

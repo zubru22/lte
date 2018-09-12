@@ -17,17 +17,7 @@ int servet_t__socket(server_t* self) {
   return self->socket;
 }
 
-void server_t__destroy(server_t* self) { // TODO
-  /*int i;
-  for (i = 0; i < self->max_number_of_clients; i++) {
-    if (self->clients[i] == NULL) { // TODO
-      continue;
-    }
-    close(self->clients[i]->socket);
-    free(self->clients[i]);
-  }
-  close(self->socket);
-  free(self->clients);*/
+void server_t__destroy(server_t* self) {
   close_clients_sockets();
   hashmap_destroy(self->clients);
   close(self->socket);
@@ -67,7 +57,6 @@ void init_server(int port) {
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
-  //pthread_t thread_id;
   pthread_create(&thread_id, NULL, pinging_in_thread, NULL);
 }
 
@@ -93,9 +82,6 @@ void handle_connection(int number_of_file_descriptors_ready) {
 }
 
 void accept_client() {
-  /*if (server.number_of_clients == server.max_number_of_clients) { // TODO
-    expand_clients();
-  }*/
   client_t* client = (client_t*)malloc(sizeof(client_t)); // TODO
   struct sockaddr_in client_address;
   socklen_t client_length;
@@ -119,29 +105,6 @@ void accept_client() {
       error("epoll_ctl in accept_client");
   }
   put_client_in_hashmap(server.clients, client->socket, client);
-  /*int it;
-  for (it = 0; it < server.max_number_of_clients; it++) { // TODO
-    if (server.clients[it] == NULL) {
-      server.number_of_clients++;
-      server.clients[it] = (client_t*)malloc(sizeof(client_t));
-      server.clients[it]->client_length = sizeof(server.clients[it]->client_address);
-      server.clients[it]->socket = accept(
-                                    server.socket,
-                                    (struct sockaddr *) &server.clients[it]->client_address,
-                                    &server.clients[it]->client_length);
-      if (server.clients[it]->socket == -1) {
-          error("accept in accept_client");
-      }
-      add_logf(server_log_filename, LOG_SUCCESS, "ACCEPTED SOCK: %d", server.clients[it]->socket);
-      server.event.events = EPOLLIN;
-      server.event.data.fd = server.clients[it]->socket;
-      if (epoll_ctl(server.epoll_file_descriptor, EPOLL_CTL_ADD, server.clients[it]->socket,
-                  &server.event) == -1) {
-          error("epoll_ctl in accept_client");
-      }
-      break;
-    }
-  }*/
 }
 
 void remind_about_port() {
@@ -149,31 +112,11 @@ void remind_about_port() {
   exit(EXIT_FAILURE);
 }
 
-/*void expand_clients() { // TODO
-  client_t *temporary_clients = (client_t*)malloc(sizeof(client_t) * server.max_number_of_clients);
-  int i;
-  for (i = 0; i < server.max_number_of_clients; i++) {
-    temporary_clients[i] = *server.clients[i];
-  }
-  for (i = 0; i < server.max_number_of_clients; i++) {
-    free(server.clients[i]);
-  }
-  free(server.clients);
-  server.clients = (client_t**)malloc(sizeof(client_t*) * 2 * server.max_number_of_clients);
-  for (i = 0; i < server.max_number_of_clients; i++) {
-    server.clients[i] = (client_t*)malloc(sizeof(client_t));
-    *server.clients[i] = temporary_clients[i];
-  }
-  server.max_number_of_clients *= 2;
-  free(temporary_clients);
-}*/
-
 void clean() {
     add_logf(server_log_filename, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(thread_id, NULL);
     server_t__destroy(&server);
-    //exit(EXIT_SUCCESS);
 }
 
 void error(const char* error_message) {

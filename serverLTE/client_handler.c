@@ -12,7 +12,6 @@ void update_client_by_ra_rnti_data(int socket, int8_t preamble_index, time_t cur
     client_to_update->preamble_index = preamble_index;
     client_to_update->last_activity = current_timestamp;
     client_to_update->first_connection_timestamp = current_timestamp;
-    //client_to_update->socket = socket; TODO
     client_to_update->rnti = received_ra_rnti;
     client_to_update->battery_state = OK;
   }

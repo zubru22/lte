@@ -41,21 +41,12 @@
 #define MAX_LISTEN_QUERIED_CONNECTIONS 128 // value suggested as "safe" for most of the systems
 #define MAX_EVENTS 100
 
-/*typedef struct { TODO
-    int socket;
-    struct sockaddr_in client_address;
-    socklen_t client_length;
-} client_t;*/
-
 typedef struct {
     int socket;
     struct sockaddr_in server_address;
     int epoll_file_descriptor;
     struct epoll_event event;
     struct epoll_event events[MAX_EVENTS];
-    //client_t** clients; TODO
-    //int number_of_clients;
-    //int max_number_of_clients;
     hashmap* clients;
 } server_t;
 
