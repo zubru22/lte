@@ -116,21 +116,20 @@ void handle_high_battery_request(int client_socket) {
 }
 
 void* pinging_in_thread(void* arg) {
-  send_pings();
+  send_pings_handle_timeout();
   return NULL;
 }
 
-void send_pings() {
-  hashmap_callback ping_each_client = ping_client;
+void send_pings_handle_timeout() {
   while (!threads_done) {
     sleep(1);
-    hashmap_iter(server.clients, ping_each_client, NULL);
+    hashmap_iter(server.clients, (hashmap_callback) ping_client, NULL);
+    hashmap_iter(server.clients, (hashmap_callback) handle_client_inactivity, NULL);
   }
 }
 
 int ping_client(void *data, const char *key, void *value) {
   time_t current_time = time(NULL);
-  int client_socket = atoi(key);
   client_t* current_client = (client_t*) value;
   time_t time_since_last_activity = current_time - current_client->last_activity;
   bool should_ping = (current_client->battery_state == OK && (time_since_last_activity > PING_TIME_NORMAL))
@@ -140,8 +139,8 @@ int ping_client(void *data, const char *key, void *value) {
     s_message ping_message;
     memset(&ping_message, 0, sizeof(ping_message));
     ping_message.message_type = ping;
-    send(client_socket, &ping_message, sizeof(ping_message), 0);
-    add_logf(server_log_filename, LOG_INFO, "Sent ping to client on socket: %d", client_socket);
+    send(current_client->socket, &ping_message, sizeof(ping_message), 0);
+    add_logf(server_log_filename, LOG_INFO, "Sent ping to client on socket: %d", current_client->socket);
   }
   return 0;
 
