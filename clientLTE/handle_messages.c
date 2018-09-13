@@ -1,7 +1,5 @@
 /* This functionality is about handling default client server communication like pings and stuff */
 #include "handle_messages.h"
-#include <sys/types.h>
-#include <sys/socket.h>
 
 // This function receives ping message from eNodeB. Function returns -1 on error, 0 on success.
 // If function receives a message, but message's type isn't "ping" - it returns 1.
@@ -32,22 +30,29 @@ int send_ue_off_signal(int socketfd, s_message* message) {
     return 0;
 }
 
-int receive_signal_level_request(int socketfd, s_message* message) {
-    if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
-        return -1;
-    
-    if(signal_request == message->message_type)
-        return 0;
-    
-    return 1;
+bool receive_measurement_control_request(int socketfd, s_message* message) {
+    assert(message != NULL);
+
+    if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT)) {
+        add_logf(client_log_filename, LOG_ERROR, "Failed to receive Measurement Control request!");
+        return false;
+    }
+    if(message->message_type == measurement_control_request) {
+        add_logf(client_log_filename, LOG_SUCCESS, "Successfuly received Measurement Control request.");
+        return true;
+    }
+
+    add_logf(client_log_filename, LOG_WARNING, "Message type is not Measurement Control request!");
+    return false;
 }
 
-int send_signal_level_response(int socketfd, s_message* message) {
-    message->message_type = signal_response;
+void send_measurement_report(int socketfd, s_message* message) {
+    assert(message != NULL);
+    message->message_type = measurement_report;
     //function to generate signal level response needs to be called there
     //there you need to assign signal level value to message->value
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
-        return -1;
-
-    return 0;
+        add_logf(client_log_filename, LOG_ERROR, "Failed to send Measurement Report!");
+    else
+        add_logf(client_log_filename, LOG_ERROR, "Successfuly sent Measurement Report!");
 }
