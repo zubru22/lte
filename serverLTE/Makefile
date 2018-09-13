@@ -6,12 +6,16 @@ SFLAGS=-g -Wall
 
 DEPS= client_handler.h client.h packet_handler.h server.h
 
-all: server run
+all: server
 
 ## 
+run:
+	@read -p "Enter server port:" port; \
+	./server $$port
 
-run: 
-	valgrind ./server 20000
+valgrind: 
+	@read -p "Enter server port:" port; \
+	valgrind ./server $$port
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(SFLAGS)
