@@ -124,7 +124,7 @@ void send_pings_handle_timeout() {
   while (!threads_done) {
     sleep(1);
     hashmap_iter(server.clients, (hashmap_callback) ping_client, NULL);
-    //hashmap_iter(server.clients, (hashmap_callback) handle_client_inactivity, NULL);
+    hashmap_iter(server.clients, (hashmap_callback) handle_client_inactivity, NULL);
   }
 }
 
