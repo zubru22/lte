@@ -1,6 +1,6 @@
 /**
     @file handle_messages.h
-    @brief Functions for handling ping and low battery signal
+    @brief Module for handling ping and low battery signal
 */
 /**
     @fn receive_ping(int, s_message*)
