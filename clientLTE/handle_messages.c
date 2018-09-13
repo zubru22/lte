@@ -42,7 +42,7 @@ int receive_signal_level_request(int socketfd, s_message* message) {
     return 1;
 }
 
-send_signal_level_response(int socketfd, s_message* message) {
+int send_signal_level_response(int socketfd, s_message* message) {
     message->message_type = signal_response;
     //function to generate signal level response needs to be called there
     //there you need to assign signal level value to message->value
