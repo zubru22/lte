@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <signal.h>
 
-#ifndef CLIENT_H
-#include "client.h"
+#ifndef CLIENT_OBJECT_H
+#include "client_object.h"
 #endif
 
 int main(int argc, char** argv) {

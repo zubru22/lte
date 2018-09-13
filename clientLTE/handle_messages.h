@@ -1,6 +1,6 @@
 /**
     @file handle_messages.h
-    @brief Functions for handling ping and low battery signal
+    @brief Module for handling ping and low battery signal
 */
 /**
     @fn receive_ping(int, s_message*)
@@ -24,6 +24,11 @@
 #define HANDLE_MESSAGES_H
 
 #include "../message.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include "../logs/logs.h"
+#include <assert.h>
+#include <stdbool.h>
 
 #ifndef UNISTD_H
 #define UNISTD_H
@@ -33,7 +38,7 @@
 int receive_ping(int, s_message*);
 int send_pong(int, s_message*);
 int send_ue_off_signal(int, s_message*);
-int receive_signal_level_request(int, s_message*);
-int send_signal_level_response(int, s_message*);
+bool receive_measurement_control_request(int, s_message*);
+void send_measurement_report(int, s_message*);
 
 #endif

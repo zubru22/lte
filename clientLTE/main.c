@@ -101,6 +101,7 @@ int main(int argc, char* argv[])
     while (running && !check_for_shutdown(socket_fd, &message)) {
         update_battery(socket_fd, &message, &battery);
         add_logf(client_log_filename, LOG_INFO, "Battery power: %i", battery.power_percentage);
+        
         if (receive_ping(socket_fd, &message) == 0)
             if (send_pong(socket_fd, &message) == -1)
                 add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
@@ -108,12 +109,10 @@ int main(int argc, char* argv[])
                 decrease_after_ping(socket_fd, &message, &battery);
                 add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
             }
-        if (receive_signal_level_request(socket_fd, &message) == 0)
-            if (send_signal_level_response(socket_fd, &message) == -1)
-                add_logf(client_log_filename, LOG_ERROR, "Failed to response to server signal level request!");   
-            else {
-                add_logf(client_log_filename, LOG_SUCCESS, "Successfully returned signal level to server!");
-            }
+
+        if (receive_measurement_control_request(socket_fd, &message))
+            send_measurement_report(socket_fd, &message);
+
         sleep(1);
     }
 
