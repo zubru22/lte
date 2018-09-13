@@ -4,7 +4,7 @@ CC = gcc
 CFLAGS=-g -Wall -c
 SFLAGS=-g -Wall 
 
-DEPS= client_handler.h client.h packet_handler.h server.h
+DEPS= client_handler.h client_object.h packet_handler.h server.h
 
 all: server run
 
@@ -16,9 +16,9 @@ run:
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(SFLAGS)
 
-server: main.o server.o packet_handler.o hashmap.o MurmurHash3.o client.o client_handler.o logs.o $(DEPS)
+server: main.o server.o packet_handler.o hashmap.o MurmurHash3.o client_object.o client_handler.o logs.o $(DEPS)
 		
-		$(CC) $(SFLAGS) main.o server.o packet_handler.o hashmap.o MurmurHash3.o client.o client_handler.o logs.o -lpthread -o server 2> server_output.txt -I $(DEPS)
+		$(CC) $(SFLAGS) main.o server.o packet_handler.o hashmap.o MurmurHash3.o client_object.o client_handler.o logs.o -lpthread -o server 2> server_output.txt -I $(DEPS)
 
 main.o: main.c
 		$(CC) $(CFLAGS) main.c
@@ -38,8 +38,8 @@ MurmurHash3.o: ../lib/MurmurHash3.c
 		$(CC) $(CFLAGS) ../lib/MurmurHash3.c
 	
 		##       ##
-client.o: client.c
-		$(CC) $(CFLAGS) client.c
+client_object.o: client_object.c
+		$(CC) $(CFLAGS) client_object.c
 
 client_handler.o: client_handler.c
 		$(CC) $(CFLAGS) client_handler.c
