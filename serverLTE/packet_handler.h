@@ -1,8 +1,11 @@
 #ifndef PACKET_HANDLER_H
 #define PACKET_HANDLER_H
 
-#define PING_TIME_NORMAL 2
-#define PING_TIME_LOW_BATTERY 5
+#define PING_TIME_NORMAL 20
+#define PING_TIME_LOW_BATTERY 30
+
+//should be bigger than PING_TIME_NORMAL and PING_TIME_LOW_BATTERY
+#define PING_TIMEOUT 10
 
 #ifndef LOGS_H
 #include "../logs/logs.h"
@@ -42,7 +45,7 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
 void handle_low_battery_request(int client_socket);
 void handle_high_battery_request(int client_socket);
 void* pinging_in_thread(void* arg);
-void send_pings();
+void send_pings_handle_timeout();
 int ping_client(void *data, const char *key, void *value);
 void handle_client_power_off(int client_socket);
 #endif

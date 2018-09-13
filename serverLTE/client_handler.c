@@ -31,3 +31,17 @@ int notify_client_of_shutdown(void *data, const char *key, void *value) {
   send(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0);
   return 0;
 }
+
+int handle_client_inactivity(void *data, const char *key, void *value) {
+  time_t current_time = time(NULL);
+  client_t* current_client = (client_t*) value;
+  time_t time_since_last_activity = current_time - current_client->last_activity;
+  bool should_kick = (time_since_last_activity > PING_TIMEOUT);
+
+  if (should_kick) {
+    add_logf(server_log_filename, LOG_INFO, "Timeout - kicking client on socket %d", current_client->socket);
+    close(current_client->socket);
+    delete_client_from_hashmap(server.clients, current_client->socket);
+  }
+  return 0;
+}
