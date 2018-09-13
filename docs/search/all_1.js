@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['client',['client',['../structclient.html',1,'']]],
-  ['client_5ft',['client_t',['../structclient__t.html',1,'']]]
+  ['check_5ffor_5fshutdown',['check_for_shutdown',['../shutdown_8h.html#add3dd5772fbc2faae9b8c182e537fb67',1,'shutdown.c']]],
+  ['client',['client',['../structclient.html',1,'']]]
 ];

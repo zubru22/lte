@@ -14,6 +14,9 @@
 #endif
 #include <signal.h>
 #include <stdbool.h>
+#ifndef SHUTDOWN_H
+#include "shutdown.h"
+#endif
 
 volatile bool running = true;
 
@@ -94,7 +97,8 @@ int main(int argc, char* argv[])
     receive_rrc_setup(socket_fd, &received, &message);
     sigaction(SIGINT, &s_signal, NULL);
 
-    while (running) {
+    // While running and have not received eNodeB shutdown message
+    while (running && !check_for_shutdown(socket_fd, &message)) {
         update_battery(socket_fd, &message, &battery);
         add_logf(client_log_filename, LOG_INFO, "Battery power: %i", battery.power_percentage);
         if (receive_ping(socket_fd, &message) == 0)
@@ -106,17 +110,20 @@ int main(int argc, char* argv[])
             }
         if (receive_signal_level_request(socket_fd, &message) == 0)
             if (send_signal_level_response(socket_fd, &message) == -1)
-                add_log(client_log_filename, LOG_ERROR, "Failed to response to server signal level request!");   
+                add_logf(client_log_filename, LOG_ERROR, "Failed to response to server signal level request!");   
             else {
-                add_log(client_log_filename, LOG_SUCCESS, "Successfully returned signal level to server!");
+                add_logf(client_log_filename, LOG_SUCCESS, "Successfully returned signal level to server!");
             }
         sleep(1);
     }
 
-    if(-1 == send_ue_off_signal(socket_fd, &message))
-        add_logf(client_log_filename, LOG_ERROR, "Client failed to send ue_off notification!");
-    else
-        add_logf(client_log_filename, LOG_SUCCESS, "Client successfully disconnected from server!");
-
+    // Check if eNodeB is still on before trying to send UE off signal
+    if (message.message_type != enb_off)
+    {
+        if(-1 == send_ue_off_signal(socket_fd, &message))
+            add_logf(client_log_filename, LOG_ERROR, "Client failed to send ue_off notification!");
+        else
+            add_logf(client_log_filename, LOG_SUCCESS, "Client successfully disconnected from server!");
+    }
     return 0;
 }
