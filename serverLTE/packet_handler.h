@@ -23,8 +23,8 @@
 #include "../message.h"
 #endif
 
-#ifndef CLIENT_H
-#include "client.h"
+#ifndef CLIENT_OBJECT_H
+#include "client_object.h"
 #endif
 #include <errno.h>
 #include <stdio.h>

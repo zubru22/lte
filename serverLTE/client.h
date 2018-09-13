@@ -1,5 +1,5 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef CLIENT_OBJECT_H
+#define CLIENT_OBJECT_H
 
 #include <sys/types.h>
 #include <time.h>
