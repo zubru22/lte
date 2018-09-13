@@ -1,4 +1,6 @@
+#ifndef LOGS_H
 #include "logs.h"
+#endif
 
 void add_logf(const char *log_file_name, int log, const char *str, ...)
 {

@@ -1,3 +1,4 @@
 <map id="server_t" name="server_t">
-<area shape="rect" id="node2" href="$structclient__t.html" title="client_t" alt="" coords="8,5,72,32"/>
+<area shape="rect" id="node2" href="$structhashmap.html" title="hashmap" alt="" coords="23,95,98,121"/>
+<area shape="rect" id="node3" href="$structhashmap__entry.html" title="hashmap_entry" alt="" coords="5,5,116,32"/>
 </map>
