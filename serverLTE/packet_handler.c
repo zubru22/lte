@@ -2,7 +2,7 @@
 #include "packet_handler.h"
 #endif
 
-void handle_random_access_request(int client_socket, s_message message){
+void handle_random_access_request(int client_socket, s_message message) {
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
   uint8_t preamble_index = extractPreambleIndex(received_ra_rnti);
   time_t current_timestamp = time(NULL);
@@ -143,5 +143,20 @@ int ping_client(void *data, const char *key, void *value) {
     add_logf(server_log_filename, LOG_INFO, "Sent ping to client on socket: %d", current_client->socket);
   }
   return 0;
+}
 
+void* send_measurement_control_requests(void* arg) {
+  while (!threads_done) {
+    sleep(1);
+    hashmap_iter(server.clients, (hashmap_callback) send_measurement_control_request, NULL);
+  }
+}
+
+int send_measurement_control_request(void *data, const char *key, void *value) {
+  s_message measurement_control_message;
+  memset(&measurement_control_message, 0, sizeof(measurement_control_message));
+  measurement_control_message.message_type = measurement_control_request;
+  client_t* current_client = (client_t*) value;
+  send(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
+  add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
 }
