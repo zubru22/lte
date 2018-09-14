@@ -99,11 +99,11 @@ Functions</h2></td></tr>
 <tr class="memitem:a15e21aa5afec0281d5e44337f39bfebb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="handle__messages_8h.html#a15e21aa5afec0281d5e44337f39bfebb">send_pong</a> (int, <a class="el" href="structmessage.html">s_message</a> *)</td></tr>
 <tr class="memdesc:a15e21aa5afec0281d5e44337f39bfebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function sends ping complete (answer) to eNodeB.  <a href="#a15e21aa5afec0281d5e44337f39bfebb">More...</a><br /></td></tr>
 <tr class="separator:a15e21aa5afec0281d5e44337f39bfebb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24e158731af9bd107d287d97e0560e66"><td class="memItemLeft" align="right" valign="top"><a id="a24e158731af9bd107d287d97e0560e66"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>send_ue_off_signal</b> (int, <a class="el" href="structmessage.html">s_message</a> *)</td></tr>
+<tr class="memitem:a24e158731af9bd107d287d97e0560e66"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="handle__messages_8h.html#a24e158731af9bd107d287d97e0560e66">send_ue_off_signal</a> (int, <a class="el" href="structmessage.html">s_message</a> *)</td></tr>
+<tr class="memdesc:a24e158731af9bd107d287d97e0560e66"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function sends UE off signal to eNodeB.  <a href="#a24e158731af9bd107d287d97e0560e66">More...</a><br /></td></tr>
 <tr class="separator:a24e158731af9bd107d287d97e0560e66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd50e577aa4e50622940654ef945b509"><td class="memItemLeft" align="right" valign="top"><a id="abd50e577aa4e50622940654ef945b509"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>receive_measurement_control_request</b> (int, <a class="el" href="structmessage.html">s_message</a> *)</td></tr>
+<tr class="memitem:abd50e577aa4e50622940654ef945b509"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="handle__messages_8h.html#abd50e577aa4e50622940654ef945b509">receive_measurement_control_request</a> (int, <a class="el" href="structmessage.html">s_message</a> *)</td></tr>
+<tr class="memdesc:abd50e577aa4e50622940654ef945b509"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function receives Measurement Control request from eNodeB and calls sending function.  <a href="#abd50e577aa4e50622940654ef945b509">More...</a><br /></td></tr>
 <tr class="separator:abd50e577aa4e50622940654ef945b509"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6de2aa1a4d36b93d6ccddfe8b556f715"><td class="memItemLeft" align="right" valign="top"><a id="a6de2aa1a4d36b93d6ccddfe8b556f715"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_report</b> (int, <a class="el" href="structmessage.html">s_message</a> *)</td></tr>
@@ -112,6 +112,44 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Module for handling ping and low battery signal. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="abd50e577aa4e50622940654ef945b509"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd50e577aa4e50622940654ef945b509">&#9670;&nbsp;</a></span>receive_measurement_control_request()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool receive_measurement_control_request </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structmessage.html">s_message</a> *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function receives Measurement Control request from eNodeB and calls sending function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socket from which message is received. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">message*</td><td>is a pointer to message which is received. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Function returns true if request was receieved and false if it failed to receive request. </dd></dl>
+
+</div>
+</div>
 <a id="a025b7fef2bd1fb76339ed3c68a5c2372"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a025b7fef2bd1fb76339ed3c68a5c2372">&#9670;&nbsp;</a></span>receive_ping()</h2>
 
@@ -122,13 +160,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
           <td class="memname">int receive_ping </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>socketfd</em>, </td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structmessage.html">s_message</a> *&#160;</td>
-          <td class="paramname"><em>message</em>&#160;</td>
+          <td class="paramname">&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -141,12 +179,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
 <p>This function receives ping message from eNodeB. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">socketfd</td><td>is socketfd from which message is received </td></tr>
-    <tr><td class="paramname">message</td><td>is message receieved from the socket</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socketfd from which message is received </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>is message receieved from the socket </td></tr>
   </table>
   </dd>
 </dl>
-<p>Function returns -1 on error, 0 on success. If function receives a message, but message's type isn't "ping" - it returns 1. </p>
+<dl class="section return"><dt>Returns</dt><dd>Function returns -1 on error, 0 on success. If function receives a message, but message's type isn't "ping" - it returns 1. </dd></dl>
 
 </div>
 </div>
@@ -160,13 +198,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
           <td class="memname">int send_pong </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>socketfd</em>, </td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structmessage.html">s_message</a> *&#160;</td>
-          <td class="paramname"><em>message</em>&#160;</td>
+          <td class="paramname">&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -179,12 +217,50 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
 <p>This function sends ping complete (answer) to eNodeB. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">socketfd</td><td>is socketfd to which message will be sent </td></tr>
-    <tr><td class="paramname">message</td><td>is message send to socket</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socketfd to which message will be sent </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">message</td><td>is message send to socket </td></tr>
   </table>
   </dd>
 </dl>
-<p>Function returns -1 on error, 0 on success. </p>
+<dl class="section return"><dt>Returns</dt><dd>Function returns -1 on error, 0 on success. </dd></dl>
+
+</div>
+</div>
+<a id="a24e158731af9bd107d287d97e0560e66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24e158731af9bd107d287d97e0560e66">&#9670;&nbsp;</a></span>send_ue_off_signal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int send_ue_off_signal </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structmessage.html">s_message</a> *&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function sends UE off signal to eNodeB. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socket to which message is send. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">message*</td><td>is a pointer to message which is send to socket </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Function returns -1 on error, 0 on success. </dd></dl>
 
 </div>
 </div>
