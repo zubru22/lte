@@ -8,7 +8,9 @@
 #include "random_access.h"
 #include "rrc.h"
 #include "user_equipment.h"
+#ifndef LOGS.H
 #include "../logs/logs.h"
+#endif
 #ifndef HANDLE_MESSAGES
 #include "handle_messages.h"
 #endif
