@@ -34,17 +34,17 @@ int receive_ping(int, s_message*);
 */
 int send_pong(int, s_message*);
 /**
-    @brief This function sends UE turn off message to eNodeB
-    @param[in] socketfd is socket to which message is send
-    @param[out] message* is a pointer to message which is send to eNodeB
-    @return Returns 0 on succes and -1 when sending failed
+    @brief This function sends UE off signal to eNodeB.
+    @param[in] socketfd is socket to which message is send.
+    @param[out] message* is a pointer to message which is send to socket
+    @return Function returns -1 on error, 0 on success.
 */
 int send_ue_off_signal(int, s_message*);
 /**
-    @brief Receives Measurement Control request from eNodeB and calls sending function.
-    @param[in] socketfd is socket from which request is received.
-    @param[in] message* is a pointer to message received.
-    @return Returns true if request was received and false if message was not received
+    @brief This function receives Measurement Control request from eNodeB and calls sending function
+    @param[in] socketfd is socket from which message is received.
+    @param[in] message* is a pointer to message which is received.
+    @return Function returns true if request was receieved and false if it failed to receive request.
 */
 bool receive_measurement_control_request(int, s_message*);
 void send_measurement_report(int, s_message*, s_cells*);
