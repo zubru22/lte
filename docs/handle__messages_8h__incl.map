@@ -1,3 +1,5 @@
 <map id="clientLTE/handle_messages.h" name="clientLTE/handle_messages.h">
-<area shape="rect" id="node2" href="$message_8h_source.html" title="../message.h" alt="" coords="51,80,149,107"/>
+<area shape="rect" id="node2" href="$message_8h_source.html" title="../message.h" alt="" coords="393,155,492,181"/>
+<area shape="rect" id="node6" href="$logs_8h.html" title="Functions for handling logs both on server and client side. " alt="" coords="171,80,269,107"/>
+<area shape="rect" id="node12" href="$user__equipment_8h.html" title="Module for simulating battery life in UE. " alt="" coords="484,80,609,107"/>
 </map>
