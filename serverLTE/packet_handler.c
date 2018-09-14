@@ -145,10 +145,17 @@ int ping_client(void *data, const char *key, void *value) {
   return 0;
 }
 
-void send_measurement_control_request(int socket) {
-  s_message measurement_control_message;
+void send_measurement_control_requests(int socket) {
   while (!threads_done) {
-    memset(&measurement_control_message, 0, sizeof(measurement_control_message));
-    measurement_control_message
+    sleep(1);
+    hashmap_iter(server.clients, (hashmap_callback) send_measurement_control_request, NULL);
   }
+}
+
+int send_measurement_control_request(void *data, const char *key, void *value) {
+  s_message measurement_control_message;
+  memset(&measurement_control_message, 0, sizeof(measurement_control_message));
+  measurement_control_message.message_type = measurement_control_request;
+  client_t* current_client = (client_t*) value;
+  send(current_client->socket, &ping_message, sizeof(ping_message), 0);
 }
