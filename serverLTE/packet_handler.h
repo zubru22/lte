@@ -35,6 +35,8 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
+const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 3;
+
 void handle_random_access_request(int client_socket, s_message message);
 void handle_pong(int client_socket);
 void parse_packet(int number_of_event);
@@ -48,4 +50,6 @@ void* pinging_in_thread(void* arg);
 void send_pings_handle_timeout();
 int ping_client(void *data, const char *key, void *value);
 void handle_client_power_off(int client_socket);
+void* send_measurement_control_requests(void* arg);
+int send_measurement_control_request(void *data, const char *key, void *value);
 #endif

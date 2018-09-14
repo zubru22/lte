@@ -3,7 +3,8 @@
 #endif
 
 bool threads_done = false;
-pthread_t thread_id;
+pthread_t pinging_in_thread_id;
+pthread_t send_measurement_control_requests_id;
 
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
@@ -57,7 +58,8 @@ void init_server(int port) {
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
-  pthread_create(&thread_id, NULL, pinging_in_thread, NULL);
+  pthread_create(&pinging_in_thread_id, NULL, pinging_in_thread, NULL);
+  pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
 }
 
 void receive_packets() {
@@ -121,7 +123,7 @@ void clean() {
     broadcast_shutdown_notification();
     add_logf(server_log_filename, LOG_INFO, "CLEAN");
     threads_done = true;
-    pthread_join(thread_id, NULL);
+    pthread_join(pinging_in_thread_id, NULL);
     server_t__destroy(&server);
 }
 

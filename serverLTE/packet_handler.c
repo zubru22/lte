@@ -145,7 +145,7 @@ int ping_client(void *data, const char *key, void *value) {
   return 0;
 }
 
-void send_measurement_control_requests(int socket) {
+void* send_measurement_control_requests(void* arg) {
   while (!threads_done) {
     sleep(1);
     hashmap_iter(server.clients, (hashmap_callback) send_measurement_control_request, NULL);
@@ -157,5 +157,6 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
   memset(&measurement_control_message, 0, sizeof(measurement_control_message));
   measurement_control_message.message_type = measurement_control_request;
   client_t* current_client = (client_t*) value;
-  send(current_client->socket, &ping_message, sizeof(ping_message), 0);
+  send(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
+  add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
 }
