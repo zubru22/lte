@@ -100,11 +100,11 @@ int main(int argc, char* argv[])
     sigaction(SIGINT, &s_signal, NULL);
 
     // While running and have not received eNodeB shutdown message
-    while (running && !check_for_shutdown(socket_fd, &message)) {
+    while (running && !check_for_shutdown(socket_fd, &received)) {
         update_battery(socket_fd, &message, &battery);
         add_logf(client_log_filename, LOG_INFO, "Battery power: %i", battery.power_percentage);
         
-        if (receive_ping(socket_fd, &message) == 0)
+        if (receive_ping(socket_fd, &received) == 0)
             if (send_pong(socket_fd, &message) == -1)
                 add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
             else {
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
                 add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
             }
 
-        if (receive_measurement_control_request(socket_fd, &message))
+        if (receive_measurement_control_request(socket_fd, &received))
             send_measurement_report(socket_fd, &message);
 
         sleep(1);

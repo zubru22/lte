@@ -2,6 +2,8 @@
 #include "packet_handler.h"
 #endif
 
+const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 3;
+
 void handle_random_access_request(int client_socket, s_message message) {
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
   uint8_t preamble_index = extractPreambleIndex(received_ra_rnti);

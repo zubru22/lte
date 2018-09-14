@@ -35,7 +35,7 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
-const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 3;
+extern const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD;
 
 void handle_random_access_request(int client_socket, s_message message);
 void handle_pong(int client_socket);
