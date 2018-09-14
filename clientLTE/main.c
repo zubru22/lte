@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
     struct sockaddr_in server;
     s_message message;
     ue_battery battery;
+    s_cells cells;
     srand(time(NULL)); 
 
     struct sigaction s_signal;
@@ -40,6 +41,7 @@ int main(int argc, char* argv[])
     s_signal.sa_flags = 0;
 
     initialize_battery_life(&battery);
+    initialize_cells(&cells);
 
     //init_connection returns 0 on error, else function returns 1
     if (init_connection(&socket_fd, &server, port_number)) {
@@ -97,14 +99,18 @@ int main(int argc, char* argv[])
 
     while (running) {
         update_battery(socket_fd, &message, &battery);
+        set_current_signal_event(&cells);
         printf("Battery power: %i\n", battery.power_percentage);
-        if (receive_ping(socket_fd, &message) == 0)
+
+        if (receive_ping(socket_fd, &message) == 0) {
             if (send_pong(socket_fd, &message) == -1)
                 add_log(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
             else {
                 decrease_after_ping(socket_fd, &message, &battery);
                 add_log(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
             }
+        }
+
         sleep(1);
     }
 
