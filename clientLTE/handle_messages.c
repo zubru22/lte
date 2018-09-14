@@ -33,10 +33,9 @@ int send_ue_off_signal(int socketfd, s_message* message) {
 bool receive_measurement_control_request(int socketfd, s_message* message) {
     assert(message != NULL);
 
-    if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT)) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to receive Measurement Control request!");
+    if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
         return false;
-    }
+    
     if(message->message_type == measurement_control_request) {
         add_logf(client_log_filename, LOG_SUCCESS, "Successfuly received Measurement Control request.");
         return true;
