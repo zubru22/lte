@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['check_5ffor_5fshutdown',['check_for_shutdown',['../shutdown_8h.html#add3dd5772fbc2faae9b8c182e537fb67',1,'shutdown.c']]],
-  ['client',['client',['../structclient.html',1,'']]]
+  ['add_5flogf',['add_logf',['../logs_8h.html#a43ac6cedd73727a582a97f1def406a4e',1,'logs.c']]]
 ];

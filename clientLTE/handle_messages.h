@@ -12,6 +12,7 @@
 #include "../logs/logs.h"
 #include <assert.h>
 #include <stdbool.h>
+#include "user_equipment.h"
 
 #ifndef UNISTD_H
 #define UNISTD_H
@@ -46,6 +47,6 @@ int send_ue_off_signal(int, s_message*);
     @return Returns true if request was received and false if message was not received
 */
 bool receive_measurement_control_request(int, s_message*);
-void send_measurement_report(int, s_message*);
+void send_measurement_report(int, s_message*, s_cells*);
 
 #endif

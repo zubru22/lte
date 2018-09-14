@@ -8,7 +8,9 @@
 #include "random_access.h"
 #include "rrc.h"
 #include "user_equipment.h"
+#ifndef LOGS_H
 #include "../logs/logs.h"
+#endif
 #ifndef HANDLE_MESSAGES
 #include "handle_messages.h"
 #endif
@@ -35,6 +37,7 @@ int main(int argc, char* argv[])
     struct sockaddr_in server;
     s_message message;
     ue_battery battery;
+    s_cells cells;
     srand(time(NULL)); 
 
     struct sigaction s_signal;
@@ -43,6 +46,7 @@ int main(int argc, char* argv[])
     s_signal.sa_flags = 0;
 
     initialize_battery_life(&battery);
+    initialize_cells(&cells);
 
     //init_connection returns 0 on error, else function returns 1
     if (init_connection(&socket_fd, &server, port_number)) {
@@ -100,18 +104,20 @@ int main(int argc, char* argv[])
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
         update_battery(socket_fd, &message, &battery);
-        add_logf(client_log_filename, LOG_INFO, "Battery power: %i", battery.power_percentage);
-        
-        if (receive_ping(socket_fd, &received) == 0)
+        set_current_signal_event(&cells);
+        printf("Battery power: %i\n", battery.power_percentage);
+
+        if (receive_ping(socket_fd, &message) == 0) {
             if (send_pong(socket_fd, &message) == -1)
                 add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
             else {
                 decrease_after_ping(socket_fd, &message, &battery);
                 add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
             }
+        }
 
         if (receive_measurement_control_request(socket_fd, &received))
-            send_measurement_report(socket_fd, &message);
+            send_measurement_report(socket_fd, &message, &cells);
 
         sleep(1);
     }
