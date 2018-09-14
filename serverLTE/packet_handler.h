@@ -1,3 +1,6 @@
+/**
+@file packet_handler.h
+*/
 #ifndef PACKET_HANDLER_H
 #define PACKET_HANDLER_H
 
@@ -50,6 +53,19 @@ void* pinging_in_thread(void* arg);
 void send_pings_handle_timeout();
 int ping_client(void *data, const char *key, void *value);
 void handle_client_power_off(int client_socket);
+/**
+  @fn void* send_measurement_control_requests(void* arg)
+  @brief starts while loop, which periodically iterates through clients hashmap to send measurement_control_request
+  @param arg - unused param, written only for compability with pthread_create
+  @return nothing is returned
+*/
 void* send_measurement_control_requests(void* arg);
+/**
+  @brief called on each client by send_measurement_control_requests, send measurement control request to chosen client
+  @param data - hashmap of clients, unused in function, used for compatibility purpose with hashmap_callback
+  @param key - key to the hashmap (socket of client)
+  @param value - client_t structure stored in hashmap
+  @return nothing is returned
+*/
 int send_measurement_control_request(void *data, const char *key, void *value);
 #endif
