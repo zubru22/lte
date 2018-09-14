@@ -22,6 +22,7 @@ int send_pong(int socketfd, s_message* message) {
     return 0;
 }
 
+// This function sends UE turn off message to eNodeB
 int send_ue_off_signal(int socketfd, s_message* message) {
     message->message_type = ue_off;
 
