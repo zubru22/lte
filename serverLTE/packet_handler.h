@@ -4,12 +4,11 @@
 #define PING_TIME_NORMAL 2
 #define PING_TIME_LOW_BATTERY 5
 
+//should be bigger than PING_TIME_NORMAL and PING_TIME_LOW_BATTERY
+#define PING_TIMEOUT 10
+
 #ifndef LOGS_H
 #include "../logs/logs.h"
-#endif
-
-#ifndef PACKET_HANDLER_H
-#include "packet_handler.h"
 #endif
 
 #ifndef SERVER_H
@@ -24,18 +23,19 @@
 #include "../message.h"
 #endif
 
-#ifndef CLIENT_H
-#include "client.h"
+#ifndef CLIENT_OBJECT_H
+#include "client_object.h"
 #endif
-
 #include <errno.h>
 #include <stdio.h>
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
 #include <sys/types.h>
 #include <stdbool.h>
 
+extern const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD;
 
 void handle_random_access_request(int client_socket, s_message message);
 void handle_pong(int client_socket);
@@ -47,6 +47,9 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
 void handle_low_battery_request(int client_socket);
 void handle_high_battery_request(int client_socket);
 void* pinging_in_thread(void* arg);
-void send_pings();
+void send_pings_handle_timeout();
 int ping_client(void *data, const char *key, void *value);
+void handle_client_power_off(int client_socket);
+void* send_measurement_control_requests(void* arg);
+int send_measurement_control_request(void *data, const char *key, void *value);
 #endif

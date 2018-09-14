@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['hashmap',['hashmap',['../structhashmap.html',1,'']]],
-  ['hashmap_5fentry',['hashmap_entry',['../structhashmap__entry.html',1,'']]]
+  ['check_5ffor_5fshutdown',['check_for_shutdown',['../shutdown_8h.html#add3dd5772fbc2faae9b8c182e537fb67',1,'shutdown.c']]],
+  ['client',['client',['../structclient.html',1,'']]]
 ];

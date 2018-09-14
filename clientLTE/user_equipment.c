@@ -22,12 +22,12 @@ void check_battery_status(int socketfd, int step, s_message* message, ue_battery
     if(battery->power_percentage <= 20 && (20-step) < battery->power_percentage && !battery->charging) {
         battery->power_is_low = true;
         send_low_battery_notification(socketfd, message);
-        add_log(client_log_filename, LOG_INFO, "Send low bettery note!");
+        add_logf(client_log_filename, LOG_INFO, "Send low bettery note!");
     }
     else if (battery->power_percentage >= 20 && (20+step) > battery->power_percentage && battery->charging) {
         battery->power_is_low = false;
         send_high_battery_notification(socketfd, message);
-        add_log(client_log_filename, LOG_INFO, "Send high bettery note!");
+        add_logf(client_log_filename, LOG_INFO, "Send high bettery note!");
     }
 }
 
