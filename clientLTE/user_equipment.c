@@ -131,43 +131,73 @@ void update_rsrps(s_cells* cells) {
     time(&time_now);
 
     if((time_now - cells->starting_time) > time_up) {
-
         for(int8_t i = 0; i < NUMBER_OF_CELLS; i++) {
             cells->cells_signals[i].rsrp += cells->cells_signals[i].signal_course;
+
             if(cells->cells_signals[i].rsrp > max_rsrp)
                 cells->cells_signals[i].rsrp = max_rsrp;
+
             if(cells->cells_signals[i].rsrp < 0)
                 cells->cells_signals[i].rsrp = 0;
+
             if((cells->cells_signals[i].rsrp >= max_rsrp) || (cells->cells_signals[i].rsrp <= 0)) {
-                cells->cells_signals[i].signal_course *= -1; // Change course (velocity) of signal's power change
+                cells->cells_signals[i].signal_course *= -1; // Change sign of course (velocity) of signal's power change
             }
-            printf("Signal power (%d): %d\n", i, cells->cells_signals[i].rsrp); // DEEEEEEELEEEEEEEETEEEEEEEEEEEEEE
+            printf("Signal power (%d): %d\n", i+1, cells->cells_signals[i].rsrp);
         }
         
         time(&cells->starting_time); // Actualise starting time
     }
 }
+// This function checks if there is one of events A1 or A2
+s_event check_events(s_cells* cells) {
+    static int8_t event_change = 5; // This variable is here only for event A1 and A2
+    static bool a3_checked = false;
+    static bool a4_checked = false;
+
+    // Event change checks
+    if(cells->cells_signals[0].rsrp < cells->cells_signals[0].thresholds[0] && 5 == event_change)
+        event_change = 1;
+
+    if(cells->cells_signals[0].rsrp > cells->cells_signals[0].thresholds[1] && 5 == event_change)
+        event_change = 2;
+    
+    // Events A1, A2
+    if(cells->cells_signals[0].rsrp > cells->cells_signals[0].thresholds[0] && 1 == event_change) {
+        event_change = 5;
+        return a1;
+    }
+    
+    if(cells->cells_signals[0].rsrp < cells->cells_signals[0].thresholds[1] && 2 == event_change) {
+        event_change = 5;
+        return a2;
+    }
+    // Event A3
+    if(cells->cells_signals[1].rsrp < cells->cells_signals[0].rsrp)
+        a3_checked = false;
+        
+    if(cells->cells_signals[1].rsrp > cells->cells_signals[0].rsrp && false == a3_checked) {
+        event_change = 5;
+        a3_checked = true;
+        return a3;
+    }
+    // Event A4
+    if(cells->cells_signals[1].rsrp < cells->cells_signals[1].thresholds[1])
+        a4_checked = false;
+
+    if(cells->cells_signals[1].rsrp > cells->cells_signals[1].thresholds[1] && false == a4_checked) {
+        event_change = 5;
+        a4_checked = true;
+        return a4;
+    }
+
+    //Default event - it actualy means no event whatsoever
+    return def;
+}
 // This function sets signal events
 void set_current_signal_event(s_cells* cells) {
     assert(cells != NULL);
 
-    static int event_change = 3;
-
     update_rsrps(cells);
-
-    if(cells->cells_signals[0].rsrp < cells->cells_signals[0].thresholds[0])
-        event_change = 1;
-    if(cells->cells_signals[0].rsrp > cells->cells_signals[0].thresholds[1])
-        event_change = 2;
-    
-    if(cells->cells_signals[0].rsrp > cells->cells_signals[0].thresholds[0] && 1 == event_change) {
-        cells->current_event = a1;
-        event_change = 3;
-    }
-    
-    if(cells->cells_signals[0].rsrp < cells->cells_signals[0].thresholds[1] && 2 == event_change) {
-        cells->current_event = a2;
-        event_change = 3;
-    }
-
+    cells->current_event = check_events(cells);
 }
