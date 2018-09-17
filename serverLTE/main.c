@@ -10,10 +10,10 @@
 
 int main(int argc, char** argv) {
   signal(SIGINT, clean);
-  if (argc < 2) {
+  if (argc < 3) {
     remind_about_port();
   }
-  init_server(atoi(argv[1]));
+  init_server(atoi(argv[1]), atoi(argv[2]));
   receive_packets();
   clean();
 }
