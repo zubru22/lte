@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
     s_message message;
     ue_battery battery;
     s_cells cells;
+    FILE* fp;
     srand(time(NULL)); 
 
     struct sigaction s_signal;
@@ -118,6 +119,9 @@ int main(int argc, char* argv[])
 
         if (receive_measurement_control_request(socket_fd, &received))
             send_measurement_report(socket_fd, &message, &cells);
+
+        if(download_data(socket_fd, &message, fp))
+            printf("Downloading...\n");
 
         sleep(1);
     }
