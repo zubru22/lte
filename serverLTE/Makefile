@@ -4,7 +4,7 @@ CC = gcc
 CFLAGS=-g -Wall -c
 SFLAGS=-g -Wall 
 
-DEPS= client_handler.h client_object.h packet_handler.h server.h
+DEPS= . client_handler.h client_object.h packet_handler.h server.h
 
 all: clean create 							## first, clean all the *.o binaries,then compile with new ones.
 
