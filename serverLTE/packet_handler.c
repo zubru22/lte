@@ -172,3 +172,7 @@ void handle_measurement_report(int client_socket, s_message measurement_report_m
       break;
   }
 }
+
+void handle_a3_event(int client_socket) {
+
+}
