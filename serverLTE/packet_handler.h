@@ -38,8 +38,10 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
-#include <sys/stat.h>
 #include <fcntl.h>
+
+#define BUFFER_SIZE 16
+
 extern const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD;
 
 void handle_random_access_request(int client_socket, s_message message);
@@ -51,11 +53,11 @@ int8_t extractPreambleIndex(int16_t ra_rnti);
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp);
 void handle_low_battery_request(int client_socket);
 void handle_high_battery_request(int client_socket);
-void ping_and_timeout_in_thread(void* arg);
+void* ping_and_timeout_in_thread(void* arg);
 int ping_client(void *data, const char *key, void *value);
 void handle_client_power_off(int client_socket);
 int broadcast_sample(void *arg, const char *key, void *value);
-void transfer_data(void* arg);
+void* transfer_data(void* arg);
 /**
   @fn void* send_measurement_control_requests(void* arg)
   @brief starts while loop, which periodically iterates through clients hashmap to send measurement_control_request

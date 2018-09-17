@@ -48,6 +48,6 @@ int send_ue_off_signal(int, s_message*);
 */
 bool receive_measurement_control_request(int, s_message*);
 void send_measurement_report(int, s_message*, s_cells*);
-int download_data(int, s_message*, FILE*);
+bool download_data(int, s_message*, FILE*);
 
 #endif

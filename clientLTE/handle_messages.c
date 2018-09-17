@@ -1,6 +1,8 @@
 /* This functionality is about handling default client server communication like pings and stuff */
 #include "handle_messages.h"
 
+ char* buffer;
+
 // This function receives ping message from eNodeB. Function returns -1 on error, 0 on success.
 // If function receives a message, but message's type isn't "ping" - it returns 1.
 int receive_ping(int socketfd, s_message* message) {
@@ -56,30 +58,37 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
         add_logf(client_log_filename, LOG_ERROR, "Successfuly sent Measurement Report!");
 }
 
-int download_data(int socketfd, s_message* message, FILE* fp) {
+bool download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
+    message->message_value.buffer = (char*) malloc(sizeof(char) * 16);
     if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
         return false;
     
-    char* buffer = (char*) malloc(sizeof(message->message_value.buffer) + 1);
-    buffer = message->message_value.buffer;
+    
     
     if(message->message_type == data_start) {
-        fp = fopen("/data","wb+");
-        fprintf(fp, buffer);
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfully started downloading data!");
+        add_logf(client_log_filename, LOG_SUCCESS, "\n\nSuccessfully started downloading data!\n\n");
+        //buffer = (char*) malloc(sizeof(char) * 16);
+        //buffer = message->message_value.buffer;
+        fp = fopen("/home/elszko/dupa.txt","wb+");
         return true;
     }
 
     else if(message->message_type == data) {
-        fprintf(fp, buffer);
+        add_logf(client_log_filename, LOG_INFO, "DUPADUPADUPA DATA");
+        if(message->message_value.buffer == NULL){
+            printf("DUPA NULL");
+        } else {
+            printf("++++ buffer: %s ++++\n", message->message_value.buffer);
+        }
+        fprintf(fp, message->message_value.buffer);
         return true;
     }
 
     else if(message->message_type == data_end) {
-        fprintf(fp, buffer);
         fclose(fp);
+        free(message->message_value.buffer);
         add_logf(client_log_filename, LOG_SUCCESS, "Successfully downloaded data!");
         return true;
     }
