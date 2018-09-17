@@ -77,6 +77,7 @@ typedef union message_value {
         rrc message_request;
         rrc_config rrc_response;
         rrc_setup_complete message_complete;
+        size_t size_of_file;
 } u_message_value;
 
 typedef struct message {
