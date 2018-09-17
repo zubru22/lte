@@ -69,5 +69,5 @@ void* send_measurement_control_requests(void* arg);
 */
 int send_measurement_control_request(void *data, const char *key, void *value);
 
-void handle_measurement_report(int client_socket);
+void handle_measurement_report(int client_socket, s_message measurement_report_message);
 #endif

@@ -63,7 +63,7 @@ void parse_packet(int number_of_event) {
       handle_client_power_off(client_socket);
       break;
     case measurement_report:
-      handle_measurement_report(client_socket);
+      handle_measurement_report(client_socket, message);
       break;
     default:
       break;
@@ -166,6 +166,9 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
   add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
 }
 
-void handle_measurement_report(int client_socket) {
-  
+void handle_measurement_report(int client_socket, s_message measurement_report_message) {
+  switch (measurement_report_message.events) {
+    case a3:
+      break;
+  }
 }

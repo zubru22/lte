@@ -13,18 +13,18 @@ typedef struct prach_response {
 } response;
 
 typedef enum type_of_message {
-    random_access_request, 
-    random_access_response, 
-    rrc_request, 
-    rrc_setup, 
-    rrc_complete, 
-    ue_battery_low, 
-    ue_battery_high, 
-    ping, 
-    pong, 
-    ue_off, 
-    enb_off, 
-    measurement_control_request, 
+    random_access_request,
+    random_access_response,
+    rrc_request,
+    rrc_setup,
+    rrc_complete,
+    ue_battery_low,
+    ue_battery_high,
+    ping,
+    pong,
+    ue_off,
+    enb_off,
+    measurement_control_request,
     measurement_report
 } e_message_type;
 
@@ -68,7 +68,7 @@ typedef struct rrc_setup_complete {
     int16_t mnc;
 } rrc_setup_complete;
 
-typedef enum _s_event {a1, a2, a4, a5, def} s_event;
+typedef enum _s_event {a1, a2, a3, a4, a5, def} s_event;
 
 typedef union message_value {
         preamble message_preamble;
