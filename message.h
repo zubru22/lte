@@ -25,7 +25,10 @@ typedef enum type_of_message {
     ue_off, 
     enb_off, 
     measurement_control_request, 
-    measurement_report
+    measurement_report,
+    data_start,
+    data,
+    data_end
 } e_message_type;
 
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
