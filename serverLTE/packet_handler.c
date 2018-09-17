@@ -115,12 +115,7 @@ void handle_high_battery_request(int client_socket) {
   client_with_high_battery->battery_state = OK;
 }
 
-void* pinging_in_thread(void* arg) {
-  send_pings_handle_timeout();
-  return NULL;
-}
-
-void send_pings_handle_timeout() {
+void ping_and_timeout_in_thread(void* arg) {
   while (!threads_done) {
     sleep(1);
     hashmap_iter(server.clients, (hashmap_callback) ping_client, NULL);
@@ -144,4 +139,71 @@ int ping_client(void *data, const char *key, void *value) {
   }
   return 0;
 
+}
+
+int broadcast_sample(void *arg, const char *key, void *value) {
+  client_t* current_client = (client_t*) value;
+
+  char* filename = (char*) arg;
+  add_logf(server_log_filename, LOG_INFO, "File to be sent: %s\n", filename);
+
+  int file_to_be_sent = open(filename, O_RDONLY);
+  if (file_to_be_sent == -1) {
+    add_logf(server_log_filename, LOG_ERROR, "Error opening file %s", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+  
+  struct stat file_stat;
+  if (fstat(file_to_be_sent, &file_stat) < 0) {
+    add_logf(server_log_filename, LOG_ERROR, "Error fstat %s", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+  
+  s_message data_message_tag;
+  data_message_tag.message_type = data_start;
+  data_message_tag.message_value.size_of_file = file_stat.st_size;
+  if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
+    add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
+    exit(EXIT_FAILURE);
+  }
+
+  s_message data_message;
+  data_message.message_type = data;
+  data_message.message_value.buffer = malloc(BUFSIZ * sizeof(char));
+
+  int bytes_read = 0;
+
+  while (bytes_read < file_stat.st_size) {
+    fseek(file_to_be_sent, bytes_read, SEEK_SET);
+    fread(data_message.message_value.buffer, BUFSIZ, 1, file_to_be_sent);
+    if (send(current_client->socket, &data_message, sizeof(data_message), 0) == -1) {
+      add_logf(server_log_filename, LOG_ERROR, "Error sending data");
+      exit(EXIT_FAILURE);
+    }
+    bytes_read += BUFSIZ;
+
+    // not too fast, so that we see what is going on
+    sleep(1);
+  }
+
+
+  data_message_tag.message_type = data_end;
+  if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
+    add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
+    exit(EXIT_FAILURE);
+  }
+
+  free(data_message.message_value.buffer);
+  return 0;
+}
+
+
+// filename as arg
+void transfer_data(void* arg) {
+  while (!threads_done) {
+    // not too fast, so that we see what is going on
+    sleep(1);
+
+    hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);    
+  }
 }

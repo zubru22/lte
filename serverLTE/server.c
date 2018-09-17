@@ -5,6 +5,7 @@
 bool threads_done = false;
 pthread_t thread_id;
 
+pthread_t transferring_thread;
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
   self->server_address = server_address;
@@ -57,7 +58,9 @@ void init_server(int port) {
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
-  pthread_create(&thread_id, NULL, pinging_in_thread, NULL);
+  pthread_create(&thread_id, NULL, ping_and_timeout_in_thread, NULL);
+  // trying to send example file to all clients:l
+  pthread_create(&transferring_thread, NULL, transfer_data, (void*) "/home/elszko/example.txt");
 }
 
 void receive_packets() {

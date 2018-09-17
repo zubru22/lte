@@ -35,6 +35,9 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
+#include <sys/stat.h>
+#include <fcntl.h>
+
 void handle_random_access_request(int client_socket, s_message message);
 void handle_pong(int client_socket);
 void parse_packet(int number_of_event);
@@ -44,8 +47,9 @@ int8_t extractPreambleIndex(int16_t ra_rnti);
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp);
 void handle_low_battery_request(int client_socket);
 void handle_high_battery_request(int client_socket);
-void* pinging_in_thread(void* arg);
-void send_pings_handle_timeout();
+void ping_and_timeout_in_thread(void* arg);
 int ping_client(void *data, const char *key, void *value);
 void handle_client_power_off(int client_socket);
+int broadcast_sample(void *arg, const char *key, void *value);
+void transfer_data(void* arg);
 #endif
