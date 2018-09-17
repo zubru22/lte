@@ -50,6 +50,16 @@
      
     @return Function returns -1 on error, 0 on success.
 */
+/**
+    @fn void initialize_cells(s_cells*)
+    @brief This function initializes all the cells.
+    @param s_cells* cells is a pointer to a structure containing information about cells.
+*/
+/**
+    @fn void set_current_signal_event(s_cells*)
+    @brief This function generates events A1 - A4, based on current signals in cells.
+    @param s_cells* cells is a pointer to a structure containing information about cells.
+*/
 #ifndef USER_EQUIPMENT_H
 #define USER_EQUIPMENT_H
 #include <stdio.h>
@@ -104,10 +114,10 @@ typedef struct _s_cells {
 
 void initialize_battery_life(ue_battery*);
 int update_battery(int, s_message*, ue_battery*);
-void decrease_after_ping(int socketfd, s_message* message, ue_battery* battery);
+void decrease_after_ping(int, s_message*, ue_battery*);
 int send_low_battery_notification(int, s_message*);
 int send_high_battery_notification(int, s_message*);
-void check_battery_status(int socketfd, int step, s_message* message, ue_battery* battery);
+void check_battery_status(int, int, s_message*, ue_battery*);
 void initialize_cells(s_cells*);
 void set_current_signal_event(s_cells*); 
 
