@@ -68,12 +68,15 @@ typedef struct rrc_setup_complete {
     int16_t mnc;
 } rrc_setup_complete;
 
+typedef enum _s_event {a1, a2, a4, a5, def} s_event;
+
 typedef union message_value {
         preamble message_preamble;
         response message_response;
         rrc message_request;
         rrc_config rrc_response;
         rrc_setup_complete message_complete;
+        s_event events;
 } u_message_value;
 
 typedef struct message {

@@ -42,30 +42,12 @@ extern const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD;
 
 void handle_random_access_request(int client_socket, s_message message);
 void handle_pong(int client_socket);
-/**
-  @fn void parse_packet(int number_of_event)
-  @brief handles packet specified by number_of_event, calls specific function in switch
-  @param number_of_event - epoll event number from array of events, which will be handled
-  @return nothing is returned
-*/
 void parse_packet(int number_of_event);
 rrc_config generate_rrc_config(int16_t rnti);
 void send_rrc_setup(int socket);
 int8_t extractPreambleIndex(int16_t ra_rnti);
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp);
-/**
-  @fn void handle_low_battery_request(int client_socket)
-  @brief handles message from client indicating low batery
-  @param client_socket - socket of client with low battery
-  @return nothing is returned
-*/
 void handle_low_battery_request(int client_socket);
-/**
-  @fn handle_high_battery_request(int client_socket);
-  @brief handles message from client indicating high batery
-  @param client_socket - socket of client with high battery
-  @return nothing is returned
-*/
 void handle_high_battery_request(int client_socket);
 void* pinging_in_thread(void* arg);
 void send_pings_handle_timeout();

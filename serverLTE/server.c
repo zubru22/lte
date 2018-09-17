@@ -36,6 +36,11 @@ void init_server(int port) {
   if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     error("socket in init_server");
   }
+  // reuse old socket if still exists in kernel
+  // see https://stackoverflow.com/a/10651048
+  int true_value = 1;
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &true_value, sizeof(int));
+  
   struct sockaddr_in server_address;
   init_server_address(&server_address, port);
   if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
