@@ -60,24 +60,27 @@ int download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
     if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
-    return false;
-
+        return false;
+    
+    char* buffer = (char*) malloc(sizeof(message->message_value.buffer) + 1);
+    buffer = message->message_value.buffer;
+    
     if(message->message_type == data_start) {
-        fp = fopen("/data","w");
-        fprintf(fp, message->message_value.buffor);
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfuly started downloading data!");
+        fp = fopen("/data","wb+");
+        fprintf(fp, buffer);
+        add_logf(client_log_filename, LOG_SUCCESS, "Successfully started downloading data!");
         return true;
     }
 
     else if(message->message_type == data) {
-        fprintf(fp, message->message_value.buffor);
+        fprintf(fp, buffer);
         return true;
     }
 
     else if(message->message_type == data_end) {
-        fprintf(fp, message->message_value.buffor);
+        fprintf(fp, buffer);
         fclose(fp);
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfuly downloaded data!");
+        add_logf(client_log_filename, LOG_SUCCESS, "Successfully downloaded data!");
         return true;
     }
     return false;
