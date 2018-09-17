@@ -3,7 +3,7 @@ var indexSectionsWithContent =
   0: "_acdghilmprsu",
   1: "_chmprs",
   2: "hlprsu",
-  3: "acdgirsu",
+  3: "acdghiprsu",
   4: "hlrsu",
   5: "acdgirsu",
   6: "hlprs",
@@ -34,4 +34,3 @@ var indexSectionLabels =
   5: "Enumerator",
   6: "Pages"
 };
-

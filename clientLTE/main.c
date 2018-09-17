@@ -106,6 +106,7 @@ int main(int argc, char* argv[])
     while (running && !check_for_shutdown(socket_fd, &received)) {
         update_battery(socket_fd, &message, &battery);
         set_current_signal_event(&cells);
+        printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         printf("Battery power: %i\n", battery.power_percentage);
 
         if (receive_ping(socket_fd, &message) == 0) {
