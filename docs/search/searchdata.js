@@ -1,9 +1,14 @@
 var indexSectionsWithContent =
 {
-  0: "acghlmprs",
+  0: "acdghilmprsu",
   1: "chmprs",
-  2: "hlrs",
+<<<<<<< HEAD
+  2: "hlrsu",
+  3: "acdgirsu",
+=======
+  2: "hlprs",
   3: "acgrs",
+>>>>>>> 5a99b4d96aae5f49ae53045fc7f4b7ec674cb80f
   4: "l",
   5: "l",
   6: "r"

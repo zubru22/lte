@@ -3,7 +3,8 @@
 #endif
 
 bool threads_done = false;
-pthread_t thread_id;
+pthread_t pinging_in_thread_id;
+pthread_t send_measurement_control_requests_id;
 
 pthread_t transferring_thread;
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
@@ -36,6 +37,11 @@ void init_server(int port) {
   if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     error("socket in init_server");
   }
+  // reuse old socket if still exists in kernel
+  // see https://stackoverflow.com/a/10651048
+  int true_value = 1;
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &true_value, sizeof(int));
+  
   struct sockaddr_in server_address;
   init_server_address(&server_address, port);
   if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
@@ -58,9 +64,10 @@ void init_server(int port) {
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
-  pthread_create(&thread_id, NULL, ping_and_timeout_in_thread, NULL);
-  // trying to send example file to all clients:l
+  pthread_create(&pinging_in_thread_id, NULL, ping_and_timeout_in_thread, NULL);
+  // trying to send example file to all clients:
   pthread_create(&transferring_thread, NULL, transfer_data, (void*) "/home/elszko/example.txt");
+  pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
 }
 
 void receive_packets() {
@@ -124,7 +131,7 @@ void clean() {
     broadcast_shutdown_notification();
     add_logf(server_log_filename, LOG_INFO, "CLEAN");
     threads_done = true;
-    pthread_join(thread_id, NULL);
+    pthread_join(pinging_in_thread_id, NULL);
     server_t__destroy(&server);
 }
 
