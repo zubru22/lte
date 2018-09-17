@@ -1,17 +1,16 @@
 var indexSectionsWithContent =
 {
-  0: "acdghilmprsu",
-  1: "chmprs",
-<<<<<<< HEAD
-  2: "hlrsu",
-  3: "acdgirsu",
-=======
-  2: "hlprs",
-  3: "acgrs",
->>>>>>> 5a99b4d96aae5f49ae53045fc7f4b7ec674cb80f
-  4: "l",
-  5: "l",
-  6: "r"
+  0: "_acdghilmprsu",
+  1: "_chmprs",
+  2: "hlprsu",
+  3: "acdghiprsu",
+  4: "hlrsu",
+  5: "acdgirsu",
+  6: "hlprs",
+  7: "acgrs",
+  8: "l",
+  9: "l",
+  10: "r"
 };
 
 var indexSectionNames =
@@ -35,4 +34,3 @@ var indexSectionLabels =
   5: "Enumerator",
   6: "Pages"
 };
-

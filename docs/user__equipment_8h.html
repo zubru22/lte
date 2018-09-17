@@ -76,15 +76,25 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;stdbool.h&gt;</code><br />
-<code>#include &lt;time.h&gt;</code><br />
 <code>#include &lt;sys/types.h&gt;</code><br />
 <code>#include &lt;unistd.h&gt;</code><br />
 <code>#include &quot;../message.h&quot;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
+<code>#include &lt;time.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for user_equipment.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="user__equipment_8h__incl.png" border="0" usemap="#clientLTE_2user__equipment_8h" alt=""/></div>
 <map name="clientLTE_2user__equipment_8h" id="clientLTE_2user__equipment_8h">
+<area shape="rect" id="node6" href="message_8h_source.html" title="../message.h" alt="" coords="333,80,432,107"/>
+</map>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><img src="user__equipment_8h__dep__incl.png" border="0" usemap="#clientLTE_2user__equipment_8hdep" alt=""/></div>
+<map name="clientLTE_2user__equipment_8hdep" id="clientLTE_2user__equipment_8hdep">
+<area shape="rect" id="node2" href="handle__messages_8h.html" title="Module for handling ping and low battery signal. " alt="" coords="5,80,203,107"/>
 </map>
 </div>
 </div>
@@ -94,12 +104,37 @@ Include dependency graph for user_equipment.h:</div>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structs__ue__battery.html">s_ue_battery</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__s__cell__signal.html">_s_cell_signal</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__s__cells.html">_s_cells</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a3caf01fac5e4daa87212b21987497f24"><td class="memItemLeft" align="right" valign="top"><a id="a3caf01fac5e4daa87212b21987497f24"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>STDBOOL_H</b></td></tr>
+<tr class="separator:a3caf01fac5e4daa87212b21987497f24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d030df1b814e21fe6ccf3b46bcc12fa"><td class="memItemLeft" align="right" valign="top"><a id="a1d030df1b814e21fe6ccf3b46bcc12fa"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>TIME_H</b></td></tr>
+<tr class="separator:a1d030df1b814e21fe6ccf3b46bcc12fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b424be9ff64eed7a14eeb44cbdb72ff"><td class="memItemLeft" align="right" valign="top"><a id="a3b424be9ff64eed7a14eeb44cbdb72ff"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>TYPES_H</b></td></tr>
+<tr class="separator:a3b424be9ff64eed7a14eeb44cbdb72ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a974808bbbb07cf7ff534c15bf73d4568"><td class="memItemLeft" align="right" valign="top"><a id="a974808bbbb07cf7ff534c15bf73d4568"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>NUMBER_OF_CELLS</b>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:a974808bbbb07cf7ff534c15bf73d4568"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a93aed38c0fc5df1dce619dbd6e6fe902"><td class="memItemLeft" align="right" valign="top"><a id="a93aed38c0fc5df1dce619dbd6e6fe902"></a>
 typedef struct <a class="el" href="structs__ue__battery.html">s_ue_battery</a>&#160;</td><td class="memItemRight" valign="bottom"><b>ue_battery</b></td></tr>
 <tr class="separator:a93aed38c0fc5df1dce619dbd6e6fe902"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6895514c970a57d5e6e91bf98e2da08a"><td class="memItemLeft" align="right" valign="top"><a id="a6895514c970a57d5e6e91bf98e2da08a"></a>
+typedef struct <a class="el" href="struct__s__cell__signal.html">_s_cell_signal</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_cell_signal</b></td></tr>
+<tr class="separator:a6895514c970a57d5e6e91bf98e2da08a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93eb06752559ef414683a5ae929b8fd8"><td class="memItemLeft" align="right" valign="top"><a id="a93eb06752559ef414683a5ae929b8fd8"></a>
+typedef struct <a class="el" href="struct__s__cells.html">_s_cells</a>&#160;</td><td class="memItemRight" valign="bottom"><b>s_cells</b></td></tr>
+<tr class="separator:a93eb06752559ef414683a5ae929b8fd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -121,6 +156,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a941b73d86f71c457bcb85fb3a820517e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#a941b73d86f71c457bcb85fb3a820517e">check_battery_status</a> (int socketfd, int step, <a class="el" href="structmessage.html">s_message</a> *<a class="el" href="structmessage.html">message</a>, <a class="el" href="structs__ue__battery.html">ue_battery</a> *battery)</td></tr>
 <tr class="memdesc:a941b73d86f71c457bcb85fb3a820517e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function checks if battery power is low or high. Depends if it's low or high it sends alert to eNodeB.  <a href="#a941b73d86f71c457bcb85fb3a820517e">More...</a><br /></td></tr>
 <tr class="separator:a941b73d86f71c457bcb85fb3a820517e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4edd6445539f96079211d5c8161d9cf"><td class="memItemLeft" align="right" valign="top"><a id="ac4edd6445539f96079211d5c8161d9cf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize_cells</b> (<a class="el" href="struct__s__cells.html">s_cells</a> *)</td></tr>
+<tr class="separator:ac4edd6445539f96079211d5c8161d9cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e13ba327b015ea4198cb812531f0e1a"><td class="memItemLeft" align="right" valign="top"><a id="a0e13ba327b015ea4198cb812531f0e1a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_current_signal_event</b> (<a class="el" href="struct__s__cells.html">s_cells</a> *)</td></tr>
+<tr class="separator:a0e13ba327b015ea4198cb812531f0e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Module for simulating battery life in UE. </p>
