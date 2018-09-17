@@ -43,6 +43,7 @@
 
 typedef struct {
     int socket;
+    int target_socket;
     struct sockaddr_in server_address;
     int epoll_file_descriptor;
     struct epoll_event event;
@@ -53,7 +54,7 @@ typedef struct {
 server_t server;
 extern bool threads_done;
 
-void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor);
+void server_t__init(server_t* self, int socket, int target_socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor);
 int server_t__socket(server_t* self);
 void server_t__destroy(server_t* self);
 void init_server_address(struct sockaddr_in* server_address, int port);

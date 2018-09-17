@@ -6,8 +6,9 @@ bool threads_done = false;
 pthread_t pinging_in_thread_id;
 pthread_t send_measurement_control_requests_id;
 
-void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
+void server_t__init(server_t* self, int socket, int target_socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
+  self->target_socket = target_socket;
   self->server_address = server_address;
   self->event = event;
   self->epoll_file_descriptor = epoll_file_descriptor;
@@ -31,7 +32,7 @@ void init_server_address(struct sockaddr_in* server_address, int port) {
   server_address->sin_port = htons(port);
 }
 
-void init_server(int port) {
+void init_server(int port, int target_port) {
   int server_socket;
   if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     error("socket in init_server");
@@ -40,7 +41,7 @@ void init_server(int port) {
   // see https://stackoverflow.com/a/10651048
   int true_value = 1;
   setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &true_value, sizeof(int));
-  
+
   struct sockaddr_in server_address;
   init_server_address(&server_address, port);
   if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
@@ -61,7 +62,9 @@ void init_server(int port) {
     close(epoll_file_descriptor);
     error("epoll_ctl in init_server");
   }
-  server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
+  int target_socket;
+  connect_to_target_server(target_port, &target_socket);
+  server_t__init(&server, server_socket, target_socket, server_address, event, epoll_file_descriptor);
 
   pthread_create(&pinging_in_thread_id, NULL, pinging_in_thread, NULL);
   pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
