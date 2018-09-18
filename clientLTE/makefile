@@ -20,7 +20,7 @@ valgrind:
 	$(CC) -c -o $@ $< $(SFLAGS)
 
 client: main.o handle_messages.o init_connection.o random_access.o rrc.o shutdown.o user_equipment.o logs.o $(DEPS)
-		$(CC) $(SFLAGS) main.o handle_messages.o init_connection.o random_access.o rrc.o shutdown.o user_equipment.o logs.o -o client
+		$(CC) $(SFLAGS) main.o handle_messages.o init_connection.o random_access.o rrc.o shutdown.o user_equipment.o logs.o -o client -lpthread
 
 main.o: main.c
 		$(CC) $(CFLAGS) main.c
