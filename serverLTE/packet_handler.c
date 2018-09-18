@@ -167,12 +167,15 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
 }
 
 void handle_measurement_report(int client_socket, s_message measurement_report_message) {
-  switch (measurement_report_message.events) {
+  switch (measurement_report_message.message_value.events) {
     case a3:
+      handle_a3_event(client_socket);
       break;
   }
 }
 
 void handle_a3_event(int client_socket) {
-
+  if (server.target_socket == -2) {
+    connect_to_target_server();
+  }
 }

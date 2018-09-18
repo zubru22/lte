@@ -6,9 +6,10 @@ bool threads_done = false;
 pthread_t pinging_in_thread_id;
 pthread_t send_measurement_control_requests_id;
 
-void server_t__init(server_t* self, int socket, int target_socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
+void server_t__init(server_t* self, int socket, int target_port, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
-  self->target_socket = target_socket;
+  self->target_socket = -2; // indicates that server did not connect to target
+  self->target_port = target_port;
   self->server_address = server_address;
   self->event = event;
   self->epoll_file_descriptor = epoll_file_descriptor;
@@ -62,9 +63,7 @@ void init_server(int port, int target_port) {
     close(epoll_file_descriptor);
     error("epoll_ctl in init_server");
   }
-  int target_socket;
-  connect_to_target_server(target_port, &target_socket);
-  server_t__init(&server, server_socket, target_socket, server_address, event, epoll_file_descriptor);
+  server_t__init(&server, server_socket, target_port, server_address, event, epoll_file_descriptor);
 
   pthread_create(&pinging_in_thread_id, NULL, pinging_in_thread, NULL);
   pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
@@ -141,4 +140,28 @@ void error(const char* error_message) {
     clean();
   }
   exit(EXIT_FAILURE);
+}
+
+void connect_to_target_server() {
+  if ((server.target_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    error("socket in connect_to_target_server");
+  }
+  struct hostent* target_host_entity;
+  if ((target_host_entity = gethostbyname(HOST_NAME)) == NULL) {
+    error("gethostbyname in connect_to_target_server");
+  }
+  struct sockaddr_in target_server_address;
+  bzero((char*)&target_server_address, sizeof(target_server_address));
+  target_server_address.sin_family = AF_INET;
+  bcopy((char *)target_host_entity->h_addr,
+       (char *)&target_server_address.sin_addr.s_addr,
+       target_host_entity->h_length);
+  target_server_address.sin_port = htons(server.target_port);
+  if (connect(
+              server.target_socket,
+              (struct sockaddr *) &target_server_address,
+              sizeof(target_server_address)
+              ) == -1) {
+      error("ERROR connecting");
+  }
 }
