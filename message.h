@@ -3,6 +3,8 @@
 #include <sys/types.h>
 #include <time.h>
 
+#define BUFFER_SIZE 16
+
 typedef struct prach_preamble {
     int16_t ra_rnti; // 16bit integer sent to server - first 2 bits are PreambleIndex
 } preamble;
@@ -82,7 +84,7 @@ typedef union message_value {
         rrc_config rrc_response;
         rrc_setup_complete message_complete;
         size_t size_of_file;
-        char* buffer;
+        char buffer[BUFFER_SIZE];
         s_event events;
 } u_message_value;
 

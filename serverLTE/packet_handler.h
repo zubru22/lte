@@ -4,11 +4,11 @@
 #ifndef PACKET_HANDLER_H
 #define PACKET_HANDLER_H
 
-#define PING_TIME_NORMAL 2
-#define PING_TIME_LOW_BATTERY 5
+#define PING_TIME_NORMAL 10
+#define PING_TIME_LOW_BATTERY 15
 
 //should be bigger than PING_TIME_NORMAL and PING_TIME_LOW_BATTERY
-#define PING_TIMEOUT 10
+#define PING_TIMEOUT 40
 
 #ifndef LOGS_H
 #include "../logs/logs.h"

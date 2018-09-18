@@ -2,7 +2,7 @@
 #include "packet_handler.h"
 #endif
 
-const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 3;
+const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 20;
 
 void handle_random_access_request(int client_socket, s_message message) {
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
@@ -145,7 +145,7 @@ int ping_client(void *data, const char *key, void *value) {
 
 void* send_measurement_control_requests(void* arg) {
   while (!threads_done) {
-    sleep(1);
+    sleep(SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD);
     hashmap_iter(server.clients, (hashmap_callback) send_measurement_control_request, NULL);
   }
 }
@@ -180,7 +180,6 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   
   s_message data_message_tag;
   data_message_tag.message_type = data_start;
-  //data_message_tag.message_value.size_of_file = file_stat.st_size;
   if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
     add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
     exit(EXIT_FAILURE);
@@ -191,24 +190,24 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   sleep(1);
   s_message data_message;
   data_message.message_type = data;
-  data_message.message_value.buffer = (char*) malloc(BUFFER_SIZE * sizeof(char));
 
   int bytes_read = 0;
 
   while (bytes_read < file_size) {
     sleep(1);
     fseek(file_to_be_sent, bytes_read, SEEK_SET);
-    fread(data_message.message_value.buffer, BUFFER_SIZE, 1, file_to_be_sent);
-
+    fread(data_message.message_value.buffer, BUFFER_SIZE-1, 1, file_to_be_sent);
+    data_message.message_value.buffer[BUFFER_SIZE-1] = '\0';
+    bytes_read += BUFFER_SIZE-1;
     if (send(current_client->socket, &data_message, sizeof(data_message), 0) == -1) {
       add_logf(server_log_filename, LOG_ERROR, "Error sending data");
       exit(EXIT_FAILURE);
     } else {
       add_logf(server_log_filename, LOG_SUCCESS, "Data sent: %s\n", data_message.message_value.buffer);
+      add_logf(server_log_filename, LOG_INFO, "Bytes sent: %d", bytes_read);
     }
-    bytes_read += BUFFER_SIZE;
-
-    // not too fast, so that we see what is going on
+    
+    memset(data_message.message_value.buffer, 0, BUFFER_SIZE);
   }
 
 
@@ -218,17 +217,17 @@ int broadcast_sample(void *arg, const char *key, void *value) {
     exit(EXIT_FAILURE);
   }
 
-  free(data_message.message_value.buffer);
   return 0;
 }
 
 
 // filename as arg
 void* transfer_data(void* arg) {
+  sleep(10);
   while (!threads_done) {
+    hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);
     // not too fast, so that we see what is going on
-    sleep(1);
-
-    hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);    
+    sleep(6);    
+    exit(1);
   }
 }

@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "user_equipment.h"
+#include <errno.h>
 
 #ifndef UNISTD_H
 #define UNISTD_H

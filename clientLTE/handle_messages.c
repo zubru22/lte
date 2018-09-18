@@ -1,7 +1,7 @@
 /* This functionality is about handling default client server communication like pings and stuff */
 #include "handle_messages.h"
 
- char* buffer;
+int bytes_received = 0;
 
 // This function receives ping message from eNodeB. Function returns -1 on error, 0 on success.
 // If function receives a message, but message's type isn't "ping" - it returns 1.
@@ -61,34 +61,32 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
 bool download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
-    message->message_value.buffer = (char*) malloc(sizeof(char) * 16);
     if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
         return false;
     
-    
-    
     if(message->message_type == data_start) {
         add_logf(client_log_filename, LOG_SUCCESS, "\n\nSuccessfully started downloading data!\n\n");
-        //buffer = (char*) malloc(sizeof(char) * 16);
-        //buffer = message->message_value.buffer;
-        fp = fopen("/home/elszko/dupa.txt","wb+");
+        fp = fopen("received_file","w+");
         return true;
     }
 
     else if(message->message_type == data) {
-        add_logf(client_log_filename, LOG_INFO, "DUPADUPADUPA DATA");
-        if(message->message_value.buffer == NULL){
-            printf("DUPA NULL");
-        } else {
-            printf("++++ buffer: %s ++++\n", message->message_value.buffer);
-        }
-        fprintf(fp, message->message_value.buffer);
+        add_logf(client_log_filename, LOG_SUCCESS, "Received data! %s", message->message_value.buffer);
+        
+        // TODO - don't open and close the file every time, do it on data_start and data_end
+        
+        FILE* received_file = fopen("received","ab+");
+        fprintf(received_file, "%s", message->message_value.buffer);
+        //fprintf(fp, "%s", message->message_value.buffer);
+        bytes_received += BUFFER_SIZE-1;
+        add_logf(client_log_filename, LOG_INFO, "Number of currently read bytes: %d", bytes_received);
+        fclose(received_file);
+        memset(message->message_value.buffer, 0, BUFFER_SIZE);
         return true;
     }
 
     else if(message->message_type == data_end) {
         fclose(fp);
-        free(message->message_value.buffer);
         add_logf(client_log_filename, LOG_SUCCESS, "Successfully downloaded data!");
         return true;
     }
