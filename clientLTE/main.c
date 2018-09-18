@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
     s_message message;
     ue_battery battery;
     s_cells cells;
+    FILE* file_to_recv;
     srand(time(NULL)); 
 
     struct sigaction s_signal;
@@ -105,6 +106,7 @@ int main(int argc, char* argv[])
     while (running && !check_for_shutdown(socket_fd, &received)) {
         update_battery(socket_fd, &message, &battery);
         set_current_signal_event(&cells);
+        printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         printf("Battery power: %i\n", battery.power_percentage);
 
         if (receive_ping(socket_fd, &message) == 0) {
@@ -118,6 +120,9 @@ int main(int argc, char* argv[])
 
         if (receive_measurement_control_request(socket_fd, &received))
             send_measurement_report(socket_fd, &message, &cells);
+
+        /*if(download_data(socket_fd, &message, file_to_recv))
+            printf("Downloading...\n");*/
 
         sleep(1);
     }

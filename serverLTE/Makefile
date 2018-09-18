@@ -4,7 +4,7 @@ CC = gcc
 CFLAGS=-g -Wall -c
 SFLAGS=-g -Wall 
 
-DEPS= client_handler.h client_object.h packet_handler.h server.h
+DEPS= . client_handler.h client_object.h packet_handler.h server.h
 
 all: clean create 							## first, clean all the *.o binaries,then compile with new ones.
 
@@ -54,4 +54,4 @@ logs.o: ../logs/logs.c
 .PHONY : clean
 clean: 
 	rm server client_handler.o client_object.o MurmurHash3.o hashmap.o \
-	packet_handler.o server.o main.o 
+	packet_handler.o server.o main.o logs.o 
