@@ -148,6 +148,7 @@ void* send_measurement_control_requests(void* arg) {
     sleep(SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD);
     hashmap_iter(server.clients, (hashmap_callback) send_measurement_control_request, NULL);
   }
+  return NULL;
 }
 
 int send_measurement_control_request(void *data, const char *key, void *value) {
@@ -157,6 +158,7 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
   client_t* current_client = (client_t*) value;
   send(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
   add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
+  return 0;
 }
 
 int broadcast_sample(void *arg, const char *key, void *value) {
@@ -192,19 +194,21 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   data_message.message_type = data;
 
   int bytes_read = 0;
-
+  int bytes_sent = 0;
   while (bytes_read < file_size) {
     sleep(1);
     fseek(file_to_be_sent, bytes_read, SEEK_SET);
     fread(data_message.message_value.buffer, BUFFER_SIZE-1, 1, file_to_be_sent);
     data_message.message_value.buffer[BUFFER_SIZE-1] = '\0';
     bytes_read += BUFFER_SIZE-1;
-    if (send(current_client->socket, &data_message, sizeof(data_message), 0) == -1) {
+    bytes_sent = send(current_client->socket, &data_message, sizeof(data_message), 0);
+
+    if (bytes_sent == -1) {
       add_logf(server_log_filename, LOG_ERROR, "Error sending data");
       exit(EXIT_FAILURE);
     } else {
       add_logf(server_log_filename, LOG_SUCCESS, "Data sent: %s\n", data_message.message_value.buffer);
-      add_logf(server_log_filename, LOG_INFO, "Bytes sent: %d", bytes_read);
+      add_logf(server_log_filename, LOG_INFO, "Bytes sent: %d", bytes_sent);
     }
     
     memset(data_message.message_value.buffer, 0, BUFFER_SIZE);
@@ -227,7 +231,7 @@ void* transfer_data(void* arg) {
   while (!threads_done) {
     hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);
     // not too fast, so that we see what is going on
-    sleep(6);    
     exit(1);
   }
+  return NULL;
 }
