@@ -18,13 +18,14 @@ void initialize_battery_life(ue_battery* battery) {
     time(&battery->starting_time);
 }
 void check_battery_status(int socketfd, int step, s_message* message, ue_battery* battery) {
+    const int low_battery_threshold = 20;
     assert((message != NULL) && (battery != NULL));
-    if(battery->power_percentage <= 20 && (20-step) < battery->power_percentage && !battery->charging) {
+    if(battery->power_percentage <= low_battery_threshold && (low_battery_threshold-step) < battery->power_percentage && !battery->charging) {
         battery->power_is_low = true;
         send_low_battery_notification(socketfd, message);
         add_logf(client_log_filename, LOG_INFO, "Send low bettery note!");
     }
-    else if (battery->power_percentage >= 20 && (20+step) > battery->power_percentage && battery->charging) {
+    else if (battery->power_percentage >= low_battery_threshold && (low_battery_threshold+step) > battery->power_percentage && battery->charging) {
         battery->power_is_low = false;
         send_high_battery_notification(socketfd, message);
         add_logf(client_log_filename, LOG_INFO, "Send high bettery note!");

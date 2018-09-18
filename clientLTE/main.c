@@ -121,8 +121,8 @@ int main(int argc, char* argv[])
         if (receive_measurement_control_request(socket_fd, &received))
             send_measurement_report(socket_fd, &message, &cells);
 
-        if(download_data(socket_fd, &message, file_to_recv))
-            printf("Downloading...\n");
+        /*if(download_data(socket_fd, &message, file_to_recv))
+            printf("Downloading...\n");*/
 
         sleep(1);
     }

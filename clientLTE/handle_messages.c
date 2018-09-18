@@ -56,7 +56,7 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
         add_logf(client_log_filename, LOG_ERROR, "Successfuly sent Measurement Report!");
 }
 
-int download_data(int socketfd, s_message* message, FILE* fp) {
+/*int download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
     if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
@@ -84,4 +84,4 @@ int download_data(int socketfd, s_message* message, FILE* fp) {
         return true;
     }
     return false;
-}
+}*/
