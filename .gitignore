@@ -1,0 +1,6 @@
+.gitignore
+*.o
+*.jpg
+*.log
+server
+client
