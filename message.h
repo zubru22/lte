@@ -76,6 +76,10 @@ typedef enum _s_event {a1, a2, a3, a4, a5, def} s_event; // def means 'default e
                                                          // and it can occur right after ue has been turned on
                                                          // or between the rest of events
 
+typedef struct { // structure keeps client_socket, which is prefered for handover
+  int client_socket;
+} handover;
+
 typedef union message_value {
         preamble message_preamble;
         response message_response;

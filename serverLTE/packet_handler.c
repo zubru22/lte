@@ -189,24 +189,64 @@ void handle_measurement_report(int client_socket, s_message measurement_report_m
 }
 
 void handle_a3_event(int client_socket) {
-  printf ("server.target_socket: %d\n", server.target_socket);
+  add_logf(server_log_filename, LOG_INFO, "handle_a3_event with client socket: %d", client_socket);
   if (server.target_socket == -2) {
     connect_to_target_server();
   }
   // send x2ap resource status request
   s_message handover_x2ap_resource_status_request;
-  handover_x2ap_resource_status_request.type_of_message = x2ap_resource_status_request;
   memset(&handover_x2ap_resource_status_request, 0, sizeof(handover_x2ap_resource_status_request));
+  handover_x2ap_resource_status_request.type_of_message = x2ap_resource_status_request;
+  handover_x2ap_resource_status_request.handover.client_socket = client_socket;
   if (send(server.target_socket, &handover_x2ap_resource_status_request, sizeof(handover_x2ap_resource_status_request), 0) == -1) {
     error("send in handle_a3_event");
   }
+  add_logf(server_log_filename, LOG_INFO, "send handover_x2ap_resource_status_request to target at socket: %d", server.target_socket);
 }
 
-void handle_x2ap_resource_status_request(int source_socket) {
+void handle_x2ap_resource_status_request(int client_socket) {
+  add_logf(server_log_filename, LOG_INFO, "received x2ap_resource_status_request from source server");
   s_message handover_x2ap_resource_status_response;
   handover_x2ap_resource_status_response.type_of_message = x2ap_resource_status_response;
+  handover_x2ap_resource_status_response.handover.client_socket = client_socket;
   memset(&handover_x2ap_resource_status_response, 0, sizeof(handover_x2ap_resource_status_response));
   if (send(server.target_socket, &handover_x2ap_resource_status_response, sizeof(handover_x2ap_resource_status_response), 0) == -1) {
     error("send in handle_a3_event");
   }
+  add_logf(server_log_filename, LOG_INFO, "send x2ap_resource_status_response to source server");
+}
+
+void handle_x2ap_resource_status_response(int client_socket) {
+  add_logf(server_log_filename, LOG_INFO, "received x2ap_resource_status_request from target server");
+  s_message handover_x2ap_handover_request;
+  handover_x2ap_handover_request.type_of_message = x2ap_handover_request;
+  handover_x2ap_handover_request.handover.client_socket = client_socket;
+  memset(&handover_x2ap_handover_request, 0, sizeof(handover_x2ap_handover_request));
+  if (send(server.target_socket, &handover_x2ap_handover_request, sizeof(handover_x2ap_handover_request), 0) == -1) {
+    error("send in handle_a3_event");
+  }
+  add_logf(server_log_filename, LOG_INFO, "send x2ap_handover_request to target server");
+}
+
+void handle_x2ap_handover_request(int client_socket) {
+  add_logf(server_log_filename, LOG_INFO, "received x2ap_handover_request from source server");
+  s_message handover_request_acknowledge;
+  handover_request_acknowledge.type_of_message = x2ap_handover_request_acknowledge;
+  handover_request_acknowledge.handover.client_socket = client_socket;
+  memset(&handover_request_acknowledge, 0, sizeof(handover_request_acknowledge));
+  if (send(server.target_socket, &handover_request_acknowledge, sizeof(handover_request_acknowledge), 0) == -1) {
+    error("send in handle_a3_event");
+  }
+  add_logf(server_log_filename, LOG_INFO, "send x2ap_handover_request_acknowledge to source server");
+}
+
+void handle_x2ap_handover_request_acknowledge(int client_socket) {
+  add_logf(server_log_filename, LOG_INFO, "received x2ap_handover_request_acknowledge from target server");
+  s_message rrc_connection_reconfiguration_request_message;
+  rrc_connection_reconfiguration_request_message.type_of_message = rrc_connection_reconfiguration_request;
+  memset(&rrc_connection_reconfiguration_request_message, 0, sizeof(rrc_connection_reconfiguration_request_message));
+  // here we need to get client with client_socket
+  /*if (send(server.target_socket, &rrc_connection_reconfiguration_request_messagee, sizeof(rrc_connection_reconfiguration_request_message), 0) == -1) {
+    error("send in handle_a3_event");
+  }*/
 }
