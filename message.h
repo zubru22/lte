@@ -25,7 +25,11 @@ typedef enum type_of_message {
     ue_off,
     enb_off,
     measurement_control_request,
-    measurement_report
+    measurement_report,
+    x2ap_resource_status_request,
+    x2ap_resource_status_response,
+    x2ap_handover_request_acknowledge,
+    rrc_connection_reconfiguration_request
 } e_message_type;
 
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
@@ -68,7 +72,7 @@ typedef struct rrc_setup_complete {
     int16_t mnc;
 } rrc_setup_complete;
 
-typedef enum _s_event {a1, a2, a3, a4, def} s_event; // def means 'default event' - it means no event whatsoever
+typedef enum _s_event {a1, a2, a3, a4, a5, def} s_event; // def means 'default event' - it means no event whatsoever
                                                          // and it can occur right after ue has been turned on
                                                          // or between the rest of events
 

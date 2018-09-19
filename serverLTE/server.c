@@ -91,7 +91,7 @@ void handle_connection(int number_of_file_descriptors_ready) {
 }
 
 void accept_client() {
-  client_t* client = (client_t*)malloc(sizeof(client_t)); // TODO
+  client_t* client = (client_t*)malloc(sizeof(client_t));
   struct sockaddr_in client_address;
   socklen_t client_length;
   client_length = sizeof(client_address);
@@ -146,6 +146,7 @@ void connect_to_target_server() {
   if ((server.target_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     error("socket in connect_to_target_server");
   }
+  printf ("SOCKET MADE: %d\n", server.target_socket);
   struct hostent* target_host_entity;
   if ((target_host_entity = gethostbyname(HOST_NAME)) == NULL) {
     error("gethostbyname in connect_to_target_server");
@@ -164,4 +165,5 @@ void connect_to_target_server() {
               ) == -1) {
       error("ERROR connecting");
   }
+  printf ("CONNECTED");
 }

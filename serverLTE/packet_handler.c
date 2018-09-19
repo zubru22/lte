@@ -168,14 +168,36 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
 
 void handle_measurement_report(int client_socket, s_message measurement_report_message) {
   switch (measurement_report_message.message_value.events) {
+    case a1:
+      printf ("a1\n");
+      break;
+    case a2:
+      printf ("a2\n");
+      break;
     case a3:
+      printf ("a3\n");
       handle_a3_event(client_socket);
+      break;
+    case a4:
+      printf ("a4\n");
+      break;
+    case a5:
+      printf ("a5\n");
+    default:
       break;
   }
 }
 
 void handle_a3_event(int client_socket) {
+  printf ("server.target_socket: %d\n", server.target_socket);
   if (server.target_socket == -2) {
     connect_to_target_server();
+  }
+  // send x2ap resource status request
+  s_message handover_x2ap_resource_status_request;
+  handover_x2ap_resource_status_request.type_of_message = x2ap_resource_status_request;
+  memset(&handover_x2ap_resource_status_request, 0, sizeof(handover_x2ap_resource_status_request));
+  if (send(server.target_socket, &handover_x2ap_resource_status_request, sizeof(handover_x2ap_resource_status_request), 0) == -1) {
+    error("send in handle_a3_event");
   }
 }

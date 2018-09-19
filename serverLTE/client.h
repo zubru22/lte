@@ -26,6 +26,7 @@ typedef struct client {
     int16_t mcc;
     int16_t mnc;
     battery_state_t battery_state;
+    bool is_server;
     // is stored as a key of map-element, but might be useful here
     int socket;
 } client_t;
