@@ -24,25 +24,9 @@
 #endif
 
 volatile bool running = true;
-int socket_fd;
-s_message message;
-ue_battery battery;
-
+ 
 void signal_handler(int signum) {
     running = false;
-}
-
-void* ping_thread() {
-    while(running) {
-        if (receive_ping(socket_fd, &message) == 0) {
-            if (send_pong(socket_fd, &message) == -1)
-                add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");
-            else {
-                decrease_after_ping(socket_fd, &message, &battery);
-                add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
-            }
-        }
-    }
 }
 
 int main(int argc, char* argv[])
@@ -131,8 +115,7 @@ int main(int argc, char* argv[])
     receive_rrc_setup(socket_fd, &received, &message);
     sigaction(SIGINT, &s_signal, NULL);
 
-    
-
+    int packets_received = 0;
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
         recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
@@ -153,9 +136,12 @@ int main(int argc, char* argv[])
                 break;
             case data:
                 download_data(socket_fd, &message, file_to_recv);
+                packets_received++;
                 break;
             case data_end:
                 printf("\n\n----------------------\nFinished downloading data!\n----------------------\n\n");
+                printf("\n-------------packets received: %d ----------------\n",packets_received);
+                packets_received = 0;
                 fclose(file_to_recv);    
                 break;
             case measurement_control_request:
@@ -164,17 +150,14 @@ int main(int argc, char* argv[])
                 break;
         }
     
-        update_battery(socket_fd, &message, &battery);
-        set_current_signal_event(&cells);
-        printf("\nCurrent event: %d\n", (int)cells.current_event+1);
-        printf("Battery power: %i\n", battery.power_percentage);
+        // update_battery(socket_fd, &message, &battery);
+        // set_current_signal_event(&cells);
 
-        sleep(1);
-    }
-    // Join thread
-    if(pthread_join(ping_thread_id, NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread: ping_thread_id");
-        exit(1);
+        //printf("\nCurrent event: %d\n", (int)cells.current_event+1);
+        //printf("Battery power: %i\n", battery.power_percentage);
+        message.message_type = -1;
+        
+        //sleep(1);
     }
     // Check if eNodeB is still on before trying to send UE off signal
     if (message.message_type != enb_off)

@@ -37,6 +37,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <stdbool.h>
+#include <sys/stat.h>
 
 #include <fcntl.h>
 

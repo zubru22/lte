@@ -168,17 +168,20 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   add_logf(server_log_filename, LOG_INFO, "File to be sent: %s\n", filename);
 
   FILE* file_to_be_sent = fopen(filename, "rb");
-  printf("\nafter open\n");
   if (file_to_be_sent == NULL) {
     add_logf(server_log_filename, LOG_ERROR, "Error opening file %s", strerror(errno));
     exit(EXIT_FAILURE);
   }
   
+  struct stat st;
+  stat(filename, &st);
+  __off_t real_size = st.st_size;
+  
   fseek(file_to_be_sent, 0L, SEEK_END);
-  size_t file_size = ftell(file_to_be_sent);
-  printf("size of file (bytes): %lu\n", file_size);
+  long file_size = ftell(file_to_be_sent);
   fseek(file_to_be_sent, 0, SEEK_SET);
- 
+  
+  add_logf(server_log_filename, LOG_INFO, "Size of file (bytes): %lu\nReal size of file: %lu\n", file_size, real_size);
   
   s_message data_message_tag;
   data_message_tag.message_type = data_start;
@@ -195,23 +198,29 @@ int broadcast_sample(void *arg, const char *key, void *value) {
 
   int bytes_read = 0;
   int bytes_sent = 0;
+  int packets_sent = 0;
   while (bytes_read < file_size) {
-    sleep(1);
+    //sleep(1);
+    // nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
+    nanosleep((const struct timespec[]){{0, 100000L}}, NULL);
+
     fseek(file_to_be_sent, bytes_read, SEEK_SET);
-    fread(data_message.message_value.buffer, BUFFER_SIZE-1, 1, file_to_be_sent);
-    data_message.message_value.buffer[BUFFER_SIZE-1] = '\0';
-    bytes_read += BUFFER_SIZE-1;
+    memset(data_message.message_value.buffer, 0, BUFFER_SIZE);
+    fread(data_message.message_value.buffer, BUFFER_SIZE, 1, file_to_be_sent);
+    
+    //data_message.message_value.buffer[BUFFER_SIZE-1] = '\0';
+    bytes_read += BUFFER_SIZE;
     bytes_sent = send(current_client->socket, &data_message, sizeof(data_message), 0);
 
     if (bytes_sent == -1) {
       add_logf(server_log_filename, LOG_ERROR, "Error sending data");
       exit(EXIT_FAILURE);
     } else {
-      add_logf(server_log_filename, LOG_SUCCESS, "Data sent: %s\n", data_message.message_value.buffer);
-      add_logf(server_log_filename, LOG_INFO, "Bytes sent: %d", bytes_sent);
+      //add_logf(server_log_filename, LOG_SUCCESS, "Data sent: %s\n", data_message.message_value.buffer);
+      //add_logf(server_log_filename, LOG_INFO, "Bytes sent: %d", bytes_sent);
+      packets_sent++;
     }
     
-    memset(data_message.message_value.buffer, 0, BUFFER_SIZE);
   }
 
 
@@ -219,6 +228,8 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
     add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
     exit(EXIT_FAILURE);
+  } else {
+    add_logf(server_log_filename, LOG_SUCCESS, "File transfered! Packets sent: %d", packets_sent);
   }
 
   return 0;
@@ -232,6 +243,7 @@ void* transfer_data(void* arg) {
     hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);
     // not too fast, so that we see what is going on
     sleep(5);
+    exit(0);
   }
   return NULL;
 }

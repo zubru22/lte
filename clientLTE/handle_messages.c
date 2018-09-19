@@ -6,9 +6,7 @@ int bytes_received = 0;
 // This function receives ping message from eNodeB. Function returns -1 on error, 0 on success.
 // If function receives a message, but message's type isn't "ping" - it returns 1.
 int receive_ping(int socketfd, s_message* message) {
-    if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
-        return -1;
-    
+
     if(ping == message->message_type)
         return 0;
     
@@ -58,12 +56,9 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
 int download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
-    add_logf(client_log_filename, LOG_SUCCESS, "Received data! %s", message->message_value.buffer);
         
     fprintf(fp, "%s", message->message_value.buffer);
     bytes_received += BUFFER_SIZE-1;
-    add_logf(client_log_filename, LOG_INFO, "Number of currently read bytes: %d", bytes_received);
-    memset(message->message_value.buffer, 0, BUFFER_SIZE);
 
     return 1;
 }

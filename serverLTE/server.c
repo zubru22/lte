@@ -65,12 +65,13 @@ void init_server(int port) {
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
   pthread_create(&pinging_in_thread_id, NULL, ping_and_timeout_in_thread, NULL);
-  // trying to send example file to all clients:
-  //char* file_to_be_sent = "example.txt";
-  // char* file_to_be_sent = "obrazek.jpg";
-  char* file_to_be_sent = "tekst.txt";
-  pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
   pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
+  
+  // trying to send example file to all clients:
+  //char* file_to_be_sent = "tekst.txt";
+  //char* file_to_be_sent = "obrazek.png";
+  char* file_to_be_sent = "piesel.jpg";
+  pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
 }
 
 void receive_packets() {

@@ -84,7 +84,7 @@ typedef union message_value {
         rrc_config rrc_response;
         rrc_setup_complete message_complete;
         size_t size_of_file;
-        char buffer[BUFFER_SIZE];
+        unsigned char buffer[BUFFER_SIZE];
         s_event events;
 } u_message_value;
 
