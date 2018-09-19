@@ -34,8 +34,10 @@ int main(int argc, char* argv[])
     }
     int port_number = atoi(argv[1]);
     int socket_fd;
+    int download_data_return_value;
     struct sockaddr_in server;
     s_message message;
+    s_message* message_pointer = &message;
     ue_battery battery;
     s_cells cells;
     FILE* file_to_recv = NULL;
@@ -102,26 +104,47 @@ int main(int argc, char* argv[])
     receive_rrc_setup(socket_fd, &received, &message);
     sigaction(SIGINT, &s_signal, NULL);
 
+    
+
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
-        if(download_data(socket_fd, &message, file_to_recv))
-            printf("Downloading...\n");
+        recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
+        switch (message.message_type) {
+            case ping:                
+                if (receive_ping(socket_fd, &message) == 0) {
+                    if (send_pong(socket_fd, &message) == -1)
+                        add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
+                    else {
+                        decrease_after_ping(socket_fd, &message, &battery);
+                        add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
+                    }
+                }
+                break;
+            case data_start:
+                file_to_recv = fopen("received","ab+");
+                printf("\n\n----------------------\nStarted downloading data!\n----------------------\n\n");    
+                break;
+            case data:
+                download_data(socket_fd, &message, file_to_recv);
+                break;
+            case data_end:
+                printf("\n\n----------------------\nFinished downloading data!\n----------------------\n\n");
+                fclose(file_to_recv);    
+                break;
+            case measurement_control_request:
+                if (receive_measurement_control_request(socket_fd, &received))
+                    send_measurement_report(socket_fd, &message, &cells);
+                break;
+        }
+    
         update_battery(socket_fd, &message, &battery);
         set_current_signal_event(&cells);
         printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         printf("Battery power: %i\n", battery.power_percentage);
 
-        if (receive_ping(socket_fd, &message) == 0) {
-            if (send_pong(socket_fd, &message) == -1)
-                add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");   
-            else {
-                decrease_after_ping(socket_fd, &message, &battery);
-                add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
-            }
-        }
 
-        if (receive_measurement_control_request(socket_fd, &received))
-            send_measurement_report(socket_fd, &message, &cells);
+        // if (receive_measurement_control_request(socket_fd, &received))
+            // send_measurement_report(socket_fd, &message, &cells);
 
         sleep(1);
     }

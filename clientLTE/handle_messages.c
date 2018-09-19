@@ -35,9 +35,6 @@ int send_ue_off_signal(int socketfd, s_message* message) {
 
 bool receive_measurement_control_request(int socketfd, s_message* message) {
     assert(message != NULL);
-
-    if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
-        return false;
     
     if(message->message_type == measurement_control_request) {
         add_logf(client_log_filename, LOG_SUCCESS, "Successfuly received Measurement Control request.");
@@ -58,37 +55,15 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
         add_logf(client_log_filename, LOG_ERROR, "Successfuly sent Measurement Report!");
 }
 
-bool download_data(int socketfd, s_message* message, FILE* fp) {
+int download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
-    if(-1 == recv(socketfd, (s_message*)message, sizeof(*message), MSG_DONTWAIT))
-        return false;
-    
-    if(message->message_type == data_start) {
-        add_logf(client_log_filename, LOG_SUCCESS, "\n\nSuccessfully started downloading data!\n\n");
-        fp = fopen("received_file","w+");
-        return true;
-    }
-
-    else if(message->message_type == data) {
-        add_logf(client_log_filename, LOG_SUCCESS, "Received data! %s", message->message_value.buffer);
+    add_logf(client_log_filename, LOG_SUCCESS, "Received data! %s", message->message_value.buffer);
         
-        // TODO - don't open and close the file every time, do it on data_start and data_end
-        
-        FILE* received_file = fopen("received","ab+");
-        fprintf(received_file, "%s", message->message_value.buffer);
-        //fprintf(fp, "%s", message->message_value.buffer);
-        bytes_received += BUFFER_SIZE-1;
-        add_logf(client_log_filename, LOG_INFO, "Number of currently read bytes: %d", bytes_received);
-        fclose(received_file);
-        memset(message->message_value.buffer, 0, BUFFER_SIZE);
-        return true;
-    }
+    fprintf(fp, "%s", message->message_value.buffer);
+    bytes_received += BUFFER_SIZE-1;
+    add_logf(client_log_filename, LOG_INFO, "Number of currently read bytes: %d", bytes_received);
+    memset(message->message_value.buffer, 0, BUFFER_SIZE);
 
-    else if(message->message_type == data_end) {
-        fclose(fp);
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfully downloaded data!");
-        return true;
-    }
-    return false;
+    return 1;
 }
