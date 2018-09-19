@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #ifndef HASHMAP_H
 #include "../lib/hashmap.h"
@@ -28,6 +29,7 @@ typedef struct client {
     battery_state_t battery_state;
     // is stored as a key of map-element, but might be useful here
     int socket;
+    bool is_server;
 } client_t;
 
 client_t* get_client_by_socket(hashmap* map_of_clients, int socket);

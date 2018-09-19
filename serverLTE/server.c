@@ -99,6 +99,7 @@ void accept_client() {
                          server.socket,
                          (struct sockaddr *) &client_address,
                          &client_length);
+  client->is_server = false;                      
   if (client->socket == -1) {
     error("accept in accept_client");
   }

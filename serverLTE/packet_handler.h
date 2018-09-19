@@ -72,4 +72,12 @@ int send_measurement_control_request(void *data, const char *key, void *value);
 void handle_measurement_report(int client_socket, s_message measurement_report_message);
 
 void handle_a3_event(int client_socket);
+
+void handle_x2ap_resource_status_request(int client_socket);
+
+void handle_x2ap_resource_status_response(int client_socket);
+
+void handle_x2ap_handover_request(int client_socket);
+
+void handle_x2ap_handover_request_acknowledge(int client_socket);
 #endif

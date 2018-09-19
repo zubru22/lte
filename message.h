@@ -28,6 +28,7 @@ typedef enum type_of_message {
     measurement_report,
     x2ap_resource_status_request,
     x2ap_resource_status_response,
+    x2ap_handover_request,
     x2ap_handover_request_acknowledge,
     rrc_connection_reconfiguration_request
 } e_message_type;
@@ -78,7 +79,7 @@ typedef enum _s_event {a1, a2, a3, a4, a5, def} s_event; // def means 'default e
 
 typedef struct { // structure keeps client_socket, which is prefered for handover
   int client_socket;
-} handover;
+} handover_t;
 
 typedef union message_value {
         preamble message_preamble;
@@ -87,6 +88,7 @@ typedef union message_value {
         rrc_config rrc_response;
         rrc_setup_complete message_complete;
         s_event events;
+        handover_t handover;
 } u_message_value;
 
 typedef struct message {

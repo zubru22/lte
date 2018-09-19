@@ -23,7 +23,7 @@ int16_t get_client_rnti(int socket) {
 
 int notify_client_of_shutdown(void *data, const char *key, void *value) {
   client_t* client_notified = (client_t*) value;
-  
+
   s_message shutdown_notification;
   memset(&shutdown_notification, 0, sizeof(shutdown_notification));
   shutdown_notification.message_type = enb_off;
@@ -38,7 +38,7 @@ int handle_client_inactivity(void *data, const char *key, void *value) {
   time_t time_since_last_activity = current_time - current_client->last_activity;
   bool should_kick = (time_since_last_activity > PING_TIMEOUT);
 
-  if (should_kick) {
+  if (should_kick && current_client->is_server == false) {
     add_logf(server_log_filename, LOG_INFO, "Timeout - kicking client on socket %d", current_client->socket);
     close(current_client->socket);
     delete_client_from_hashmap(server.clients, current_client->socket);

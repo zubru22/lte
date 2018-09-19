@@ -2,10 +2,10 @@
 * also it takes care of signal power measurement simulation*/
 #ifndef USER_EQUIPMENT_H
 #include "user_equipment.h"
-#endif 
+#endif
 #ifndef LOGS_H
 #include "../logs/logs.h"
-#endif 
+#endif
 #include <assert.h>
 
 // This function initializes battery. Should only be used once.
@@ -39,7 +39,7 @@ int update_battery(int socketfd, s_message* message, ue_battery* battery) {
     assert((message != NULL) && (battery != NULL));
 
     const int step = 12;
-    
+
     check_battery_status(socketfd, step, message, battery);
 
     const static time_t battery_decrease_time = 1;
@@ -53,7 +53,7 @@ int update_battery(int socketfd, s_message* message, ue_battery* battery) {
         // Reset starting_time to current time
         time(&battery->starting_time);
     }
-    
+
     if(battery->power_percentage <= 0) {
         battery->power_percentage = 0;
         battery->charging = true;
@@ -71,7 +71,7 @@ void decrease_after_ping(int socketfd, s_message* message, ue_battery* battery) 
     assert((message != NULL) && (battery != NULL));
 
     static const int8_t decrase_amount = 2;
-    
+
     check_battery_status(socketfd, decrase_amount, message, battery);
 
     if (battery->power_percentage - decrase_amount < 0)
@@ -146,7 +146,7 @@ void update_rsrps(s_cells* cells) {
             }
             printf("Signal power (%d): %d\n", i+1, cells->cells_signals[i].rsrp);
         }
-        
+
         time(&cells->starting_time); // Actualise starting time
     }
 }
@@ -162,13 +162,13 @@ s_event check_events(s_cells* cells) {
 
     if(cells->cells_signals[0].rsrp > cells->cells_signals[0].thresholds[1] && 5 == event_change)
         event_change = 2;
-    
+
     // Events A1, A2
     if(cells->cells_signals[0].rsrp > cells->cells_signals[0].thresholds[0] && 1 == event_change) {
         event_change = 5;
         return a1;
     }
-    
+
     if(cells->cells_signals[0].rsrp < cells->cells_signals[0].thresholds[1] && 2 == event_change) {
         event_change = 5;
         return a2;
@@ -176,7 +176,7 @@ s_event check_events(s_cells* cells) {
     // Event A3
     if(cells->cells_signals[1].rsrp < cells->cells_signals[0].rsrp)
         a3_checked = false;
-        
+
     if(cells->cells_signals[1].rsrp > cells->cells_signals[0].rsrp && false == a3_checked) {
         event_change = 5;
         a3_checked = true;
