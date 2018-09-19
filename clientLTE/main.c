@@ -19,6 +19,7 @@
 #ifndef SHUTDOWN_H
 #include "shutdown.h"
 #endif
+#include <jansson.h>
 
 volatile bool running = true;
 
@@ -32,6 +33,13 @@ int main(int argc, char* argv[])
         add_logf(client_log_filename, LOG_ERROR, "You need to pass port number as an argument!");
         return 0;
     }
+    json_t *json;
+    json = json_object();
+    json_object_set(json, "value", json_integer(42));
+    json_object_set(json, "string", json_string("something"));
+    printf("%s\n", json_string_value(json_object_get(json, "string")));
+    json_dumpf(json, stdout, JSON_INDENT(4));
+
     int port_number = atoi(argv[1]);
     int socket_fd;
     struct sockaddr_in server;
