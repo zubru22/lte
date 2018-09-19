@@ -142,32 +142,32 @@ Functions</h2></td></tr>
 <tr class="memdesc:a9a179b258107ce0a6f0fc44c4b6e243c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function initializes battery. Should only be used once.  <a href="#a9a179b258107ce0a6f0fc44c4b6e243c">More...</a><br /></td></tr>
 <tr class="separator:a9a179b258107ce0a6f0fc44c4b6e243c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4244e521b3f14a2b532dc4119a924032"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#a4244e521b3f14a2b532dc4119a924032">update_battery</a> (int, <a class="el" href="structmessage.html">s_message</a> *, <a class="el" href="structs__ue__battery.html">ue_battery</a> *)</td></tr>
-<tr class="memdesc:a4244e521b3f14a2b532dc4119a924032"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is responsible for decreasing battery level over time. It also calls <a class="el" href="user__equipment_8h.html#a941b73d86f71c457bcb85fb3a820517e" title="This function checks if battery power is low or high. Depends if it&#39;s low or high it sends alert to e...">check_battery_status()</a> func.  <a href="#a4244e521b3f14a2b532dc4119a924032">More...</a><br /></td></tr>
+<tr class="memdesc:a4244e521b3f14a2b532dc4119a924032"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is responsible for decreasing battery level over time. It also calls <a class="el" href="user__equipment_8h.html#a6d73f0eed10b76a4bc9941e806efb454" title="This function checks if battery power is low or high. Depends if it&#39;s low or high it sends alert to e...">check_battery_status()</a> func.  <a href="#a4244e521b3f14a2b532dc4119a924032">More...</a><br /></td></tr>
 <tr class="separator:a4244e521b3f14a2b532dc4119a924032"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23ce72a536638fdd18c4a1c900c5b1f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#a23ce72a536638fdd18c4a1c900c5b1f4">decrease_after_ping</a> (int socketfd, <a class="el" href="structmessage.html">s_message</a> *<a class="el" href="structmessage.html">message</a>, <a class="el" href="structs__ue__battery.html">ue_battery</a> *battery)</td></tr>
-<tr class="memdesc:a23ce72a536638fdd18c4a1c900c5b1f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is responsible for decreasing battery level over time. It also calls <a class="el" href="user__equipment_8h.html#a941b73d86f71c457bcb85fb3a820517e" title="This function checks if battery power is low or high. Depends if it&#39;s low or high it sends alert to e...">check_battery_status()</a> func.  <a href="#a23ce72a536638fdd18c4a1c900c5b1f4">More...</a><br /></td></tr>
-<tr class="separator:a23ce72a536638fdd18c4a1c900c5b1f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84b28d44e58eacd8563f2d35bf60bd86"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#a84b28d44e58eacd8563f2d35bf60bd86">decrease_after_ping</a> (int, <a class="el" href="structmessage.html">s_message</a> *, <a class="el" href="structs__ue__battery.html">ue_battery</a> *)</td></tr>
+<tr class="memdesc:a84b28d44e58eacd8563f2d35bf60bd86"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is responsible for decreasing battery level over time. It also calls <a class="el" href="user__equipment_8h.html#a6d73f0eed10b76a4bc9941e806efb454" title="This function checks if battery power is low or high. Depends if it&#39;s low or high it sends alert to e...">check_battery_status()</a> func.  <a href="#a84b28d44e58eacd8563f2d35bf60bd86">More...</a><br /></td></tr>
+<tr class="separator:a84b28d44e58eacd8563f2d35bf60bd86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac818b60c5466cf9904259d6c0a231b88"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#ac818b60c5466cf9904259d6c0a231b88">send_low_battery_notification</a> (int, <a class="el" href="structmessage.html">s_message</a> *)</td></tr>
 <tr class="memdesc:ac818b60c5466cf9904259d6c0a231b88"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function sends notification to eNodeB when battery power goes from high to low.  <a href="#ac818b60c5466cf9904259d6c0a231b88">More...</a><br /></td></tr>
 <tr class="separator:ac818b60c5466cf9904259d6c0a231b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95be815cf4e17e752b2fc41c346c821d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#a95be815cf4e17e752b2fc41c346c821d">send_high_battery_notification</a> (int, <a class="el" href="structmessage.html">s_message</a> *)</td></tr>
 <tr class="memdesc:a95be815cf4e17e752b2fc41c346c821d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function sends notification to eNodeB when battery power goes from low to high.  <a href="#a95be815cf4e17e752b2fc41c346c821d">More...</a><br /></td></tr>
 <tr class="separator:a95be815cf4e17e752b2fc41c346c821d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a941b73d86f71c457bcb85fb3a820517e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#a941b73d86f71c457bcb85fb3a820517e">check_battery_status</a> (int socketfd, int step, <a class="el" href="structmessage.html">s_message</a> *<a class="el" href="structmessage.html">message</a>, <a class="el" href="structs__ue__battery.html">ue_battery</a> *battery)</td></tr>
-<tr class="memdesc:a941b73d86f71c457bcb85fb3a820517e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function checks if battery power is low or high. Depends if it's low or high it sends alert to eNodeB.  <a href="#a941b73d86f71c457bcb85fb3a820517e">More...</a><br /></td></tr>
-<tr class="separator:a941b73d86f71c457bcb85fb3a820517e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4edd6445539f96079211d5c8161d9cf"><td class="memItemLeft" align="right" valign="top"><a id="ac4edd6445539f96079211d5c8161d9cf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize_cells</b> (<a class="el" href="struct__s__cells.html">s_cells</a> *)</td></tr>
+<tr class="memitem:a6d73f0eed10b76a4bc9941e806efb454"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#a6d73f0eed10b76a4bc9941e806efb454">check_battery_status</a> (int, int, <a class="el" href="structmessage.html">s_message</a> *, <a class="el" href="structs__ue__battery.html">ue_battery</a> *)</td></tr>
+<tr class="memdesc:a6d73f0eed10b76a4bc9941e806efb454"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function checks if battery power is low or high. Depends if it's low or high it sends alert to eNodeB.  <a href="#a6d73f0eed10b76a4bc9941e806efb454">More...</a><br /></td></tr>
+<tr class="separator:a6d73f0eed10b76a4bc9941e806efb454"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4edd6445539f96079211d5c8161d9cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#ac4edd6445539f96079211d5c8161d9cf">initialize_cells</a> (<a class="el" href="struct__s__cells.html">s_cells</a> *)</td></tr>
+<tr class="memdesc:ac4edd6445539f96079211d5c8161d9cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function initializes all the cells.  <a href="#ac4edd6445539f96079211d5c8161d9cf">More...</a><br /></td></tr>
 <tr class="separator:ac4edd6445539f96079211d5c8161d9cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e13ba327b015ea4198cb812531f0e1a"><td class="memItemLeft" align="right" valign="top"><a id="a0e13ba327b015ea4198cb812531f0e1a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_current_signal_event</b> (<a class="el" href="struct__s__cells.html">s_cells</a> *)</td></tr>
+<tr class="memitem:a0e13ba327b015ea4198cb812531f0e1a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="user__equipment_8h.html#a0e13ba327b015ea4198cb812531f0e1a">set_current_signal_event</a> (<a class="el" href="struct__s__cells.html">s_cells</a> *)</td></tr>
+<tr class="memdesc:a0e13ba327b015ea4198cb812531f0e1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function generates events A1 - A4, based on current signals in cells.  <a href="#a0e13ba327b015ea4198cb812531f0e1a">More...</a><br /></td></tr>
 <tr class="separator:a0e13ba327b015ea4198cb812531f0e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Module for simulating battery life in UE. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a941b73d86f71c457bcb85fb3a820517e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a941b73d86f71c457bcb85fb3a820517e">&#9670;&nbsp;</a></span>check_battery_status()</h2>
+<a id="a6d73f0eed10b76a4bc9941e806efb454"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d73f0eed10b76a4bc9941e806efb454">&#9670;&nbsp;</a></span>check_battery_status()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,8 +218,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>set_current_signal_ev
 
 </div>
 </div>
-<a id="a23ce72a536638fdd18c4a1c900c5b1f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23ce72a536638fdd18c4a1c900c5b1f4">&#9670;&nbsp;</a></span>decrease_after_ping()</h2>
+<a id="a84b28d44e58eacd8563f2d35bf60bd86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84b28d44e58eacd8563f2d35bf60bd86">&#9670;&nbsp;</a></span>decrease_after_ping()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -250,7 +250,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>set_current_signal_ev
       </table>
 </div><div class="memdoc">
 
-<p>This function is responsible for decreasing battery level over time. It also calls <a class="el" href="user__equipment_8h.html#a941b73d86f71c457bcb85fb3a820517e" title="This function checks if battery power is low or high. Depends if it&#39;s low or high it sends alert to e...">check_battery_status()</a> func. </p>
+<p>This function is responsible for decreasing battery level over time. It also calls <a class="el" href="user__equipment_8h.html#a6d73f0eed10b76a4bc9941e806efb454" title="This function checks if battery power is low or high. Depends if it&#39;s low or high it sends alert to e...">check_battery_status()</a> func. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">socketfd</td><td>is socketfd to which message will be sent </td></tr>
@@ -282,6 +282,32 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>set_current_signal_ev
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ue_battery</td><td>is struct to hold all the parameters of ours battery </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac4edd6445539f96079211d5c8161d9cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4edd6445539f96079211d5c8161d9cf">&#9670;&nbsp;</a></span>initialize_cells()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void initialize_cells </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct__s__cells.html">s_cells</a> *&#160;</td>
+          <td class="paramname"><em>cells</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function initializes all the cells. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s_cells*</td><td>cells is a pointer to a structure containing information about cells. </td></tr>
   </table>
   </dd>
 </dl>
@@ -364,6 +390,32 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>set_current_signal_ev
 
 </div>
 </div>
+<a id="a0e13ba327b015ea4198cb812531f0e1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e13ba327b015ea4198cb812531f0e1a">&#9670;&nbsp;</a></span>set_current_signal_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void set_current_signal_event </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct__s__cells.html">s_cells</a> *&#160;</td>
+          <td class="paramname"><em>cells</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function generates events A1 - A4, based on current signals in cells. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s_cells*</td><td>cells is a pointer to a structure containing information about cells. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a4244e521b3f14a2b532dc4119a924032"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4244e521b3f14a2b532dc4119a924032">&#9670;&nbsp;</a></span>update_battery()</h2>
 
@@ -396,7 +448,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>set_current_signal_ev
       </table>
 </div><div class="memdoc">
 
-<p>This function is responsible for decreasing battery level over time. It also calls <a class="el" href="user__equipment_8h.html#a941b73d86f71c457bcb85fb3a820517e" title="This function checks if battery power is low or high. Depends if it&#39;s low or high it sends alert to e...">check_battery_status()</a> func. </p>
+<p>This function is responsible for decreasing battery level over time. It also calls <a class="el" href="user__equipment_8h.html#a6d73f0eed10b76a4bc9941e806efb454" title="This function checks if battery power is low or high. Depends if it&#39;s low or high it sends alert to e...">check_battery_status()</a> func. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">socketfd</td><td>is socketfd to which message will be sent </td></tr>
