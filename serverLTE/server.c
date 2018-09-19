@@ -66,8 +66,8 @@ void init_server(int port) {
 
   pthread_create(&pinging_in_thread_id, NULL, ping_and_timeout_in_thread, NULL);
   // trying to send example file to all clients:
-  // char* file_to_be_sent = "/home/elszko/example.txt";
-  char* file_to_be_sent = "/home/elszko/lte/obrazki/start-here-16.png";
+  // char* file_to_be_sent = "obrazek.jpg";
+  char* file_to_be_sent = "tekst.txt";
   pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
   pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
 }
