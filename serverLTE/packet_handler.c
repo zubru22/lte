@@ -201,3 +201,12 @@ void handle_a3_event(int client_socket) {
     error("send in handle_a3_event");
   }
 }
+
+void handle_x2ap_resource_status_request(int source_socket) {
+  s_message handover_x2ap_resource_status_response;
+  handover_x2ap_resource_status_response.type_of_message = x2ap_resource_status_response;
+  memset(&handover_x2ap_resource_status_response, 0, sizeof(handover_x2ap_resource_status_response));
+  if (send(server.target_socket, &handover_x2ap_resource_status_response, sizeof(handover_x2ap_resource_status_response), 0) == -1) {
+    error("send in handle_a3_event");
+  }
+}
