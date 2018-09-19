@@ -53,7 +53,7 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
         add_logf(client_log_filename, LOG_ERROR, "Failed to send Measurement Report!");
     else
-        add_logf(client_log_filename, LOG_ERROR, "Successfuly sent Measurement Report!");
+        add_logf(client_log_filename, LOG_SUCCESS, "Successfuly sent Measurement Report!");
 }
 
 /*int download_data(int socketfd, s_message* message, FILE* fp) {

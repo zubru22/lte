@@ -26,14 +26,28 @@
 volatile bool running = true;
 int socket_fd;
 s_message message;
+s_message received;
 ue_battery battery;
+pthread_mutex_t lock[2];
 
 void signal_handler(int signum) {
     running = false;
 }
 
+void* battery_thread() {
+    while(running && !check_for_shutdown(socket_fd, &received)) {
+        pthread_mutex_lock(&lock[0]);
+        update_battery(socket_fd, &message, &battery);
+        pthread_mutex_unlock(&lock[0]);
+    }
+
+    return NULL;
+}
+
 void* ping_thread() {
-    while(running) {
+    while(running && !check_for_shutdown(socket_fd, &received)) {
+        pthread_mutex_lock(&lock[1]);
+
         if (receive_ping(socket_fd, &message) == 0) {
             if (send_pong(socket_fd, &message) == -1)
                 add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");
@@ -42,7 +56,12 @@ void* ping_thread() {
                 add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
             }
         }
+
+        pthread_mutex_unlock(&lock[1]);
+        sleep(1);
     }
+
+    return NULL;
 }
 
 int main(int argc, char* argv[])
@@ -55,7 +74,7 @@ int main(int argc, char* argv[])
     struct sockaddr_in server;
     s_cells cells;
     FILE* file_to_recv;
-    pthread_t ping_thread_id;
+    pthread_t thread_id[2];
 
     srand(time(NULL)); 
 
@@ -69,6 +88,16 @@ int main(int argc, char* argv[])
 
     initialize_battery_life(&battery);
     initialize_cells(&cells);
+
+    if(pthread_mutex_init(&lock[0], NULL) != 0) {
+        add_logf(client_log_filename, LOG_ERROR, "Mutex initialization failed!");
+        exit(1);
+    }
+
+    if(pthread_mutex_init(&lock[1], NULL) != 0) {
+        add_logf(client_log_filename, LOG_ERROR, "Mutex initialization failed!");
+        exit(1);
+    }
 
     //init_connection returns 0 on error, else function returns 1
     if (init_connection(&socket_fd, &server, port_number)) {
@@ -98,8 +127,6 @@ int main(int argc, char* argv[])
         add_logf(client_log_filename, LOG_INFO, "RA_RNTI VALUE: %d", message.message_value.message_preamble.ra_rnti);
     }
 
-    s_message received;
-
     int prach_response_func_status = receive_prach_response(socket_fd, &received, &message);
 
     if(-1 == prach_response_func_status) {
@@ -126,15 +153,20 @@ int main(int argc, char* argv[])
     receive_rrc_setup(socket_fd, &received, &message);
     sigaction(SIGINT, &s_signal, NULL);
 
-    // Create another thread for pinging
-    if(pthread_create(&ping_thread_id, NULL, ping_thread, NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to create a thread: ping_thread_id");
+    // Create another thread for battery and ping
+    if(pthread_create(&thread_id[0], NULL, battery_thread, NULL) != 0) {
+        add_logf(client_log_filename, LOG_ERROR, "Failed to create a thread!");
         exit(1);
     }
 
+    if(pthread_create(&thread_id[1], NULL, ping_thread, NULL) != 0) {
+        add_logf(client_log_filename, LOG_ERROR, "Failed to create a thread!");
+        exit(1);
+    }
+
+
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
-        update_battery(socket_fd, &message, &battery);
         set_current_signal_event(&cells);
         printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         printf("Battery power: %i\n", battery.power_percentage);
@@ -148,10 +180,16 @@ int main(int argc, char* argv[])
         sleep(1);
     }
     // Join thread
-    if(pthread_join(ping_thread_id, NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread: ping_thread_id");
+    if(pthread_join(thread_id[0], NULL) != 0) {
+        add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread!");
         exit(1);
     }
+    if(pthread_join(thread_id[1], NULL) != 0) {
+        add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread!");
+        exit(1);
+    }
+    pthread_mutex_destroy(&lock[0]);
+    pthread_mutex_destroy(&lock[1]);
     // Check if eNodeB is still on before trying to send UE off signal
     if (message.message_type != enb_off)
     {
