@@ -97,6 +97,7 @@ typedef struct s_ue_battery {
     int8_t power_percentage;
     bool power_is_low;
     bool charging;
+    bool sent_notification;
     time_t starting_time;
 } ue_battery;
 

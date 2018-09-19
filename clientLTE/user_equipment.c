@@ -15,6 +15,7 @@ void initialize_battery_life(ue_battery* battery) {
     battery->power_percentage = 100;
     battery->power_is_low = false;
     battery->charging = false;
+    battery->sent_notification = false;
     time(&battery->starting_time);
 }
 void check_battery_status(int socketfd, int step, s_message* message, ue_battery* battery) {
@@ -22,13 +23,19 @@ void check_battery_status(int socketfd, int step, s_message* message, ue_battery
     assert((message != NULL) && (battery != NULL));
     if(battery->power_percentage <= low_battery_threshold && (low_battery_threshold-step) < battery->power_percentage && !battery->charging) {
         battery->power_is_low = true;
-        send_low_battery_notification(socketfd, message);
-        add_logf(client_log_filename, LOG_INFO, "Send low bettery note!");
+        if(battery->sent_notification == false) {
+            if(send_low_battery_notification(socketfd, message) == 0)
+                battery->sent_notification = true;
+            add_logf(client_log_filename, LOG_INFO, "Send low bettery note!");
+        }
     }
     else if (battery->power_percentage >= low_battery_threshold && (low_battery_threshold+step) > battery->power_percentage && battery->charging) {
         battery->power_is_low = false;
-        send_high_battery_notification(socketfd, message);
-        add_logf(client_log_filename, LOG_INFO, "Send high bettery note!");
+        if(battery->sent_notification == false) {
+            if(send_high_battery_notification(socketfd, message) == 0)
+                battery->sent_notification = true;
+            add_logf(client_log_filename, LOG_INFO, "Send high bettery note!");
+        }
     }
 }
 
@@ -55,10 +62,12 @@ int update_battery(int socketfd, s_message* message, ue_battery* battery) {
     }
     
     if(battery->power_percentage <= 0) {
+        battery->sent_notification = false;
         battery->power_percentage = 0;
         battery->charging = true;
     }
     else if(battery->power_percentage >= 100) {
+        battery->sent_notification = false;
         battery->power_percentage = 100;
         battery->charging = false;
     }
@@ -89,6 +98,7 @@ int send_low_battery_notification(int socketfd, s_message* message) {
 
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
         return -1;
+    
     return 0;
 }
 // This function sends notification to eNodeB if battery state is high again. Function returns 0 if all goes well,
@@ -100,6 +110,7 @@ int send_high_battery_notification(int socketfd, s_message* message) {
 
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
         return -1;
+
     return 0;
 }
 // This function initializes cells, returns false if fails, otherwise true

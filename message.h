@@ -3,6 +3,8 @@
 #include <sys/types.h>
 #include <time.h>
 
+#define BUFFER_SIZE 16
+
 typedef struct prach_preamble {
     int16_t ra_rnti; // 16bit integer sent to server - first 2 bits are PreambleIndex
 } preamble;
@@ -25,7 +27,10 @@ typedef enum type_of_message {
     ue_off, 
     enb_off, 
     measurement_control_request, 
-    measurement_report
+    measurement_report,
+    data_start,
+    data,
+    data_end
 } e_message_type;
 
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
@@ -78,6 +83,8 @@ typedef union message_value {
         rrc message_request;
         rrc_config rrc_response;
         rrc_setup_complete message_complete;
+        size_t size_of_file;
+        unsigned char buffer[BUFFER_SIZE];
         s_event events;
 } u_message_value;
 

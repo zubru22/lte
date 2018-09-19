@@ -4,11 +4,11 @@
 #ifndef PACKET_HANDLER_H
 #define PACKET_HANDLER_H
 
-#define PING_TIME_NORMAL 2
-#define PING_TIME_LOW_BATTERY 5
+#define PING_TIME_NORMAL 5
+#define PING_TIME_LOW_BATTERY 10
 
 //should be bigger than PING_TIME_NORMAL and PING_TIME_LOW_BATTERY
-#define PING_TIMEOUT 10
+#define PING_TIMEOUT 4000
 
 #ifndef LOGS_H
 #include "../logs/logs.h"
@@ -37,6 +37,9 @@
 #include <time.h>
 #include <sys/types.h>
 #include <stdbool.h>
+#include <sys/stat.h>
+
+#include <fcntl.h>
 
 extern const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD;
 
@@ -49,10 +52,11 @@ int8_t extractPreambleIndex(int16_t ra_rnti);
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp);
 void handle_low_battery_request(int client_socket);
 void handle_high_battery_request(int client_socket);
-void* pinging_in_thread(void* arg);
-void send_pings_handle_timeout();
+void* ping_and_timeout_in_thread(void* arg);
 int ping_client(void *data, const char *key, void *value);
 void handle_client_power_off(int client_socket);
+int broadcast_sample(void *arg, const char *key, void *value);
+void* transfer_data(void* arg);
 /**
   @fn void* send_measurement_control_requests(void* arg)
   @brief starts while loop, which periodically iterates through clients hashmap to send measurement_control_request
