@@ -44,26 +44,6 @@ void* battery_thread() {
     return NULL;
 }
 
-void* ping_thread() {
-    while(running && !check_for_shutdown(socket_fd, &received)) {
-        pthread_mutex_lock(&lock[1]);
-
-        if (receive_ping(socket_fd, &message) == 0) {
-            if (send_pong(socket_fd, &message) == -1)
-                add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");
-            else {
-                decrease_after_ping(socket_fd, &message, &battery);
-                add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
-            }
-        }
-
-        pthread_mutex_unlock(&lock[1]);
-        sleep(1);
-    }
-
-    return NULL;
-}
-
 int main(int argc, char* argv[])
 {
     if(argc < 2){
@@ -71,12 +51,11 @@ int main(int argc, char* argv[])
         return 0;
     }
     int port_number = atoi(argv[1]);
-    int socket_fd;
     int download_data_return_value;
     struct sockaddr_in server;
-    s_message message;
+    //s_message message;
     s_message* message_pointer = &message;
-    ue_battery battery;
+    //ue_battery battery;
     s_cells cells;
     FILE* file_to_recv;
     pthread_t thread_id[2];
@@ -113,8 +92,6 @@ int main(int argc, char* argv[])
         add_logf(client_log_filename, LOG_ERROR, "Failed to connect!");
         return 0;
     }
-
-    /////////////////////////////////////////////////////////////
 
     //returns -1 on error, else 0
     if (send_prach_preamble(socket_fd, &message, generate_ra_rnti) == -1) {
@@ -165,16 +142,20 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    if(pthread_create(&thread_id[1], NULL, ping_thread, NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to create a thread!");
-        exit(1);
-    }
-
-
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
         recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
         switch (message.message_type) {
+            case ping:
+                if (receive_ping(socket_fd, &message) == 0) {
+                    if (send_pong(socket_fd, &message) == -1)
+                            add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");
+                        else {
+                            decrease_after_ping(socket_fd, &message, &battery);
+                            add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
+                        }
+                }
+                break;
             case data_start:
                 file_to_recv = fopen("received","ab+");
                 printf("\n\n----------------------\nStarted downloading data!\n----------------------\n\n");    
@@ -195,7 +176,7 @@ int main(int argc, char* argv[])
                 break;
         }
     
-        // set_current_signal_event(&cells);
+        set_current_signal_event(&cells);
 
         //printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         //printf("Battery power: %i\n", battery.power_percentage);
@@ -208,11 +189,7 @@ int main(int argc, char* argv[])
         add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread!");
         exit(1);
     }
-    if(pthread_join(thread_id[1], NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread!");
-        exit(1);
     pthread_mutex_destroy(&lock[0]);
-    pthread_mutex_destroy(&lock[1]);
     // Check if eNodeB is still on before trying to send UE off signal
     if (message.message_type != enb_off)
     {
@@ -222,5 +199,5 @@ int main(int argc, char* argv[])
             add_logf(client_log_filename, LOG_SUCCESS, "Client successfully disconnected from server!");
     }
     return 0;
-    }
+    
 }
