@@ -231,7 +231,7 @@ void* transfer_data(void* arg) {
   while (!threads_done) {
     hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);
     // not too fast, so that we see what is going on
-    exit(1);
+    sleep(5);
   }
   return NULL;
 }
