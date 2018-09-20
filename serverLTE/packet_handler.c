@@ -227,13 +227,11 @@ void handle_handover() {
     if(recv(server.target_socket, &handover_message, sizeof(handover_message), 0) == -1) {
       error ("recv in handle_handover");
     }
-    printf ("RECV MESSAGE!\n");
     switch(handover_message.message_type) {
       case x2ap_resource_status_response:
         handle_x2ap_resource_status_response(handover_message.message_value.handover.client_socket);
         break;
       case x2ap_handover_request_acknowledge:
-        printf ("SUCCESS!\n");
         handle_x2ap_handover_request_acknowledge(handover_message.message_value.handover.client_socket);
         return;
       default:
@@ -289,7 +287,8 @@ void handle_x2ap_handover_request_acknowledge(int client_socket) {
   memset(&rrc_connection_reconfiguration_request_message, 0, sizeof(rrc_connection_reconfiguration_request_message));
   rrc_connection_reconfiguration_request_message.message_type = rrc_connection_reconfiguration_request;
   // here we need to get client with client_socket
-  /*if (send(server.target_socket, &rrc_connection_reconfiguration_request_messagee, sizeof(rrc_connection_reconfiguration_request_message), 0) == -1) {
+  if (send(client_socket, &rrc_connection_reconfiguration_request_message, sizeof(rrc_connection_reconfiguration_request_message), 0) == -1) {
     error("handle_x2ap_handover_request_acknowledge");
-  }*/
+  }
+  add_logf(server_log_filename, LOG_INFO, "sent rrc_connection_reconfiguration_request to client to handover");
 }
