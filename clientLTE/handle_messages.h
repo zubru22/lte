@@ -20,7 +20,6 @@
 #include <unistd.h>
 #endif
 
-
 /**
     @brief This function receives ping message from eNodeB.
     @param[in] socketfd is socket from which message is received
@@ -57,5 +56,11 @@ void send_measurement_report(int, s_message*, s_cells*);
     @param[in] fp is pointer to the file we write to
 */
 void download_data(int, s_message*, FILE*);
+/**
+    @brief This function sends resource request to eNodeB, which is expected to respond with a proper resource response.
+    @param[in] socketfd is socket from which message is received.
+    @param[in] sessage is message receieved from the socket.
+*/
+int send_resource_request(int, s_message*);
 
 #endif

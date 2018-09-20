@@ -2,6 +2,10 @@
 #define MESSAGE_H
 #include <sys/types.h>
 #include <time.h>
+#ifndef STDBOOL_H
+#define STDBOOL_H
+#include <stdbool.h>
+#endif
 
 #define BUFFER_SIZE 16
 
@@ -35,7 +39,9 @@ typedef enum type_of_message {
     rrc_connection_reconfiguration_request,
     data_start,
     data,
-    data_end
+    data_end,
+    resource_request,
+    resource_response
 } e_message_type;
 
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
@@ -96,6 +102,7 @@ typedef union message_value {
         unsigned char buffer[BUFFER_SIZE];
         s_event events;
         handover_t handover;
+        bool resource_state;
 } u_message_value;
 
 typedef struct message {

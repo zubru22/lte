@@ -42,6 +42,7 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
     assert(message != NULL);
     message->message_type = measurement_report;
     message->message_value.events = cells->current_event;
+    
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
         add_logf(client_log_filename, LOG_ERROR, "Failed to send Measurement Report!");
     else
@@ -54,4 +55,13 @@ void download_data(int socketfd, s_message* message, FILE* fp) {
     fwrite(message->message_value.buffer,BUFFER_SIZE,1,fp);
 
     bytes_received += BUFFER_SIZE;
+}
+
+int send_resource_request(int socketfd, s_message* message) {
+    message->message_type = resource_request;
+    
+    if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
+        return -1;
+
+    return 0;
 }
