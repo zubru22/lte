@@ -33,12 +33,9 @@ int main(int argc, char* argv[])
         add_logf(client_log_filename, LOG_ERROR, "You need to pass port number as an argument!");
         return 0;
     }
-    json_t *json;
-    json = json_object();
-    json_object_set(json, "value", json_integer(42));
-    json_object_set(json, "string", json_string("something"));
-    printf("%s\n", json_string_value(json_object_get(json, "string")));
-    json_dumpf(json, stdout, JSON_INDENT(4));
+    json_t *json_message;
+    json_message = json_object();
+    // json_dumpf(json, stdout, JSON_INDENT(4));
 
     int port_number = atoi(argv[1]);
     int socket_fd;
@@ -66,20 +63,20 @@ int main(int argc, char* argv[])
         return 0;
     }
     //returns -1 on error, else 0
-    if (send_prach_preamble(socket_fd, &message, generate_ra_rnti) == -1) {
+    if (send_prach_preamble(socket_fd, json_message, generate_ra_rnti) == -1) {
         add_logf(client_log_filename, LOG_ERROR, "Failed to send preamble!");
         return 0;
     } 
     else {
         add_logf(client_log_filename, LOG_SUCCESS, "Message sent!");
         
-        if (message.message_type == random_access_request) {
+        if (json_integer_value(json_object_get(json_message, "message_type")) == random_access_request) {
             add_logf(client_log_filename, LOG_INFO, "Message type: RA_RNTI.");
         }
         else {
             add_logf(client_log_filename, LOG_WARNING, "Message type: NOT RA_RNTI.");
         }
-        add_logf(client_log_filename, LOG_INFO, "RA_RNTI VALUE: %d", message.message_value.message_preamble.ra_rnti);
+        add_logf(client_log_filename, LOG_INFO, "RA_RNTI VALUE: %d", json_integer_value(json_object_get(json_message, "ra_rnti")));
     }
 
     s_message received;

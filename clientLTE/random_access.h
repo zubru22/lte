@@ -13,8 +13,13 @@
 #include <unistd.h>
 #endif
 
-void generate_ra_rnti(preamble*);
-int send_prach_preamble(int, s_message*, void (*ra_rnti_generator_func)(preamble*));
+#ifndef JANSSON_H
+#include <string.h>
+#include <jansson.h>
+#endif
+
+int generate_ra_rnti(void);
+int send_prach_preamble(int, json_t*, int (*ra_rnti_generator_func)(void));
 int receive_prach_response(int, s_message*, s_message*);
 
 #endif

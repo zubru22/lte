@@ -5,22 +5,42 @@
 #endif
 
 // This function generates and returns ra_rnti for prach preamble and modifies original structure
-void generate_ra_rnti(preamble* s_preamble) {
+int generate_ra_rnti(void) {
     const char max_t_id = 10;
     const char max_f_id = 6;
-    s_preamble->ra_rnti = (1 + ( rand() % max_t_id) + 10 * (rand() % max_f_id) );
+    return (1 + (rand() % max_t_id) + 10 * (rand() % max_f_id));
 }
 
 // This function sends prach preamble to eNodeB. Function returns -1 on error and 0 on success
-int send_prach_preamble(int sockfd, s_message* message, void (*ra_rnti_generator_func)(preamble*)) {
-    // First we need to fill preamble structure
-    ra_rnti_generator_func(&message->message_value.message_preamble);
-    //Then we need to set message type to random_access_request
-    message->message_type = random_access_request;
-    //Send struct
-    if(-1 == write(sockfd, (s_message*)message, sizeof(*message)))
-        return -1;
+int send_prach_preamble(int sockfd, json_t* message, int (*ra_rnti_generator_func)(void)) {
+    char *json_message;
+    // We need to set message type to random_access_request
+    json_object_set(message, "message_type", json_integer(random_access_request));
+    // We need to fill preamble value (ra_rnti)
+    json_object_set(message, "ra_rnti", json_integer(ra_rnti_generator_func()));
+    // Convert json object to string, 0 means no formating
+    json_message = json_dumps(message, 0);
+    // Length of json string to be send
+    size_t json_message_len = strlen(json_message);
+    // Printing for debugging
+    printf("message size: %lu\n", json_message_len);
+    
 
+    //Send struct
+    /*if(write(sockfd, &json_message_len, json_message_len) == -1)
+    {
+        free(json_message);
+        return -1;
+    }*/
+    
+    // Send length of json string to eNodeB
+    write(sockfd, &json_message_len, json_message_len);
+    // Send json string
+    int written = write(sockfd, json_message, json_message_len);
+    printf("written: %lu\n", written);
+    puts(json_message);
+    
+    free(json_message);
     return 0;
 }
 

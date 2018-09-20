@@ -22,7 +22,7 @@ valgrind:
 
 create: main.o server.o packet_handler.o hashmap.o MurmurHash3.o client_object.o client_handler.o logs.o $(DEPS)
 		
-		$(CC) $(SFLAGS) main.o server.o packet_handler.o hashmap.o MurmurHash3.o client_object.o client_handler.o logs.o -I $(DEPS) -lpthread -o server 2> server_output.txt 
+		$(CC) $(SFLAGS) main.o server.o packet_handler.o hashmap.o MurmurHash3.o client_object.o client_handler.o logs.o -I $(DEPS) -lpthread -ljansson -o server 2> server_output.txt 
 
 main.o: main.c
 		$(CC) $(CFLAGS) main.c
