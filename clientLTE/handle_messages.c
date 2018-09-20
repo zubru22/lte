@@ -48,12 +48,10 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
         add_logf(client_log_filename, LOG_SUCCESS, "Successfuly sent Measurement Report!");
 }
 
-int download_data(int socketfd, s_message* message, FILE* fp) {
+void download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
     fwrite(message->message_value.buffer,BUFFER_SIZE,1,fp);
 
     bytes_received += BUFFER_SIZE;
-
-    return 1;
 }

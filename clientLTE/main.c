@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
     receive_rrc_setup(socket_fd, &received, &message);
     sigaction(SIGINT, &s_signal, NULL);
 
-    // Create another thread for battery and ping
+    // Create another thread for battery
     if(pthread_create(&thread_id[0], NULL, battery_thread, NULL) != 0) {
         add_logf(client_log_filename, LOG_ERROR, "Failed to create a thread!");
         exit(1);
@@ -163,9 +163,8 @@ int main(int argc, char* argv[])
                 }
                 break;
             case data_start:
-                //char* filename = 
                 file_to_recv = fopen(message.message_value.buffer,"ab+");
-                printf("\n\n----------------------\nStarted downloading data!\n----------------------\n\n");    
+                add_logf(client_log_filename, LOG_INFO, "\n\n----------------------\nStarted downloading data!\n----------------------\n\n");    
                 diff_time = what_time_is_it();
                 break;
             case data:
@@ -173,11 +172,11 @@ int main(int argc, char* argv[])
                 packets_received++;
                 break;
             case data_end:
-                printf("\n\n----------------------\nFinished downloading data!\n----------------------\n\n");
+                add_logf(client_log_filename, LOG_INFO, "\n\n----------------------\nFinished downloading data!\n----------------------\n\n");
                 printf("\n-------------packets received: %d ----------------\n",packets_received);
                 packets_received = 0;
                 fclose(file_to_recv);
-                add_logf(client_log_filename, LOG_INFO, "Downloaded in %.3lf seconds", what_time_is_it() - diff_time);
+                add_logf(client_log_filename, LOG_INFO, "Downloaded in %.3lf seconds\n", what_time_is_it() - diff_time);
                 break;
             case measurement_control_request:
                 if (receive_measurement_control_request(socket_fd, &received))
@@ -190,8 +189,6 @@ int main(int argc, char* argv[])
         //printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         //printf("Battery power: %i\n", battery.power_percentage);
         message.message_type = -1;
-        
-        //sleep(1);
     }
     // Join thread
     if(pthread_join(thread_id[0], NULL) != 0) {
