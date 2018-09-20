@@ -5,6 +5,7 @@
 bool threads_done = false;
 pthread_t pinging_in_thread_id;
 pthread_t send_measurement_control_requests_id;
+pthread_t transferring_thread;
 
 void server_t__init(server_t* self, int socket, int target_port, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;

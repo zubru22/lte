@@ -195,6 +195,7 @@ void handle_measurement_report(int client_socket, s_message measurement_report_m
     case a5:
       printf ("a5\n");
     default:
+      printf ("a6\n");
       break;
   }
 }
@@ -288,9 +289,6 @@ void handle_x2ap_handover_request_acknowledge(int client_socket) {
     error("handle_x2ap_handover_request_acknowledge");
   }
   add_logf(server_log_filename, LOG_INFO, "sent rrc_connection_reconfiguration_request to client to handover");
-  send(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
-  add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
-  return 0;
 }
 
 int broadcast_sample(void *arg, const char *key, void *value) {
@@ -370,8 +368,8 @@ void* transfer_data(void* arg) {
   while (!threads_done) {
     hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);
     // not too fast, so that we see what is going on
-    sleep(5);
-    exit(0);
+    sleep(1000);
+    //exit(0);
   }
   return NULL;
 }
