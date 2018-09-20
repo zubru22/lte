@@ -2,7 +2,7 @@
 #include "packet_handler.h"
 #endif
 
-const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 3;
+const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 5;
 
 void handle_random_access_request(int client_socket, s_message message) {
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
@@ -132,17 +132,13 @@ void handle_high_battery_request(int client_socket) {
   client_with_high_battery->battery_state = OK;
 }
 
-void* pinging_in_thread(void* arg) {
-  send_pings_handle_timeout();
-  return NULL;
-}
-
-void send_pings_handle_timeout() {
+void* ping_and_timeout_in_thread(void* arg) {
   while (!threads_done) {
     sleep(1);
     hashmap_iter(server.clients, (hashmap_callback) ping_client, NULL);
     hashmap_iter(server.clients, (hashmap_callback) handle_client_inactivity, NULL);
   }
+  return NULL;
 }
 
 int ping_client(void *data, const char *key, void *value) {
@@ -164,9 +160,10 @@ int ping_client(void *data, const char *key, void *value) {
 
 void* send_measurement_control_requests(void* arg) {
   while (!threads_done) {
-    sleep(1);
+    sleep(SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD);
     hashmap_iter(server.clients, (hashmap_callback) send_measurement_control_request, NULL);
   }
+  return NULL;
 }
 
 int send_measurement_control_request(void *data, const char *key, void *value) {
@@ -291,4 +288,90 @@ void handle_x2ap_handover_request_acknowledge(int client_socket) {
     error("handle_x2ap_handover_request_acknowledge");
   }
   add_logf(server_log_filename, LOG_INFO, "sent rrc_connection_reconfiguration_request to client to handover");
+  send(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
+  add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
+  return 0;
+}
+
+int broadcast_sample(void *arg, const char *key, void *value) {
+  client_t* current_client = (client_t*) value;
+
+  char* filename = (char*) arg;
+  add_logf(server_log_filename, LOG_INFO, "File to be sent: %s\n", filename);
+
+  FILE* file_to_be_sent = fopen(filename, "rb");
+  if (file_to_be_sent == NULL) {
+    add_logf(server_log_filename, LOG_ERROR, "Error opening file %s", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+
+  struct stat st;
+  stat(filename, &st);
+  __off_t real_size = st.st_size;
+
+  fseek(file_to_be_sent, 0L, SEEK_END);
+  long file_size = ftell(file_to_be_sent);
+  fseek(file_to_be_sent, 0, SEEK_SET);
+
+  add_logf(server_log_filename, LOG_INFO, "Size of file (bytes): %lu\nReal size of file: %lu\n", file_size, real_size);
+
+  s_message data_message_tag;
+  data_message_tag.message_type = data_start;
+  memset(data_message_tag.message_value.buffer, 0, BUFFER_SIZE);
+  memcpy(data_message_tag.message_value.buffer, filename, BUFFER_SIZE);
+  if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
+    add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
+    exit(EXIT_FAILURE);
+  } else {
+    add_logf(server_log_filename, LOG_SUCCESS, "START SEND DATA");
+  }
+
+  sleep(1);
+  s_message data_message;
+  data_message.message_type = data;
+
+  int bytes_read = 0;
+  int bytes_sent = 0;
+  int packets_sent = 0;
+  while (bytes_read < file_size) {
+    nanosleep((const struct timespec[]){{0, 100000L}}, NULL);
+
+    fseek(file_to_be_sent, bytes_read, SEEK_SET);
+    memset(data_message.message_value.buffer, 0, BUFFER_SIZE);
+    fread(data_message.message_value.buffer, BUFFER_SIZE, 1, file_to_be_sent);
+
+    bytes_read += BUFFER_SIZE;
+    bytes_sent = send(current_client->socket, &data_message, sizeof(data_message), 0);
+
+    if (bytes_sent == -1) {
+      add_logf(server_log_filename, LOG_ERROR, "Error sending data");
+      exit(EXIT_FAILURE);
+    } else {
+      //add_logf(server_log_filename, LOG_INFO, "Bytes sent: %d", bytes_sent);
+      packets_sent++;
+    }
+
+  }
+
+  data_message_tag.message_type = data_end;
+  if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
+    add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
+    exit(EXIT_FAILURE);
+  } else {
+    add_logf(server_log_filename, LOG_SUCCESS, "File transfered! Packets sent: %d", packets_sent);
+  }
+
+  return 0;
+}
+
+// filename as arg
+void* transfer_data(void* arg) {
+  sleep(10);
+  while (!threads_done) {
+    hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);
+    // not too fast, so that we see what is going on
+    sleep(5);
+    exit(0);
+  }
+  return NULL;
 }

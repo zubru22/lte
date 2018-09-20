@@ -127,8 +127,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>handle_random_access_
 <tr class="memitem:a65c88e80f829fda0b3ea75b122287bd5"><td class="memItemLeft" align="right" valign="top"><a id="a65c88e80f829fda0b3ea75b122287bd5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>handle_pong</b> (int client_socket)</td></tr>
 <tr class="separator:a65c88e80f829fda0b3ea75b122287bd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bffd0dfb7dfce247ad75d72ac24f9ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="packet__handler_8h.html#a5bffd0dfb7dfce247ad75d72ac24f9ff">parse_packet</a> (int number_of_event)</td></tr>
-<tr class="memdesc:a5bffd0dfb7dfce247ad75d72ac24f9ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">handles packet specified by number_of_event, calls specific function in switch  <a href="#a5bffd0dfb7dfce247ad75d72ac24f9ff">More...</a><br /></td></tr>
+<tr class="memitem:a5bffd0dfb7dfce247ad75d72ac24f9ff"><td class="memItemLeft" align="right" valign="top"><a id="a5bffd0dfb7dfce247ad75d72ac24f9ff"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>parse_packet</b> (int number_of_event)</td></tr>
 <tr class="separator:a5bffd0dfb7dfce247ad75d72ac24f9ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e81df87ed8ecdd3776763bc25b0483a"><td class="memItemLeft" align="right" valign="top"><a id="a2e81df87ed8ecdd3776763bc25b0483a"></a>
 <a class="el" href="structrrc__config.html">rrc_config</a>&#160;</td><td class="memItemRight" valign="bottom"><b>generate_rrc_config</b> (int16_t rnti)</td></tr>
@@ -142,11 +142,11 @@ int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>extractPreambleInde
 <tr class="memitem:a518ab9d6e6411cd9a174ef13d86a2227"><td class="memItemLeft" align="right" valign="top"><a id="a518ab9d6e6411cd9a174ef13d86a2227"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>send_random_access_response</b> (int socket, int8_t preamble_index, time_t timestamp)</td></tr>
 <tr class="separator:a518ab9d6e6411cd9a174ef13d86a2227"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d869f0fcc688ec4370b076a50394ecb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="packet__handler_8h.html#a6d869f0fcc688ec4370b076a50394ecb">handle_low_battery_request</a> (int client_socket)</td></tr>
-<tr class="memdesc:a6d869f0fcc688ec4370b076a50394ecb"><td class="mdescLeft">&#160;</td><td class="mdescRight">handles message from client indicating low batery  <a href="#a6d869f0fcc688ec4370b076a50394ecb">More...</a><br /></td></tr>
+<tr class="memitem:a6d869f0fcc688ec4370b076a50394ecb"><td class="memItemLeft" align="right" valign="top"><a id="a6d869f0fcc688ec4370b076a50394ecb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>handle_low_battery_request</b> (int client_socket)</td></tr>
 <tr class="separator:a6d869f0fcc688ec4370b076a50394ecb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a608e0d27f42249b1f080508d252d9561"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="packet__handler_8h.html#a608e0d27f42249b1f080508d252d9561">handle_high_battery_request</a> (int client_socket)</td></tr>
-<tr class="memdesc:a608e0d27f42249b1f080508d252d9561"><td class="mdescLeft">&#160;</td><td class="mdescRight">handles message from client indicating high batery  <a href="#a608e0d27f42249b1f080508d252d9561">More...</a><br /></td></tr>
+<tr class="memitem:a608e0d27f42249b1f080508d252d9561"><td class="memItemLeft" align="right" valign="top"><a id="a608e0d27f42249b1f080508d252d9561"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>handle_high_battery_request</b> (int client_socket)</td></tr>
 <tr class="separator:a608e0d27f42249b1f080508d252d9561"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acbbc18fdd77c37273cdfcc2411a78948"><td class="memItemLeft" align="right" valign="top"><a id="acbbc18fdd77c37273cdfcc2411a78948"></a>
 void *&#160;</td><td class="memItemRight" valign="bottom"><b>pinging_in_thread</b> (void *arg)</td></tr>
@@ -174,87 +174,6 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>SEND_MEASUREMENT
 <tr class="separator:aaf9416d6f5ab595127ef534829b923cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a608e0d27f42249b1f080508d252d9561"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a608e0d27f42249b1f080508d252d9561">&#9670;&nbsp;</a></span>handle_high_battery_request()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void handle_high_battery_request </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>client_socket</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>handles message from client indicating high batery </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">client_socket</td><td>- socket of client with high battery </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>nothing is returned </dd></dl>
-
-</div>
-</div>
-<a id="a6d869f0fcc688ec4370b076a50394ecb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d869f0fcc688ec4370b076a50394ecb">&#9670;&nbsp;</a></span>handle_low_battery_request()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void handle_low_battery_request </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>client_socket</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>handles message from client indicating low batery </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">client_socket</td><td>- socket of client with low battery </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>nothing is returned </dd></dl>
-
-</div>
-</div>
-<a id="a5bffd0dfb7dfce247ad75d72ac24f9ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bffd0dfb7dfce247ad75d72ac24f9ff">&#9670;&nbsp;</a></span>parse_packet()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void parse_packet </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>number_of_event</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>handles packet specified by number_of_event, calls specific function in switch </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">number_of_event</td><td>- epoll event number from array of events, which will be handled </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>nothing is returned </dd></dl>
-
-</div>
-</div>
 <a id="a2b897e5a9d13296d42e70129849c170b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2b897e5a9d13296d42e70129849c170b">&#9670;&nbsp;</a></span>send_measurement_control_request()</h2>
 

@@ -65,8 +65,16 @@ void init_server(int port, int target_port) {
   }
   server_t__init(&server, server_socket, target_port, server_address, event, epoll_file_descriptor);
 
-  pthread_create(&pinging_in_thread_id, NULL, pinging_in_thread, NULL);
+  pthread_create(&pinging_in_thread_id, NULL, ping_and_timeout_in_thread, NULL);
   pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
+
+  // trying to send example file to all clients:
+  //char* file_to_be_sent = "tekst.txt";
+  char* file_to_be_sent = "obrazek.png";
+  //char* file_to_be_sent = "piesel.jpg";
+  //char* file_to_be_sent = "piksel.bmp";
+
+  pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
 }
 
 void receive_packets() {
@@ -99,7 +107,7 @@ void accept_client() {
                          server.socket,
                          (struct sockaddr *) &client_address,
                          &client_length);
-  client->is_server = false;                      
+  client->is_server = false;
   if (client->socket == -1) {
     error("accept in accept_client");
   }

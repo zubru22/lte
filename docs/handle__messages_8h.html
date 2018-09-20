@@ -110,6 +110,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a8f853a48ce29ce67b3d3e8bc56215f0e"><td class="memItemLeft" align="right" valign="top"><a id="a8f853a48ce29ce67b3d3e8bc56215f0e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_report</b> (int, <a class="el" href="structmessage.html">s_message</a> *, <a class="el" href="struct__s__cells.html">s_cells</a> *)</td></tr>
 <tr class="separator:a8f853a48ce29ce67b3d3e8bc56215f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a704b4929dd06a1fa3d1278641105e81c"><td class="memItemLeft" align="right" valign="top"><a id="a704b4929dd06a1fa3d1278641105e81c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>download_data</b> (int, <a class="el" href="structmessage.html">s_message</a> *, FILE *)</td></tr>
+<tr class="separator:a704b4929dd06a1fa3d1278641105e81c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Module for handling ping and low battery signal. </p>
@@ -140,17 +143,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
       </table>
 </div><div class="memdoc">
 
-<<<<<<< HEAD
-<p>Receives Measurement Control request from eNodeB and calls sending function. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socket from which request is received. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">message*</td><td>is a pointer to message received. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if request was received and false if message was not received </dd></dl>
-=======
 <p>This function receives Measurement Control request from eNodeB and calls sending function. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -160,7 +152,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Function returns true if request was receieved and false if it failed to receive request. </dd></dl>
->>>>>>> gh-pages
 
 </div>
 </div>
@@ -193,11 +184,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
 <p>This function receives ping message from eNodeB. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-<<<<<<< HEAD
     <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socket from which message is received </td></tr>
-=======
-    <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socketfd from which message is received </td></tr>
->>>>>>> gh-pages
     <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>is message receieved from the socket </td></tr>
   </table>
   </dd>
@@ -235,11 +222,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
 <p>This function sends ping complete (answer) to eNodeB. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-<<<<<<< HEAD
     <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socket to which message is send </td></tr>
-=======
-    <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socketfd to which message will be sent </td></tr>
->>>>>>> gh-pages
     <tr><td class="paramdir">[out]</td><td class="paramname">message</td><td>is message send to socket </td></tr>
   </table>
   </dd>
@@ -274,17 +257,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
       </table>
 </div><div class="memdoc">
 
-<<<<<<< HEAD
-<p>This function sends UE turn off message to eNodeB. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">socketfd</td><td>is socket to which message is send </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">message*</td><td>is a pointer to message which is send to eNodeB </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns 0 on succes and -1 when sending failed </dd></dl>
-=======
 <p>This function sends UE off signal to eNodeB. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -294,7 +266,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>send_measurement_repo
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Function returns -1 on error, 0 on success. </dd></dl>
->>>>>>> gh-pages
 
 </div>
 </div>

@@ -13,11 +13,13 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "user_equipment.h"
+#include <errno.h>
 
 #ifndef UNISTD_H
 #define UNISTD_H
 #include <unistd.h>
 #endif
+
 
 /**
     @brief This function receives ping message from eNodeB.
@@ -48,6 +50,12 @@ int send_ue_off_signal(int, s_message*);
 */
 bool receive_measurement_control_request(int, s_message*);
 void send_measurement_report(int, s_message*, s_cells*);
-int download_data(int, s_message*, FILE*);
+/**
+    @brief This function writes to file what has been downloaded from eNodeB.
+    @param[in] socketfd is socket from which message is received
+    @param[in] message is message receieved from the socket
+    @param[in] fp is pointer to the file we write to
+*/
+void download_data(int, s_message*, FILE*);
 
 #endif
