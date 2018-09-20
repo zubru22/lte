@@ -70,7 +70,9 @@ void init_server(int port) {
   // trying to send example file to all clients:
   //char* file_to_be_sent = "tekst.txt";
   //char* file_to_be_sent = "obrazek.png";
-  char* file_to_be_sent = "piesel.jpg";
+  //char* file_to_be_sent = "piesel.jpg";
+  char* file_to_be_sent = "piksel.bmp";
+
   pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
 }
 
@@ -96,7 +98,7 @@ void handle_connection(int number_of_file_descriptors_ready) {
 }
 
 void accept_client() {
-  client_t* client = (client_t*)malloc(sizeof(client_t)); // TODO
+  client_t* client = (client_t*)malloc(sizeof(client_t));
   struct sockaddr_in client_address;
   socklen_t client_length;
   client_length = sizeof(client_address);
