@@ -95,15 +95,15 @@ void handle_high_battery_request(int client_socket);
 void* ping_and_timeout_in_thread(void* arg);
 /**
     @brief Invoked by hashmap_iter on every map element. Checks if client should be pinged and pings if necessary.
-    @param[in] 
+    @param[in] *data Passed to function by hashmap iter if any data needs to be used inside, unused here.
+    @param[in] *key Key of currently iterated client.
+    @param[in] *key Value of currently iterated client.
+    @return 0 required by hashmap library (1 would stop iterating).
 */
 int ping_client(void *data, const char *key, void *value);
 /**
     @brief This function triggers when user sends "shutdown message". It closes client's socket and removes him from hashmap.
-    @param[in] *data Passed to function by hashmap iter, unused.
-    @param[in] *key Key of currently iterated client
-    @param[in] *key Value of currently iterated client
-    @return 0 required by hashmap library (1 would stop iterating)
+    @param[in] client_socket Socket of client that send shutdown notification.
 */
 void handle_client_power_off(int client_socket);
 int broadcast_sample(void *arg, const char *key, void *value);
@@ -117,8 +117,8 @@ void* transfer_data(void* arg);
 void* send_measurement_control_requests(void* arg);
 /**
   @brief called on each client by send_measurement_control_requests, send measurement control request to chosen client
-  @param data - hashmap of clients, unused in function, used for compatibility purpose with hashmap_callback
-  @param key - key to the hashmap (socket of client)
+  @param data - data passed to function by hashmap iter, used only for compatibility purpose with hashmap_callback
+  @param key - key of the client hashmap (socket of client)
   @param value - client_t structure stored in hashmap
   @return nothing is returned
 */
