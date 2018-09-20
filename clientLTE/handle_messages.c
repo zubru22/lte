@@ -51,9 +51,9 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
 int download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
-        
-    fprintf(fp, "%s", message->message_value.buffer);
-    bytes_received += BUFFER_SIZE-1;
+    fwrite(message->message_value.buffer,BUFFER_SIZE,1,fp);
+
+    bytes_received += BUFFER_SIZE;
 
     return 1;
 }
