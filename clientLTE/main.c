@@ -30,6 +30,8 @@ s_message received;
 ue_battery battery;
 pthread_mutex_t lock[2];
 
+bool downloading = false;
+
 void signal_handler(int signum) {
     running = false;
 }
@@ -39,6 +41,25 @@ void* battery_thread() {
         pthread_mutex_lock(&lock[0]);
         update_battery(socket_fd, &message, &battery);
         pthread_mutex_unlock(&lock[0]);
+    }
+
+    return NULL;
+}
+
+void* keyboard_thread() {
+    while(running && !check_for_shutdown(socket_fd, &received)) {
+            pthread_mutex_lock(&lock[1]);
+
+            int key = getchar();
+            if(key == 'd' && false == downloading) {
+                downloading = true;
+
+                if(!send_resource_request(socket_fd, &message)) {
+                    
+                }
+            }
+
+            pthread_mutex_unlock(&lock[1]);
     }
 
     return NULL;
@@ -148,6 +169,12 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
+    // Create another thread for battery
+    if(pthread_create(&thread_id[1], NULL, keyboard_thread, NULL) != 0) {
+        add_logf(client_log_filename, LOG_ERROR, "Failed to create a thread!");
+        exit(1);
+    }
+
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
         recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
@@ -177,10 +204,18 @@ int main(int argc, char* argv[])
                 packets_received = 0;
                 fclose(file_to_recv);
                 add_logf(client_log_filename, LOG_INFO, "Downloaded in %.3lf seconds\n", what_time_is_it() - diff_time);
+                downloading = false;
                 break;
             case measurement_control_request:
                 if (receive_measurement_control_request(socket_fd, &received))
                     send_measurement_report(socket_fd, &message, &cells);
+                break;
+            case resource_response:
+                if (message.message_value.resource_state) {
+                    add_logf(client_log_filename, LOG_INFO, "Resource avaliable.");
+                }
+                else
+                    add_logf(client_log_filename, LOG_WARNING, "Resource unavailable. Download won't be conducted.");
                 break;
         }
     
@@ -195,7 +230,12 @@ int main(int argc, char* argv[])
         add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread!");
         exit(1);
     }
-    pthread_mutex_destroy(&lock[0]);
+    if(pthread_join(thread_id[1], NULL) != 0) {
+        add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread!");
+        exit(1);
+    }
+    for(int i = 0; i < 2; i++)
+        pthread_mutex_destroy(&lock[i]);
     // Check if eNodeB is still on before trying to send UE off signal
     if (message.message_type != enb_off)
     {
@@ -205,5 +245,4 @@ int main(int argc, char* argv[])
             add_logf(client_log_filename, LOG_SUCCESS, "Client successfully disconnected from server!");
     }
     return 0;
-    
 }

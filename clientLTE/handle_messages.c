@@ -55,3 +55,12 @@ void download_data(int socketfd, s_message* message, FILE* fp) {
 
     bytes_received += BUFFER_SIZE;
 }
+
+int send_resource_request(int socketfd, s_message* message) {
+    message->message_type = resource_request;
+    
+    if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
+        return -1;
+
+    return 0;
+}
