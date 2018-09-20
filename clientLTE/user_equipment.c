@@ -109,7 +109,7 @@ void initialize_cells(s_cells* cells) {
     const int8_t threshold1 = 19; // thresholds are hardcoded to 20% and 80% of rsrp
     const int8_t threshold2 = 77;
     const int8_t max_rsrp = 97;
-    const int8_t signal_course_value = 17;
+    const int8_t signal_course_value = 5;
 
     for(int8_t i = 0; i < NUMBER_OF_CELLS; i++) {
         cells->cells_signals[i].rsrp = rand() % max_rsrp;
