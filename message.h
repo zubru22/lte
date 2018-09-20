@@ -92,6 +92,11 @@ typedef struct { // structure keeps client_socket, which is prefered for handove
   int client_socket;
 } handover_t;
 
+typedef struct {
+  int port;
+  char ip_address[BUFFER_SIZE];
+} handover_request_t;
+
 typedef union message_value {
         preamble message_preamble;
         response message_response;
