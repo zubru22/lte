@@ -3,8 +3,10 @@
 #endif
 
 bool threads_done = false;
-pthread_t thread_id;
+pthread_t pinging_in_thread_id;
+pthread_t send_measurement_control_requests_id;
 
+pthread_t transferring_thread;
 void server_t__init(server_t* self, int socket, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
   self->server_address = server_address;
@@ -35,6 +37,11 @@ void init_server(int port) {
   if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     error("socket in init_server");
   }
+  // reuse old socket if still exists in kernel
+  // see https://stackoverflow.com/a/10651048
+  int true_value = 1;
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &true_value, sizeof(int));
+  
   struct sockaddr_in server_address;
   init_server_address(&server_address, port);
   if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
@@ -57,7 +64,16 @@ void init_server(int port) {
   }
   server_t__init(&server, server_socket, server_address, event, epoll_file_descriptor);
 
-  pthread_create(&thread_id, NULL, pinging_in_thread, NULL);
+  pthread_create(&pinging_in_thread_id, NULL, ping_and_timeout_in_thread, NULL);
+  pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
+  
+  // trying to send example file to all clients:
+  //char* file_to_be_sent = "tekst.txt";
+  char* file_to_be_sent = "obrazek.png";
+  //char* file_to_be_sent = "piesel.jpg";
+  //char* file_to_be_sent = "piksel.bmp";
+
+  pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
 }
 
 void receive_packets() {
@@ -82,7 +98,7 @@ void handle_connection(int number_of_file_descriptors_ready) {
 }
 
 void accept_client() {
-  client_t* client = (client_t*)malloc(sizeof(client_t)); // TODO
+  client_t* client = (client_t*)malloc(sizeof(client_t));
   struct sockaddr_in client_address;
   socklen_t client_length;
   client_length = sizeof(client_address);
@@ -93,7 +109,7 @@ void accept_client() {
   if (client->socket == -1) {
     error("accept in accept_client");
   }
-  printf ("ACCEPTED SOCK: %d\n", client->socket);
+  add_logf(server_log_filename, LOG_INFO, "ACCEPTED SOCK: %d", client->socket);
   server.event.events = EPOLLIN;
   server.event.data.fd = client->socket;
   if (epoll_ctl(
@@ -112,10 +128,16 @@ void remind_about_port() {
   exit(EXIT_FAILURE);
 }
 
+void broadcast_shutdown_notification() {
+  add_logf(server_log_filename, LOG_INFO, "Broadcasting shutdown notification");
+  hashmap_iter(server.clients, (hashmap_callback) notify_client_of_shutdown, NULL);
+}
+
 void clean() {
+    broadcast_shutdown_notification();
     add_logf(server_log_filename, LOG_INFO, "CLEAN");
     threads_done = true;
-    pthread_join(thread_id, NULL);
+    pthread_join(pinging_in_thread_id, NULL);
     server_t__destroy(&server);
 }
 

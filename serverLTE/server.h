@@ -5,8 +5,8 @@
 #include "../lib/hashmap.h"
 #endif
 
-#ifndef CLIENT_H
-#include "client.h"
+#ifndef CLIENT_OBJECT_H
+#include "client_object.h"
 #endif
 
 #ifndef PACKET_HANDLER_H
@@ -17,7 +17,7 @@
 #include "../message.h"
 #endif
 
-#ifndef CLIENT_HANDLER_H
+#ifndef CLIENT_OBJECT_HANDLER_H
 #include "client_handler.h"
 #endif
 
@@ -65,5 +65,6 @@ void remind_about_port();
 void expand_clients();
 void clean();
 void error(const char* error_message);
+void broadcast_shutdown_notification();
 
 #endif
