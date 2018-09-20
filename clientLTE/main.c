@@ -207,8 +207,7 @@ int main(int argc, char* argv[])
                 downloading = false;
                 break;
             case measurement_control_request:
-                if (receive_measurement_control_request(socket_fd, &received))
-                    send_measurement_report(socket_fd, &message, &cells);
+                send_measurement_report(socket_fd, &message, &cells);
                 break;
             case resource_response:
                 if (message.message_value.resource_state) {

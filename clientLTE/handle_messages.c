@@ -42,6 +42,7 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
     assert(message != NULL);
     message->message_type = measurement_report;
     message->message_value.events = cells->current_event;
+    
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
         add_logf(client_log_filename, LOG_ERROR, "Failed to send Measurement Report!");
     else
