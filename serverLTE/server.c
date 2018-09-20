@@ -68,8 +68,8 @@ void init_server(int port) {
   pthread_create(&send_measurement_control_requests_id, NULL, send_measurement_control_requests, NULL);
   
   // trying to send example file to all clients:
-  char* file_to_be_sent = "example.txt";
-  //char* file_to_be_sent = "obrazek.png";
+  //char* file_to_be_sent = "example.txt";
+  char* file_to_be_sent = "obrazek.png";
   //char* file_to_be_sent = "piesel.jpg";
   pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
 }

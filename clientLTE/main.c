@@ -43,6 +43,12 @@ void* battery_thread() {
 
     return NULL;
 }
+double what_time_is_it()
+{
+    struct timespec now;
+    clock_gettime(CLOCK_REALTIME, &now);
+    return now.tv_sec + now.tv_nsec*1e-9;
+}
 
 int main(int argc, char* argv[])
 {
@@ -51,7 +57,6 @@ int main(int argc, char* argv[])
         return 0;
     }
     int port_number = atoi(argv[1]);
-    int download_data_return_value;
     struct sockaddr_in server;
     //s_message message;
     s_message* message_pointer = &message;
@@ -60,6 +65,7 @@ int main(int argc, char* argv[])
     FILE* file_to_recv;
     pthread_t thread_id[2];
     int packets_received = 0;
+    double diff_time;
 
     srand(time(NULL)); 
 
@@ -159,6 +165,7 @@ int main(int argc, char* argv[])
             case data_start:
                 file_to_recv = fopen("received","ab+");
                 printf("\n\n----------------------\nStarted downloading data!\n----------------------\n\n");    
+                diff_time = what_time_is_it();
                 break;
             case data:
                 download_data(socket_fd, &message, file_to_recv);
@@ -168,7 +175,8 @@ int main(int argc, char* argv[])
                 printf("\n\n----------------------\nFinished downloading data!\n----------------------\n\n");
                 printf("\n-------------packets received: %d ----------------\n",packets_received);
                 packets_received = 0;
-                fclose(file_to_recv);    
+                fclose(file_to_recv);
+                add_logf(client_log_filename, LOG_INFO, "Downloaded in %.3lf seconds", what_time_is_it() - diff_time);
                 break;
             case measurement_control_request:
                 if (receive_measurement_control_request(socket_fd, &received))
