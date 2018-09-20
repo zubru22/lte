@@ -6,7 +6,7 @@ int bytes_received = 0;
 // This function receives ping message from eNodeB. Function returns -1 on error, 0 on success.
 // If function receives a message, but message's type isn't "ping" - it returns 1.
 int receive_ping(int socketfd, s_message* message) {
-
+    
     if(ping == message->message_type)
         return 0;
     
@@ -34,13 +34,8 @@ int send_ue_off_signal(int socketfd, s_message* message) {
 bool receive_measurement_control_request(int socketfd, s_message* message) {
     assert(message != NULL);
     
-    if(message->message_type == measurement_control_request) {
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfuly received Measurement Control request.");
-        return true;
-    }
-
-    add_logf(client_log_filename, LOG_WARNING, "Message type is not Measurement Control request!");
-    return false;
+    add_logf(client_log_filename, LOG_SUCCESS, "Successfuly received Measurement Control request.");
+    return true;    
 }
 
 void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
@@ -56,9 +51,9 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
 int download_data(int socketfd, s_message* message, FILE* fp) {
     assert(message != NULL);
 
-        
-    fprintf(fp, "%s", message->message_value.buffer);
-    bytes_received += BUFFER_SIZE-1;
+    fwrite(message->message_value.buffer,BUFFER_SIZE,1,fp);
+
+    bytes_received += BUFFER_SIZE;
 
     return 1;
 }
