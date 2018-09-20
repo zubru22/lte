@@ -71,6 +71,9 @@ void parse_packet(int number_of_event) {
     case x2ap_resource_status_response:
       handle_x2ap_resource_status_response(message.message_value.handover.client_socket);
       break;
+    case x2ap_handover_request:
+      handle_x2ap_handover_request(message.message_value.handover.client_socket);
+      break;
     case x2ap_handover_request_acknowledge:
       handle_x2ap_handover_request_acknowledge(message.message_value.handover.client_socket);
       break;
@@ -213,15 +216,32 @@ void handle_a3_event(int client_socket) {
     error("send in handle_a3_event");
   }
   add_logf(server_log_filename, LOG_INFO, "send handover_x2ap_resource_status_request to target at socket: %d", server.target_socket);
-  //handle_handover(client_socket);
+  handle_handover();
 }
 
-/*void handle_handover() {
-  s_message message;
-  // musze tu wywolac funkcje:
-  handle_x2ap_resource_status_response
-  handle_x2ap_handover_request_acknowledge
-}*/
+void handle_handover() {
+  add_logf(server_log_filename, LOG_INFO, "expecting handover messages at target server on socket: %d\n", server.target_socket);
+  s_message handover_message;
+  memset(&handover_message, 0, sizeof(handover_message));
+  while(1) {
+    if(recv(server.target_socket, &handover_message, sizeof(handover_message), 0) == -1) {
+      error ("recv in handle_handover");
+    }
+    printf ("RECV MESSAGE!\n");
+    switch(handover_message.message_type) {
+      case x2ap_resource_status_response:
+        handle_x2ap_resource_status_response(handover_message.message_value.handover.client_socket);
+        break;
+      case x2ap_handover_request_acknowledge:
+        printf ("SUCCESS!\n");
+        handle_x2ap_handover_request_acknowledge(handover_message.message_value.handover.client_socket);
+        return;
+      default:
+        break;
+     }
+     memset(&handover_message, 0, sizeof(handover_message));
+   }
+}
 
 void handle_x2ap_resource_status_request(int client_socket) {
   add_logf(server_log_filename, LOG_INFO, "received x2ap_resource_status_request from source server");
@@ -229,9 +249,10 @@ void handle_x2ap_resource_status_request(int client_socket) {
   client_t* source_server = get_client_by_socket(server.clients, client_socket);
   source_server->is_server = true;
   s_message handover_x2ap_resource_status_response;
+  memset(&handover_x2ap_resource_status_response, 0, sizeof(handover_x2ap_resource_status_response));
   handover_x2ap_resource_status_response.message_type = x2ap_resource_status_response;
   handover_x2ap_resource_status_response.message_value.handover.client_socket = client_socket;
-  memset(&handover_x2ap_resource_status_response, 0, sizeof(handover_x2ap_resource_status_response));
+  //sleep(10);
   if (send(server.target_socket, &handover_x2ap_resource_status_response, sizeof(handover_x2ap_resource_status_response), 0) == -1) {
     error("send in handle_x2ap_resource_status_request");
   }
@@ -241,21 +262,21 @@ void handle_x2ap_resource_status_request(int client_socket) {
 void handle_x2ap_resource_status_response(int client_socket) {
   add_logf(server_log_filename, LOG_INFO, "received x2ap_resource_status_request from target server");
   s_message handover_x2ap_handover_request;
+  memset(&handover_x2ap_handover_request, 0, sizeof(handover_x2ap_handover_request));
   handover_x2ap_handover_request.message_type = x2ap_handover_request;
   handover_x2ap_handover_request.message_value.handover.client_socket = client_socket;
-  memset(&handover_x2ap_handover_request, 0, sizeof(handover_x2ap_handover_request));
   if (send(server.target_socket, &handover_x2ap_handover_request, sizeof(handover_x2ap_handover_request), 0) == -1) {
     error("send in handle_x2ap_resource_status_response");
   }
-  add_logf(server_log_filename, LOG_INFO, "send x2ap_handover_request to target server");
+   add_logf(server_log_filename, LOG_INFO, "send x2ap_handover_request to target server");
 }
 
 void handle_x2ap_handover_request(int client_socket) {
   add_logf(server_log_filename, LOG_INFO, "received x2ap_handover_request from source server");
   s_message handover_request_acknowledge;
+  memset(&handover_request_acknowledge, 0, sizeof(handover_request_acknowledge));
   handover_request_acknowledge.message_type = x2ap_handover_request_acknowledge;
   handover_request_acknowledge.message_value.handover.client_socket = client_socket;
-  memset(&handover_request_acknowledge, 0, sizeof(handover_request_acknowledge));
   if (send(server.target_socket, &handover_request_acknowledge, sizeof(handover_request_acknowledge), 0) == -1) {
     error("send in handle_x2ap_resource_status_response");
   }
@@ -265,8 +286,8 @@ void handle_x2ap_handover_request(int client_socket) {
 void handle_x2ap_handover_request_acknowledge(int client_socket) {
   add_logf(server_log_filename, LOG_INFO, "received x2ap_handover_request_acknowledge from target server");
   s_message rrc_connection_reconfiguration_request_message;
-  rrc_connection_reconfiguration_request_message.message_type = rrc_connection_reconfiguration_request;
   memset(&rrc_connection_reconfiguration_request_message, 0, sizeof(rrc_connection_reconfiguration_request_message));
+  rrc_connection_reconfiguration_request_message.message_type = rrc_connection_reconfiguration_request;
   // here we need to get client with client_socket
   /*if (send(server.target_socket, &rrc_connection_reconfiguration_request_messagee, sizeof(rrc_connection_reconfiguration_request_message), 0) == -1) {
     error("handle_x2ap_handover_request_acknowledge");

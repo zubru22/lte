@@ -109,7 +109,7 @@ void initialize_cells(s_cells* cells) {
     const int8_t threshold1 = 19; // thresholds are hardcoded to 20% and 80% of rsrp
     const int8_t threshold2 = 77;
     const int8_t max_rsrp = 97;
-    const int8_t signal_course_value = 5;
+    const int8_t signal_course_value = 17;
 
     for(int8_t i = 0; i < NUMBER_OF_CELLS; i++) {
         cells->cells_signals[i].rsrp = rand() % max_rsrp;
@@ -166,12 +166,12 @@ s_event check_events(s_cells* cells) {
     // Events A1, A2
     if(cells->cells_signals[0].rsrp > cells->cells_signals[0].thresholds[0] && 1 == event_change) {
         event_change = 5;
-        return a1;
+        return a3;//a1;
     }
 
     if(cells->cells_signals[0].rsrp < cells->cells_signals[0].thresholds[1] && 2 == event_change) {
         event_change = 5;
-        return a2;
+        return a3;//a2;
     }
     // Event A3
     if(cells->cells_signals[1].rsrp < cells->cells_signals[0].rsrp)
@@ -189,11 +189,11 @@ s_event check_events(s_cells* cells) {
     if(cells->cells_signals[1].rsrp > cells->cells_signals[1].thresholds[1] && false == a4_checked) {
         event_change = 5;
         a4_checked = true;
-        return a4;
+        return a3;//a4;
     }
 
     //Default event - it actualy means no event whatsoever
-    return def;
+    return a3;//def;
 }
 // This function sets signal events
 void set_current_signal_event(s_cells* cells) {

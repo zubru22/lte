@@ -80,4 +80,6 @@ void handle_x2ap_resource_status_response(int client_socket);
 void handle_x2ap_handover_request(int client_socket);
 
 void handle_x2ap_handover_request_acknowledge(int client_socket);
+
+void handle_handover();
 #endif
