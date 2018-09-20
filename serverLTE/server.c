@@ -69,9 +69,9 @@ void init_server(int port) {
   
   // trying to send example file to all clients:
   //char* file_to_be_sent = "tekst.txt";
-  //char* file_to_be_sent = "obrazek.png";
+  char* file_to_be_sent = "obrazek.png";
   //char* file_to_be_sent = "piesel.jpg";
-  char* file_to_be_sent = "piksel.bmp";
+  //char* file_to_be_sent = "piksel.bmp";
 
   pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
 }

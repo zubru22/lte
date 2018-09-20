@@ -163,7 +163,8 @@ int main(int argc, char* argv[])
                 }
                 break;
             case data_start:
-                file_to_recv = fopen("received","ab+");
+                //char* filename = 
+                file_to_recv = fopen(message.message_value.buffer,"ab+");
                 printf("\n\n----------------------\nStarted downloading data!\n----------------------\n\n");    
                 diff_time = what_time_is_it();
                 break;

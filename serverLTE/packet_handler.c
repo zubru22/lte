@@ -185,6 +185,8 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   
   s_message data_message_tag;
   data_message_tag.message_type = data_start;
+  memset(data_message_tag.message_value.buffer, 0, BUFFER_SIZE);
+  memcpy(data_message_tag.message_value.buffer, filename, BUFFER_SIZE);
   if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
     add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
     exit(EXIT_FAILURE);
@@ -200,15 +202,12 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   int bytes_sent = 0;
   int packets_sent = 0;
   while (bytes_read < file_size) {
-    //sleep(1);
-    // nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
     nanosleep((const struct timespec[]){{0, 100000L}}, NULL);
 
     fseek(file_to_be_sent, bytes_read, SEEK_SET);
     memset(data_message.message_value.buffer, 0, BUFFER_SIZE);
     fread(data_message.message_value.buffer, BUFFER_SIZE, 1, file_to_be_sent);
     
-    //data_message.message_value.buffer[BUFFER_SIZE-1] = '\0';
     bytes_read += BUFFER_SIZE;
     bytes_sent = send(current_client->socket, &data_message, sizeof(data_message), 0);
 
@@ -216,7 +215,6 @@ int broadcast_sample(void *arg, const char *key, void *value) {
       add_logf(server_log_filename, LOG_ERROR, "Error sending data");
       exit(EXIT_FAILURE);
     } else {
-      //add_logf(server_log_filename, LOG_SUCCESS, "Data sent: %s\n", data_message.message_value.buffer);
       //add_logf(server_log_filename, LOG_INFO, "Bytes sent: %d", bytes_sent);
       packets_sent++;
     }
