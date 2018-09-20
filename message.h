@@ -107,6 +107,7 @@ typedef union message_value {
         unsigned char buffer[BUFFER_SIZE];
         s_event events;
         handover_t handover;
+        handover_request_t handover_request;
         bool resource_state;
 } u_message_value;
 

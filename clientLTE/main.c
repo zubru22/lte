@@ -29,6 +29,7 @@ s_message message;
 s_message received;
 ue_battery battery;
 pthread_mutex_t lock[2];
+const char* localhost = "127.0.0.1";
 
 bool downloading = false;
 
@@ -112,7 +113,7 @@ int main(int argc, char* argv[])
     }
 
     //init_connection returns 0 on error, else function returns 1
-    if (init_connection(&socket_fd, &server, port_number)) {
+    if (init_connection(&socket_fd, &server, port_number, localhost)) {
         add_logf(client_log_filename, LOG_SUCCESS, "Connected!");
     } 
     else {
@@ -215,6 +216,17 @@ int main(int argc, char* argv[])
                 }
                 else
                     add_logf(client_log_filename, LOG_WARNING, "Resource unavailable. Download won't be conducted.");
+                break;
+            case rrc_connection_reconfiguration_request:
+                send_ue_off_signal(socket_fd, &message);
+
+                if (init_connection(&socket_fd, &server, message.message_value.handover_request.port, message.message_value.handover_request.ip_address)) {
+                    add_logf(client_log_filename, LOG_SUCCESS, "Connected!");
+                } 
+                else {
+                    add_logf(client_log_filename, LOG_ERROR, "Failed to connect!");
+                    return 0;
+                }
                 break;
         }
     
