@@ -36,10 +36,10 @@ void parse_packet(int number_of_event) {
   int client_socket = server.events[number_of_event].data.fd;
   int number_of_bytes_read;
   size_t json_message_len;
-  char *json_message;
+  char* json_message;
 
   add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
-  number_of_bytes_read = read(client_socket, &json_message_len, sizeof(json_message_len));
+  number_of_bytes_read = read(client_socket, (size_t*) &json_message_len, sizeof(json_message_len));
 
   if (number_of_bytes_read == -1) {
     error("read in parse_packet");
@@ -50,13 +50,14 @@ void parse_packet(int number_of_event) {
     return;
   }
 
-  json_message = (char *) malloc(json_message_len * sizeof(char));
-  perror("");
-  number_of_bytes_read = read(client_socket, json_message, json_message_len);
+  json_message = (char*) malloc(json_message_len);
+
+  do {
+    number_of_bytes_read = read(client_socket, json_message, json_message_len);
+  } while (number_of_bytes_read != json_message_len);
   
-  perror("");
+  printf("should read: %lu, read: %d\n", json_message_len, number_of_bytes_read);
   printf("%s\n", json_message);
-  printf("should read: %lu, read: %lu\n", json_message_len, number_of_bytes_read);
   
   free(json_message);
 
@@ -169,6 +170,7 @@ void* send_measurement_control_requests(void* arg) {
     sleep(1);
     hashmap_iter(server.clients, (hashmap_callback) send_measurement_control_request, NULL);
   }
+  return NULL;
 }
 
 int send_measurement_control_request(void *data, const char *key, void *value) {
@@ -178,4 +180,5 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
   client_t* current_client = (client_t*) value;
   send(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
   add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
+  return 0;
 }
