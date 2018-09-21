@@ -7,7 +7,8 @@
             add_logf(client_log_filename, LOG_ERROR, "Failed to create socket!");
             return 0;
         }
-
+        printf ("port = %d\n", port_number);
+        printf ("ip_address = %s\n", ip_addr);
         server->sin_family = AF_INET;
         server->sin_port = htons(port_number);
         inet_pton(AF_INET,ip_addr,&(server->sin_addr));

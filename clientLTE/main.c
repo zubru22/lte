@@ -56,7 +56,7 @@ void* keyboard_thread() {
                 downloading = true;
 
                 if(!send_resource_request(socket_fd, &message)) {
-                    
+
                 }
             }
 
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
     int packets_received = 0;
     double diff_time;
 
-    srand(time(NULL)); 
+    srand(time(NULL));
 
     struct sigaction s_signal;
     s_signal.sa_handler = signal_handler;
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
     //init_connection returns 0 on error, else function returns 1
     if (init_connection(&socket_fd, &server, port_number, localhost)) {
         add_logf(client_log_filename, LOG_SUCCESS, "Connected!");
-    } 
+    }
     else {
         add_logf(client_log_filename, LOG_ERROR, "Failed to connect!");
         return 0;
@@ -125,10 +125,10 @@ int main(int argc, char* argv[])
     if (send_prach_preamble(socket_fd, &message, generate_ra_rnti) == -1) {
         add_logf(client_log_filename, LOG_ERROR, "Failed to send preamble!");
         return 0;
-    } 
+    }
     else {
         add_logf(client_log_filename, LOG_SUCCESS, "Message sent!");
-        
+
         if (message.message_type == random_access_request) {
             add_logf(client_log_filename, LOG_INFO, "Message type: RA_RNTI.");
         }
@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
                 break;
             case data_start:
                 file_to_recv = fopen(message.message_value.buffer,"ab+");
-                add_logf(client_log_filename, LOG_INFO, "\n\n----------------------\nStarted downloading data!\n----------------------\n\n");    
+                add_logf(client_log_filename, LOG_INFO, "\n\n----------------------\nStarted downloading data!\n----------------------\n\n");
                 diff_time = what_time_is_it();
                 break;
             case data:
@@ -218,21 +218,22 @@ int main(int argc, char* argv[])
                     add_logf(client_log_filename, LOG_WARNING, "Resource unavailable. Download won't be conducted.");
                 break;
             case rrc_connection_reconfiguration_request:
+                add_logf(client_log_filename, LOG_WARNING, "rrc_connection_reconfiguration_request SUCCESS");
                 send_ue_off_signal(socket_fd, &message);
-
+                close(socket_fd);
                 if (init_connection(&socket_fd, &server, message.message_value.handover_request.port, message.message_value.handover_request.ip_address)) {
                     add_logf(client_log_filename, LOG_SUCCESS, "Connected!");
-                } 
+                }
                 else {
                     add_logf(client_log_filename, LOG_ERROR, "Failed to connect!");
                     return 0;
                 }
                 break;
         }
-    
+        sleep(1);
         set_current_signal_event(&cells);
 
-        //printf("\nCurrent event: %d\n", (int)cells.current_event+1);
+        printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         //printf("Battery power: %i\n", battery.power_percentage);
         message.message_type = -1;
     }
