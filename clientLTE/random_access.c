@@ -13,34 +13,28 @@ int generate_ra_rnti(void) {
 
 // This function sends prach preamble to eNodeB. Function returns -1 on error and 0 on success
 int send_prach_preamble(int sockfd, json_t* message, int (*ra_rnti_generator_func)(void)) {
-    char *json_message;
+    char json_message[50];
+    memset(json_message, 0, sizeof(json_message));
+    strcpy(json_message, "hello1111");
     // We need to set message type to random_access_request
     json_object_set(message, "message_type", json_integer(random_access_request));
     // We need to fill preamble value (ra_rnti)
     json_object_set(message, "ra_rnti", json_integer(ra_rnti_generator_func()));
     // Convert json object to string, 0 means no formating
-    json_message = json_dumps(message, 0);
+    //json_message = json_dumps(message, 0);
     // Length of json string to be send
     size_t json_message_len = strlen(json_message);
+    
     // Printing for debugging
     printf("message size: %lu\n", json_message_len);
     
-
-    //Send struct
-    /*if(write(sockfd, &json_message_len, json_message_len) == -1)
-    {
-        free(json_message);
-        return -1;
-    }*/
-    
-    // Send length of json string to eNodeB
+    // Send length of json string
     write(sockfd, &json_message_len, json_message_len);
-    // Send json string
     int written = write(sockfd, json_message, json_message_len);
     printf("written: %lu\n", written);
-    puts(json_message);
+    //json_dumpf(message, stdout, 0);
     
-    free(json_message);
+    //free(json_message);
     return 0;
 }
 

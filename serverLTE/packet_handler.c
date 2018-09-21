@@ -5,18 +5,18 @@
 const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 3;
 
 void handle_random_access_request(int client_socket, char *json_message) {
-  json_t *message;
- /* message = json_object();
+  /* json_t *message;
+  message = json_object();
   message = json_loads(json_message, strlen(json_message), 0);
-  json_dumpf(message, stdout, 0);*/
+  json_dumpf(message, stdout, 0);
 
-  /*int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
+  int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
   uint8_t preamble_index = extractPreambleIndex(received_ra_rnti);
   time_t current_timestamp = time(NULL);
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   update_client_by_ra_rnti_data(client_socket, preamble_index, current_timestamp, received_ra_rnti);
-  add_logf(server_log_filename, LOG_INFO, "Random Access response sent");*/
+  add_logf(server_log_filename, LOG_INFO, "Random Access response sent"); */
 }
 
 void handle_pong(int client_socket) {
@@ -34,14 +34,12 @@ void handle_client_power_off(int client_socket) {
 
 void parse_packet(int number_of_event) {
   int client_socket = server.events[number_of_event].data.fd;
-
-  add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
-  //s_message message;
-  // memset(&message, 0, sizeof(message));
-  //char json_message[1024];
+  int number_of_bytes_read;
   size_t json_message_len;
   char *json_message;
-  int number_of_bytes_read = read(client_socket, &json_message_len, sizeof(json_message_len));
+
+  add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
+  number_of_bytes_read = read(client_socket, &json_message_len, sizeof(json_message_len));
 
   if (number_of_bytes_read == -1) {
     error("read in parse_packet");
@@ -53,10 +51,13 @@ void parse_packet(int number_of_event) {
   }
 
   json_message = (char *) malloc(json_message_len * sizeof(char));
+  perror("");
   number_of_bytes_read = read(client_socket, json_message, json_message_len);
+  
+  perror("");
+  printf("%s\n", json_message);
   printf("should read: %lu, read: %lu\n", json_message_len, number_of_bytes_read);
   
-  printf("%s\n", json_message);
   free(json_message);
 
   /*switch(message.message_type) {
