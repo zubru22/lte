@@ -23,7 +23,9 @@ int servet_t__socket(server_t* self) {
 
 void server_t__destroy(server_t* self) {
   close_clients_sockets();
+  pthread_mutex_lock(&server.hashmap_lock);
   hashmap_destroy(self->clients);
+  pthread_mutex_unlock(&server.hashmap_lock);
   close(self->socket);
 }
 
@@ -76,6 +78,11 @@ void init_server(int port, int target_port) {
   //char* file_to_be_sent = "piksel.bmp";
 
   pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
+
+  if (pthread_mutex_init(&server.hashmap_lock, NULL) != 0)
+    {
+        error("Mutex init failed");
+    }
 }
 
 void receive_packets() {
@@ -141,6 +148,7 @@ void clean() {
     add_logf(server_log_filename, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(pinging_in_thread_id, NULL);
+    pthread_mutex_destroy(&server.hashmap_lock);
     server_t__destroy(&server);
 }
 
