@@ -123,13 +123,21 @@ int8_t extractPreambleIndex(int16_t ra_rnti) {
 }
 
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp) {
-    s_message response;
-    memset(&response, 0, sizeof(response));
-    response.message_type = random_access_response;
-    response.message_value.message_response.rapid = preamble_index;
-    response.message_value.message_response.unix_epoch_timestamp = timestamp;
+    json_t *response_json;
+    char *json_str_outgoing;
+    size_t json_str_len;
+    response_json = json_object();
+    json_object_set(response_json, "message_type", json_integer(random_access_response));
+    json_object_set(response_json, "rapid", json_integer(preamble_index));
+    json_object_set(response_json, "timestamp", json_integer(timestamp));
+    json_str_outgoing = json_dumps(response_json,0);
+    json_str_len = strlen(json_str_outgoing);
+    write(socket, &json_str_len, json_str_len);
+    //send json_struckt
+    size_t written = write(socket, json_str_outgoing, json_str_len);
+    assert(json_str_len==written);
+
     add_logf(server_log_filename, LOG_INFO, "Sent value: %d", preamble_index);
-    send(socket, &response, sizeof(response), 0);
 }
 
 void handle_low_battery_request(int client_socket) {

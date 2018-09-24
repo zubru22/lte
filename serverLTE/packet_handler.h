@@ -38,6 +38,7 @@
 #include <sys/types.h>
 #include <stdbool.h>
 #include <jansson.h>
+#include <assert.h>
 
 extern const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD;
 
