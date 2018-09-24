@@ -65,3 +65,13 @@ int send_resource_request(int socketfd, s_message* message) {
 
     return 0;
 }
+
+int send_SMS(int socketfd, s_message* message, char* text_message) {
+    message->message_type = SMS;
+    strcpy(message->message_value.text_message,text_message);
+
+    if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
+        return -1;
+
+    return 0;
+}
