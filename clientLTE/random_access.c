@@ -1,8 +1,5 @@
 // This functionality is about to create Random Access Preamble (RA-RNTI) and wait for Random Access Response (C-RNTI) from eNB
 #include "random_access.h"
-#ifndef STDBOOL_H
-#include <stdbool.h>
-#endif
 
 // This function generates and returns ra_rnti for prach preamble and modifies original structure
 int generate_ra_rnti(void) {
@@ -12,28 +9,31 @@ int generate_ra_rnti(void) {
 }
 
 // This function sends prach preamble to eNodeB. Function returns -1 on error and 0 on success
-int send_prach_preamble(int sockfd, json_t* message, int (*ra_rnti_generator_func)(void)) {
-    char *json_message;
+int send_prach_preamble(int sockfd, json_t* json_obj, int (*ra_rnti_generator_func)(void)) {
+    char *json_str_outgoing;
 
     // We need to set message type to random_access_request
-    json_object_set(message, "message_type", json_integer(random_access_request));
+    json_object_set(json_obj, "message_type", json_integer(random_access_request));
     // We need to fill preamble value (ra_rnti)
-    json_object_set(message, "ra_rnti", json_integer(ra_rnti_generator_func()));
+    json_object_set(json_obj, "ra_rnti", json_integer(ra_rnti_generator_func()));
     // Convert json object to string, 0 means no formating
-    json_message = json_dumps(message, 0);
+    json_str_outgoing = json_dumps(json_obj, 0);
     // Length of json string to be send
-    size_t json_message_len = strlen(json_message) + 1;
+    size_t json_str_len = strlen(json_str_outgoing) + 1;
     
     // Printing for debugging
-    printf("message size: %lu\n", json_message_len);
+    printf("message size: %lu\n", json_str_len);
     
     // Send length of json string
-    write(sockfd, &json_message_len, json_message_len);
-    size_t written = write(sockfd, json_message, json_message_len);
+    write(sockfd, &json_str_len, json_str_len);
+    // Send json string and store amount of bytes written to the file descriptor
+    size_t written = write(sockfd, json_str_outgoing, json_str_len);
+    assert(json_str_len == written);
     printf("written: %lu\n", written);
-    json_dumpf(message, stdout, 0);
+    json_dumpf(json_obj, stdout, 0);
     
-    free(json_message);
+    // No need to keep the string
+    free(json_str_outgoing);
     return 0;
 }
 

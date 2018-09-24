@@ -11,12 +11,22 @@
 #include <arpa/inet.h>
 #ifndef UNISTD_H
 #include <unistd.h>
-#endif
 
 #ifndef JANSSON_H
 #include <string.h>
 #include <jansson.h>
 #endif
+
+#ifndef STDBOOL_H
+#include <stdbool.h>
+#endif
+
+#ifndef ASSERT_H
+#include <assert.h>
+#endif
+#endif
+
+
 
 int generate_ra_rnti(void);
 int send_prach_preamble(int, json_t*, int (*ra_rnti_generator_func)(void));

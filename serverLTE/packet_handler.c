@@ -4,19 +4,15 @@
 
 const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 3;
 
-void handle_random_access_request(int client_socket, char *json_message) {
-  /* json_t *message;
-  message = json_object();
-  message = json_loads(json_message, strlen(json_message), 0);
-  json_dumpf(message, stdout, 0);
-
-  int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
+void handle_random_access_request(int client_socket, json_t *json) {
+  int16_t received_ra_rnti;
+  json_unpack(json_object_get(json, "ra_rnti"), "i", &received_ra_rnti);
   uint8_t preamble_index = extractPreambleIndex(received_ra_rnti);
   time_t current_timestamp = time(NULL);
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   update_client_by_ra_rnti_data(client_socket, preamble_index, current_timestamp, received_ra_rnti);
-  add_logf(server_log_filename, LOG_INFO, "Random Access response sent"); */
+  add_logf(server_log_filename, LOG_INFO, "Random Access response sent");
 }
 
 void handle_pong(int client_socket) {
@@ -35,12 +31,17 @@ void handle_client_power_off(int client_socket) {
 void parse_packet(int number_of_event) {
   int client_socket = server.events[number_of_event].data.fd;
   int number_of_bytes_read;
-  size_t json_message_len;
-  char* json_message;
+  size_t json_str_len;
+  char* json_str_incoming;
+  json_t *json_obj;
+  int message_type_received;
+  
 
   add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
-  number_of_bytes_read = read(client_socket, (size_t*) &json_message_len, sizeof(json_message_len));
+  // Read length of json from the socket
+  number_of_bytes_read = read(client_socket, (size_t*) &json_str_len, sizeof(json_str_len));
 
+  // Abort in case of an error or zero length
   if (number_of_bytes_read == -1) {
     error("read in parse_packet");
   } else if (number_of_bytes_read == 0) {
@@ -50,20 +51,28 @@ void parse_packet(int number_of_event) {
     return;
   }
 
-  json_message = (char*) malloc(json_message_len);
+  // Allocate memory for json string
+  json_str_incoming = (char*) malloc(json_str_len);
 
+  // Read json string from socket - repeat in case it's needed
   do {
-    number_of_bytes_read = read(client_socket, json_message, json_message_len);
-  } while (number_of_bytes_read != json_message_len);
+    number_of_bytes_read = read(client_socket, json_str_incoming, json_str_len);
+  } while (number_of_bytes_read != json_str_len);
   
-  printf("should read: %lu, read: %d\n", json_message_len, number_of_bytes_read);
-  printf("%s\n", json_message);
-  
-  free(json_message);
+  printf("should read: %lu, read: %d\n", json_str_len, number_of_bytes_read);
+  printf("%s\n", json_str_incoming);
 
-  /*switch(message.message_type) {
+  // Decode json string to json object
+  json_obj = json_loads(json_str_incoming, 0, 0);
+  // String not needed any more
+  free(json_str_incoming);
+
+  // Exctract message type value from json
+  json_unpack(json_object_get(json_obj, "message_type"), "i", &message_type_received);
+
+  switch(message_type_received) {
     case random_access_request:
-      handle_random_access_request(client_socket, message);
+      handle_random_access_request(client_socket, json_obj);
       break;
     case rrc_request:
       send_rrc_setup(client_socket);
@@ -82,7 +91,7 @@ void parse_packet(int number_of_event) {
       break;
     default:
       break;
-  }*/
+  }
 }
 
 rrc_config generate_rrc_config(int16_t rnti) {

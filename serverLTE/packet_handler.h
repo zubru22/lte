@@ -41,7 +41,7 @@
 
 extern const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD;
 
-void handle_random_access_request(int client_socket, char *json_message);
+void handle_random_access_request(int client_socket, json_t *json);
 void handle_pong(int client_socket);
 void parse_packet(int number_of_event);
 rrc_config generate_rrc_config(int16_t rnti);
