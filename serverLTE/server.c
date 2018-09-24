@@ -81,7 +81,7 @@ void init_server(int port, int target_port) {
 
   if (pthread_mutex_init(&server.hashmap_lock, NULL) != 0)
     {
-        error("Mutex init failed");
+        error("Hashmap mutex init failed");
     }
 }
 
@@ -108,6 +108,9 @@ void handle_connection(int number_of_file_descriptors_ready) {
 
 void accept_client() {
   client_t* client = (client_t*)malloc(sizeof(client_t));
+  if (pthread_mutex_init(&client->socket_lock, NULL) != 0) {
+        error("Client mutex init failed");
+    }
   struct sockaddr_in client_address;
   socklen_t client_length;
   client_length = sizeof(client_address);
