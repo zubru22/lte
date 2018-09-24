@@ -8,6 +8,8 @@
 #endif
 #include <assert.h>
 
+static char client_log_filename[] = "../logs/client.log";
+
 // This function initializes battery. Should only be used once.
 void initialize_battery_life(ue_battery* battery) {
     assert(battery != NULL);
@@ -127,8 +129,15 @@ void initialize_cells(s_cells* cells) {
         cells->cells_signals[i].thresholds[0] = threshold1;
         cells->cells_signals[i].thresholds[1] = threshold2;
         cells->current_event = def;
-        cells->cells_signals[i].signal_course = signal_course_value;
+
+        if(0 == rand() % 2)
+            cells->cells_signals[i].signal_course = signal_course_value;
+        else
+            cells->cells_signals[i].signal_course = -signal_course_value;
     }
+
+    while(cells->cells_signals[1].signal_course == cells->cells_signals[0].signal_course)
+        cells->cells_signals[1].signal_course = rand() % max_rsrp;
 
     time(&cells->starting_time);
 }

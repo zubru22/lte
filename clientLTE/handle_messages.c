@@ -1,6 +1,8 @@
 /* This functionality is about handling default client server communication like pings and stuff */
 #include "handle_messages.h"
 
+static char client_log_filename[] = "../logs/client.log";
+
 int bytes_received = 0;
 
 // This function receives ping message from eNodeB. Function returns -1 on error, 0 on success.

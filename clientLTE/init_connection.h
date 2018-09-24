@@ -5,5 +5,5 @@
     #include <sys/types.h>
     #include "random_access.h"
 
-    int init_connection(int* socket_fd, struct sockaddr_in* server, int port_number, char* ip_addr);
+    int init_connection(int* socket_fd, struct sockaddr_in* server, int port_number, const char* ip_addr);
 #endif
