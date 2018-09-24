@@ -100,7 +100,7 @@ int send_low_battery_notification(int socketfd, s_message* message) {
 
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
         return -1;
-    
+
     return 0;
 }
 // This function sends notification to eNodeB if battery state is high again. Function returns 0 if all goes well,
@@ -213,7 +213,8 @@ s_event check_events(s_cells* cells) {
     }
 
     //Default event - it actualy means no event whatsoever
-    return def;
+    //sleep(10);
+    return a3;//def;
 }
 // This function sets signal events
 void set_current_signal_event(s_cells* cells) {

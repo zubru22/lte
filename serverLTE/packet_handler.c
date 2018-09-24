@@ -284,6 +284,11 @@ void handle_x2ap_handover_request_acknowledge(int client_socket) {
   s_message rrc_connection_reconfiguration_request_message;
   memset(&rrc_connection_reconfiguration_request_message, 0, sizeof(rrc_connection_reconfiguration_request_message));
   rrc_connection_reconfiguration_request_message.message_type = rrc_connection_reconfiguration_request;
+  rrc_connection_reconfiguration_request_message.message_value.handover_request.port = server.target_port;
+  memset(rrc_connection_reconfiguration_request_message.message_value.handover_request.ip_address, 0, sizeof(rrc_connection_reconfiguration_request_message.message_value.handover_request.ip_address));
+  strcpy(rrc_connection_reconfiguration_request_message.message_value.handover_request.ip_address, "127.0.0.1");
+  printf ("port = %d\n", rrc_connection_reconfiguration_request_message.message_value.handover_request.port);
+  printf ("ip_address = %s\n", rrc_connection_reconfiguration_request_message.message_value.handover_request.ip_address);
   // here we need to get client with client_socket
   if (send(client_socket, &rrc_connection_reconfiguration_request_message, sizeof(rrc_connection_reconfiguration_request_message), 0) == -1) {
     error("handle_x2ap_handover_request_acknowledge");
