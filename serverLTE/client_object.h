@@ -14,6 +14,10 @@
 #include "../logs/logs.h"
 #endif
 
+#ifndef CONFIG_H
+#include "config.h"
+#endif
+
 typedef enum {
   OK = 0,
   LOW

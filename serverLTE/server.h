@@ -25,6 +25,10 @@
 #include "../logs/logs.h"
 #endif
 
+#ifndef CONFIG_H
+#include "config.h"
+#endif
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>

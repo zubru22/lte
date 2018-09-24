@@ -4,6 +4,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#ifndef CONFIG_H
+#include "config.h"
+#endif
+
 /**
  * // TODO something's not right here, review this comment and change
     @brief Gets client by its socket and updates it data with data given as arguments

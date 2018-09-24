@@ -29,6 +29,11 @@
 #ifndef CLIENT_OBJECT_H
 #include "client_object.h"
 #endif
+
+#ifndef CONFIG_H
+#include "config.h"
+#endif
+
 #include <errno.h>
 #include <stdio.h>
 
