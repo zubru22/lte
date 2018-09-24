@@ -123,6 +123,7 @@ void accept_client() {
                ) == -1) {
       error("epoll_ctl in accept_client");
   }
+  client->last_activity = time(NULL);
   put_client_in_hashmap(server.clients, client->socket, client);
 }
 

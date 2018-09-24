@@ -204,8 +204,7 @@ s_event check_events(s_cells* cells) {
     }
 
     //Default event - it actualy means no event whatsoever
-    //sleep(10);
-    return a3;//def;
+    return def;
 }
 // This function sets signal events
 void set_current_signal_event(s_cells* cells) {
