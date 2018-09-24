@@ -102,7 +102,9 @@ void send_rrc_setup(int socket) {
   memset(&response, 0, sizeof(response));
   response.message_type = rrc_setup;
   response.message_value.rrc_response = generate_rrc_config(client_rnti);
-  send(socket, &response, sizeof(response), 0);
+  if(send(socket, &response, sizeof(response), 0) == -1) {
+    error("send in send_rrc_setup");
+  }
   add_logf(server_log_filename, LOG_INFO, "Sent RRC setup");
 }
 
