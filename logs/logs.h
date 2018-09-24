@@ -47,7 +47,5 @@ enum logs {
     /** Flag for neutral events */
     LOG_INFO
 } type_of_log;
-static char client_log_filename[] = "../logs/client.log";
-static char server_log_filename[] = "../logs/server.log";
 void add_logf(const char *log_file_name, int log, const char *str, ...);
 #endif

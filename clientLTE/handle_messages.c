@@ -1,6 +1,8 @@
 /* This functionality is about handling default client server communication like pings and stuff */
 #include "handle_messages.h"
 
+static char client_log_filename[] = "../logs/client.log";
+
 int bytes_received = 0;
 
 // This function receives ping message from eNodeB. Function returns -1 on error, 0 on success.
@@ -60,6 +62,16 @@ void download_data(int socketfd, s_message* message, FILE* fp) {
 int send_resource_request(int socketfd, s_message* message) {
     message->message_type = resource_request;
     
+    if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
+        return -1;
+
+    return 0;
+}
+
+int send_SMS(int socketfd, s_message* message, char* text_message) {
+    message->message_type = SMS;
+    strcpy(message->message_value.text_message,text_message);
+
     if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
         return -1;
 
