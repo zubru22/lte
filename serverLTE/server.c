@@ -43,8 +43,8 @@ void init_server(int port, int target_port) {
   }
   // reuse old socket if still exists in kernel
   // see https://stackoverflow.com/a/10651048
-  int true_value = 1;
-  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &true_value, sizeof(int));
+  int value_set = 1;
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &value_set, sizeof(int));
 
   struct sockaddr_in server_address;
   init_server_address(&server_address, port);
