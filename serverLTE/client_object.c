@@ -40,9 +40,23 @@ void close_client_socket(void *data, const char *key, void *value) {
 }
 
 void delete_client_from_hashmap(hashmap* map_of_clients, int socket) {
+    client_t* client_being_deleted;
     char key[8];
-    sprintf(key, "%d", socket);
+
+    // blocks for readability
     pthread_mutex_lock(&server.hashmap_lock);
-    hashmap_delete(server.clients, key);
+    {
+        client_being_deleted = get_client_by_socket(server.clients, socket);
+
+        pthread_mutex_lock(&client_being_deleted->socket_lock);
+        {
+            close(client_being_deleted->socket);
+        }
+        pthread_mutex_unlock(&client_being_deleted->socket_lock);
+        
+        pthread_mutex_destroy(&client_being_deleted->socket_lock);
+        sprintf(key, "%d", socket);
+        hashmap_delete(server.clients, key);    
+    }
     pthread_mutex_unlock(&server.hashmap_lock);
 }
