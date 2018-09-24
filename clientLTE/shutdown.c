@@ -2,6 +2,8 @@
 #include "shutdown.h"
 #endif
 
+static char client_log_filename[] = "../logs/client.log";
+
 bool check_for_shutdown(int socketfd, s_message* message)
 {
     if (message->message_type == enb_off)

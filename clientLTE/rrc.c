@@ -4,6 +4,8 @@
 #include "rrc.h"
 #include "../logs/logs.h"
 
+static char client_log_filename[] = "../logs/client.log";
+
 // This function generates ue_identity random key
 void generate_ue_identity(s_stmsi* ue_identity) {
     ue_identity->mme_code = rand() % (int)pow(2, 8);

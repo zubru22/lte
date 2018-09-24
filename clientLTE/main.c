@@ -23,6 +23,8 @@
 #include <pthread.h>
 #endif
 
+static char client_log_filename[] = "../logs/client.log";
+
 volatile bool running = true;
 int socket_fd;
 s_message message;
@@ -95,7 +97,6 @@ int main(int argc, char* argv[])
     s_signal.sa_handler = signal_handler;
     sigemptyset(&s_signal.sa_mask);
     s_signal.sa_flags = 0;
-
 
     // INITIALIZATION BLOCK /////////////////////////////////////
 
