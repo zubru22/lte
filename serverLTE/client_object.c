@@ -10,18 +10,24 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
     char key[8];
     sprintf(key, "%d", socket);
     void* searched_client;
+    pthread_mutex_lock(&server.hashmap_lock);
     if (hashmap_get(server.clients, key, &searched_client) == -1) {
         add_logf(server_log_filename, LOG_ERROR, "error retrieving data from clients hashmap - no client %s found", key);
+        pthread_mutex_unlock(&server.hashmap_lock);
         return NULL;
+    } else {
+        pthread_mutex_unlock(&server.hashmap_lock);
+        return ((client_t*) searched_client);
     }
 
-    return ((client_t*) searched_client);
 }
 
 void put_client_in_hashmap(hashmap* map_of_clients, int socket, client_t* client_inserted) {
     char key[8];
     sprintf(key, "%d", socket);
+    pthread_mutex_lock(&server.hashmap_lock);
     hashmap_put(server.clients, key, client_inserted);
+    pthread_mutex_unlock(&server.hashmap_lock);
 }
 
 void close_clients_sockets() {
@@ -34,7 +40,23 @@ void close_client_socket(void *data, const char *key, void *value) {
 }
 
 void delete_client_from_hashmap(hashmap* map_of_clients, int socket) {
+    client_t* client_being_deleted;
     char key[8];
-    sprintf(key, "%d", socket);
-    hashmap_delete(server.clients, key);
+
+    // blocks for readability
+    pthread_mutex_lock(&server.hashmap_lock);
+    {
+        client_being_deleted = get_client_by_socket(server.clients, socket);
+
+        pthread_mutex_lock(&client_being_deleted->socket_lock);
+        {
+            close(client_being_deleted->socket);
+        }
+        pthread_mutex_unlock(&client_being_deleted->socket_lock);
+        
+        pthread_mutex_destroy(&client_being_deleted->socket_lock);
+        sprintf(key, "%d", socket);
+        hashmap_delete(server.clients, key);    
+    }
+    pthread_mutex_unlock(&server.hashmap_lock);
 }

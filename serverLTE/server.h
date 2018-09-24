@@ -52,6 +52,7 @@ typedef struct {
     struct epoll_event event;
     struct epoll_event events[MAX_EVENTS];
     hashmap* clients;
+    pthread_mutex_t hashmap_lock;
 } server_t;
 
 server_t server;

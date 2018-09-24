@@ -28,7 +28,7 @@ int notify_client_of_shutdown(void *data, const char *key, void *value) {
   memset(&shutdown_notification, 0, sizeof(shutdown_notification));
   shutdown_notification.message_type = enb_off;
 
-  send(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0);
+  send_thread_safe(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0);
   return 0;
 }
 
@@ -44,4 +44,12 @@ int handle_client_inactivity(void *data, const char *key, void *value) {
     delete_client_from_hashmap(server.clients, current_client->socket);
   }
   return 0;
+}
+
+ssize_t send_thread_safe(int client_socket, const void *buf, size_t size_of_buffer, int flags) {
+  client_t* current_client = get_client_by_socket(server.clients, client_socket);
+  pthread_mutex_lock(&current_client->socket_lock);
+  int bytes_sent = send(client_socket, buf, size_of_buffer, flags);
+  pthread_mutex_unlock(&current_client->socket_lock);
+  return bytes_sent;
 }
