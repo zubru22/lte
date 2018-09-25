@@ -15,27 +15,37 @@ void add_logf(FILE* log_file, int log, const char *str, ...)
     strtok(local_time, "\n");
     
     // Print log time to terminal and to log file
+    if(should_print_to_console)
+        printf("%s", local_time);
     fprintf(log_file, "%s", local_time);
 
     // Print message tag to log file
+    char* log_type;
     switch (log) {
         case 0:
-            fprintf(log_file, "[SUCCESS] ");
+            log_type = " [SUCCESS] ";
             break;
         case 1:
-            fprintf(log_file, "[WARNING] ");
+            log_type = " [WARNING] ";
             break;
         case 2:
-            fprintf(log_file, " [ERROR] ");
+            log_type = " [ERROR] ";
             break;
         case 3:
-            fprintf(log_file, " [INFO] ");
+            log_type = " [INFO] ";
             break;
     }
+    if(should_print_to_console)
+        printf("%s", log_type);
+    fprintf(log_file, "%s", log_type);
 
     // Print message description to log file
     va_list args;
-    va_start(args, str);
+    if(should_print_to_console) {    
+        va_start(args, str);
+        vprintf(str, args);
+        printf("\n");
+    }
     va_start(args, str);
     vfprintf(log_file, str, args);
     fprintf(log_file, "\n");
@@ -44,4 +54,9 @@ void add_logf(FILE* log_file, int log, const char *str, ...)
 
 FILE* log_init(const char* filename, const char* mode) {
     return fopen(filename, mode);
+    should_print_to_console = false;
+}
+
+void set_console_logging(bool value) {
+    should_print_to_console = value;
 }

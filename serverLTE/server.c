@@ -89,6 +89,7 @@ void init_server(int port, int target_port) {
     printf("Unable to open log file, exiting\n");
     exit(EXIT_FAILURE);
   }
+  set_console_logging(true);
 }
 
 void receive_packets() {
@@ -159,7 +160,7 @@ void clean() {
     pthread_join(pinging_in_thread_id, NULL);
     pthread_mutex_destroy(&server.hashmap_lock);
     server_t__destroy(&server);
-    close(server_log_file);
+    fclose(server_log_file);
 }
 
 void error(const char* error_message) {

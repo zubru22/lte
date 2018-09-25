@@ -36,6 +36,9 @@
 #endif
 
 #include <stdarg.h>
+#include <stdbool.h>
+
+static bool should_print_to_console = false;
 
 enum logs {
     /** Flag for successful events */
@@ -49,4 +52,5 @@ enum logs {
 } type_of_log;
 void add_logf(FILE*, int, const char*, ...);
 FILE* log_init(const char* filename, const char* mode);
+void set_console_logging(bool value);
 #endif
