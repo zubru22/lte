@@ -31,6 +31,9 @@
 #ifndef STDLIB_H
 #include <stdlib.h>
 #endif
+#ifndef CTYPE_H
+#include <ctype.h>
+#endif
 
 static char client_log_filename[] = "../logs/client.log";
 
@@ -80,14 +83,19 @@ void* keyboard_thread() {
                 if(!send_resource_request(socket_fd, &message)) {
 
                 }
-               // display_menu_options();
             }
             else if (isMessage) {
                 if(send_SMS(socket_fd, &message, message_buff) == 0)
-                    add_logf(client_log_filename, LOG_INFO, "Message sent!");
+                    add_logf(log_file, LOG_INFO, "Message sent!");
                 else
-                    add_logf(client_log_filename, LOG_INFO, "Couldn't send message!");
+                    add_logf(log_file, LOG_INFO, "Couldn't send message!");
             }
+            else if(strcmp(message_buff, "1\n") == 0) {
+                printf("\e[1;1H\e[2J");
+                menu_options = DISPLAY_LOGS;
+                display_logs();
+            }
+            
             pthread_mutex_unlock(&lock[1]);
     }
 
@@ -102,8 +110,9 @@ double what_time_is_it()
 
 int main(int argc, char* argv[])
 {
+    menu_options = DISPLAY_MENU;
     // Open the file for appending
-    if((log_file = fopen(client_log_filename, "rw")) == NULL)
+    if((log_file = fopen(client_log_filename, "w")) == NULL)
         puts("Couldn't open log file!\n");
 
     if(argc < 2){
@@ -208,7 +217,6 @@ int main(int argc, char* argv[])
 
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
-        printf("Socked fd: %i", socket_fd);
         recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
         switch (message.message_type) {
             case ping:
@@ -261,12 +269,16 @@ int main(int argc, char* argv[])
                 }
                 break;
             case SMS:
-                add_logf(client_log_filename, LOG_INFO, "Received message: %s", message.message_value.text_message);
+                add_logf(log_file, LOG_INFO, "Received message: %s", message.message_value.text_message);
                     
                 break;
         }
         sleep(1);
         set_current_signal_event(&cells);
+
+        if(menu_options == DISPLAY_MENU) { 
+            display_menu();
+        }
 
         // printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         //printf("Battery power: %i\n", battery.power_percentage);
