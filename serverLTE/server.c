@@ -138,8 +138,7 @@ void accept_client() {
 }
 
 void remind_about_port() {
-  add_logf(server_log_filename, LOG_ERROR, "Run program: ./server PORT TARGET_PORT");
-  exit(EXIT_FAILURE);
+  error ("Run program: ./server PORT TARGET_PORT");
 }
 
 void broadcast_shutdown_notification() {

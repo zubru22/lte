@@ -47,5 +47,5 @@ enum logs {
     /** Flag for neutral events */
     LOG_INFO
 } type_of_log;
-void add_logf(const char *log_file_name, int log, const char *str, ...);
+void add_logf(FILE*, int, const char*, ...);
 #endif
