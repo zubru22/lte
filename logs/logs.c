@@ -37,7 +37,7 @@ void add_logf(FILE* log_file, int log, const char *str, ...)
     }
     if(should_print_to_console)
         printf("%s", log_type);
-    fprintf(log_file, log_type);
+    fprintf(log_file, "%s", log_type);
 
     // Print message description to log file
     va_list args;

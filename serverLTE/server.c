@@ -160,7 +160,7 @@ void clean() {
     pthread_join(pinging_in_thread_id, NULL);
     pthread_mutex_destroy(&server.hashmap_lock);
     server_t__destroy(&server);
-    close(server_log_file);
+    fclose(server_log_file);
 }
 
 void error(const char* error_message) {

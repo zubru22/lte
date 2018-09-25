@@ -22,6 +22,24 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
 
 }
 
+int check_client_by_MSIN(void *data, const char *key, void *value) {
+    int* searched_MSIN = (int*) data;
+    client_t* current_client = (client_t*) value;
+    if (current_client->phone_number == *searched_MSIN) {
+        data = current_client;
+        return 1;
+    } else {
+        data = NULL;
+    }
+    return 0;
+}
+
+client_t* get_client_by_MSIN(hashmap* map_of_clients, int MSIN) {
+    void* data = (void*) &MSIN;
+    hashmap_iter(server.clients, (hashmap_callback) check_client_by_MSIN, data);
+    return (client_t*) data;
+}
+
 void put_client_in_hashmap(hashmap* map_of_clients, int socket, client_t* client_inserted) {
     char key[8];
     sprintf(key, "%d", socket);
