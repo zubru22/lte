@@ -35,6 +35,7 @@ typedef struct client {
     int socket;
     bool is_server;
     pthread_mutex_t socket_lock;
+    int phone_number;
 } client_t;
 
 client_t* get_client_by_socket(hashmap* map_of_clients, int socket);

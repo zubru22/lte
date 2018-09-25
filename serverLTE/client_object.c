@@ -19,7 +19,13 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
         pthread_mutex_unlock(&server.hashmap_lock);
         return ((client_t*) searched_client);
     }
+}
 
+client_t* get_client_by_phone_number(hashmap* map_of_clients, int phone_number) {
+  char key[16];
+  sprintf (key, "%d", phone_number);
+  void* searched_client;
+  pthread_mutex_lock(&server.hashmap_lock);
 }
 
 void put_client_in_hashmap(hashmap* map_of_clients, int socket, client_t* client_inserted) {
@@ -53,10 +59,10 @@ void delete_client_from_hashmap(hashmap* map_of_clients, int socket) {
             close(client_being_deleted->socket);
         }
         pthread_mutex_unlock(&client_being_deleted->socket_lock);
-        
+
         pthread_mutex_destroy(&client_being_deleted->socket_lock);
         sprintf(key, "%d", socket);
-        hashmap_delete(server.clients, key);    
+        hashmap_delete(server.clients, key);
     }
     pthread_mutex_unlock(&server.hashmap_lock);
 }

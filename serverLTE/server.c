@@ -83,7 +83,7 @@ void init_server(int port, int target_port) {
     {
         error("Hashmap mutex init failed");
     }
-  
+
   server_log_file = log_init(server_log_filename, "w+");
   if(server_log_file == NULL) {
     printf("Unable to open log file, exiting\n");
@@ -194,4 +194,8 @@ void connect_to_target_server() {
       error("ERROR connecting");
   }
   printf ("CONNECTED");
+}
+
+void forward_sms_message(int client_socket) {
+
 }
