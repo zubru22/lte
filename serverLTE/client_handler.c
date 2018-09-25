@@ -41,7 +41,7 @@ int handle_client_inactivity(void *data, const char *key, void *value) {
   bool should_kick = (time_since_last_activity > PING_TIMEOUT);
 
   if (should_kick && current_client->is_server == false) {
-    add_logf(server_log_filename, LOG_INFO, "Timeout - kicking client on socket %d", current_client->socket);
+    add_logf(server_log_file, LOG_INFO, "Timeout - kicking client on socket %d", current_client->socket);
     close(current_client->socket);
     delete_client_from_hashmap(server.clients, current_client->socket);
   }

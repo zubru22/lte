@@ -83,6 +83,12 @@ void init_server(int port, int target_port) {
     {
         error("Hashmap mutex init failed");
     }
+  
+  server_log_file = log_init(server_log_filename, "w+");
+  if(server_log_file == NULL) {
+    printf("Unable to open log file, exiting\n");
+    exit(EXIT_FAILURE);
+  }
 }
 
 void receive_packets() {
@@ -122,7 +128,7 @@ void accept_client() {
   if (client->socket == -1) {
     error("accept in accept_client");
   }
-  add_logf(server_log_filename, LOG_INFO, "ACCEPTED SOCK: %d", client->socket);
+  add_logf(server_log_file, LOG_INFO, "ACCEPTED SOCK: %d", client->socket);
   server.event.events = EPOLLIN;
   server.event.data.fd = client->socket;
   if (epoll_ctl(
@@ -142,21 +148,22 @@ void remind_about_port() {
 }
 
 void broadcast_shutdown_notification() {
-  add_logf(server_log_filename, LOG_INFO, "Broadcasting shutdown notification");
+  add_logf(server_log_file, LOG_INFO, "Broadcasting shutdown notification");
   hashmap_iter(server.clients, (hashmap_callback) notify_client_of_shutdown, NULL);
 }
 
 void clean() {
     broadcast_shutdown_notification();
-    add_logf(server_log_filename, LOG_INFO, "CLEAN");
+    add_logf(server_log_file, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(pinging_in_thread_id, NULL);
     pthread_mutex_destroy(&server.hashmap_lock);
     server_t__destroy(&server);
+    close(server_log_file);
 }
 
 void error(const char* error_message) {
-  add_logf(server_log_filename, LOG_ERROR, error_message);
+  add_logf(server_log_file, LOG_ERROR, error_message);
   if (errno != EINTR) {
     clean();
   }

@@ -11,14 +11,14 @@ void handle_random_access_request(int client_socket, s_message message) {
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
   update_client_by_ra_rnti_data(client_socket, preamble_index, current_timestamp, received_ra_rnti);
-  add_logf(server_log_filename, LOG_INFO, "Random Access response sent");
+  add_logf(server_log_file, LOG_INFO, "Random Access response sent");
 }
 
 void handle_pong(int client_socket) {
   //update client's lst activity timestamp
   client_t* to_be_updated = get_client_by_socket(server.clients, client_socket);
   to_be_updated->last_activity = time(NULL);
-  add_logf(server_log_filename, LOG_INFO, "Received pong");
+  add_logf(server_log_file, LOG_INFO, "Received pong");
 }
 
 void handle_client_power_off(int client_socket) {
@@ -29,14 +29,14 @@ void handle_client_power_off(int client_socket) {
 void parse_packet(int number_of_event) {
   int client_socket = server.events[number_of_event].data.fd;
 
-  add_logf(server_log_filename, LOG_INFO, "Parsing packet from socket: %d", client_socket);
+  add_logf(server_log_file, LOG_INFO, "Parsing packet from socket: %d", client_socket);
   s_message message;
   memset(&message, 0, sizeof(message));
   int number_of_bytes_read = read(client_socket, &message, sizeof(message));
   if (number_of_bytes_read == -1) {
     error("read in parse_packet");
   } else if (number_of_bytes_read == 0) {
-    add_logf(server_log_filename, LOG_INFO, "Client disconnected: %d", client_socket);
+    add_logf(server_log_file, LOG_INFO, "Client disconnected: %d", client_socket);
     delete_client_from_hashmap(server.clients, client_socket);
     return;
   }
@@ -103,7 +103,7 @@ void send_rrc_setup(int socket) {
   if(send_thread_safe(socket, &response, sizeof(response), 0) == -1) {
     error("send in send_rrc_setup");
   }
-  add_logf(server_log_filename, LOG_INFO, "Sent RRC setup");
+  add_logf(server_log_file, LOG_INFO, "Sent RRC setup");
 }
 
 int8_t extractPreambleIndex(int16_t ra_rnti) {
@@ -116,18 +116,18 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
     response.message_type = random_access_response;
     response.message_value.message_response.rapid = preamble_index;
     response.message_value.message_response.unix_epoch_timestamp = timestamp;
-    add_logf(server_log_filename, LOG_INFO, "Sent value: %d", preamble_index);
+    add_logf(server_log_file, LOG_INFO, "Sent value: %d", preamble_index);
     send_thread_safe(socket, &response, sizeof(response), 0);
 }
 
 void handle_low_battery_request(int client_socket) {
-  add_logf(server_log_filename, LOG_INFO, "Battery LOW on client: %d", client_socket);
+  add_logf(server_log_file, LOG_INFO, "Battery LOW on client: %d", client_socket);
   client_t* client_with_low_battery = get_client_by_socket(server.clients, client_socket);
   client_with_low_battery->battery_state = LOW;
 }
 
 void handle_high_battery_request(int client_socket) {
-  add_logf(server_log_filename, LOG_INFO, "Battery HIGH on client: %d", client_socket);
+  add_logf(server_log_file, LOG_INFO, "Battery HIGH on client: %d", client_socket);
   client_t* client_with_high_battery = get_client_by_socket(server.clients, client_socket);
   client_with_high_battery->battery_state = OK;
 }
@@ -153,7 +153,7 @@ int ping_client(void *data, const char *key, void *value) {
     memset(&ping_message, 0, sizeof(ping_message));
     ping_message.message_type = ping;
     send_thread_safe(current_client->socket, &ping_message, sizeof(ping_message), 0);
-    add_logf(server_log_filename, LOG_INFO, "Sent ping to client on socket: %d", current_client->socket);
+    add_logf(server_log_file, LOG_INFO, "Sent ping to client on socket: %d", current_client->socket);
   }
   return 0;
 }
@@ -173,7 +173,7 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
     memset(&measurement_control_message, 0, sizeof(measurement_control_message));
     measurement_control_message.message_type = measurement_control_request;
     send_thread_safe(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
-    add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
+    add_logf(server_log_file, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
   }
 }
 
@@ -201,7 +201,7 @@ void handle_measurement_report(int client_socket, s_message measurement_report_m
 }
 
 void handle_a3_event(int client_socket) {
-  add_logf(server_log_filename, LOG_INFO, "handle_a3_event with client socket: %d", client_socket);
+  add_logf(server_log_file, LOG_INFO, "handle_a3_event with client socket: %d", client_socket);
   if (server.target_socket == -2) {
     connect_to_target_server();
   }
@@ -213,12 +213,12 @@ void handle_a3_event(int client_socket) {
   if (send_thread_safe(server.target_socket, &handover_x2ap_resource_status_request, sizeof(handover_x2ap_resource_status_request), 0) == -1) {
     error("send in handle_a3_event");
   }
-  add_logf(server_log_filename, LOG_INFO, "send handover_x2ap_resource_status_request to target at socket: %d", server.target_socket);
+  add_logf(server_log_file, LOG_INFO, "send handover_x2ap_resource_status_request to target at socket: %d", server.target_socket);
   handle_handover();
 }
 
 void handle_handover() {
-  add_logf(server_log_filename, LOG_INFO, "expecting handover messages at target server on socket: %d\n", server.target_socket);
+  add_logf(server_log_file, LOG_INFO, "expecting handover messages at target server on socket: %d\n", server.target_socket);
   s_message handover_message;
   memset(&handover_message, 0, sizeof(handover_message));
   while(1) {
@@ -240,7 +240,7 @@ void handle_handover() {
 }
 
 void handle_x2ap_resource_status_request(int client_socket) {
-  add_logf(server_log_filename, LOG_INFO, "received x2ap_resource_status_request from source server");
+  add_logf(server_log_file, LOG_INFO, "received x2ap_resource_status_request from source server");
   server.target_socket = client_socket;
   client_t* source_server = get_client_by_socket(server.clients, client_socket);
   source_server->is_server = true;
@@ -252,11 +252,11 @@ void handle_x2ap_resource_status_request(int client_socket) {
   if (send_thread_safe(server.target_socket, &handover_x2ap_resource_status_response, sizeof(handover_x2ap_resource_status_response), 0) == -1) {
     error("send in handle_x2ap_resource_status_request");
   }
-  add_logf(server_log_filename, LOG_INFO, "send x2ap_resource_status_response to source server");
+  add_logf(server_log_file, LOG_INFO, "send x2ap_resource_status_response to source server");
 }
 
 void handle_x2ap_resource_status_response(int client_socket) {
-  add_logf(server_log_filename, LOG_INFO, "received x2ap_resource_status_request from target server");
+  add_logf(server_log_file, LOG_INFO, "received x2ap_resource_status_request from target server");
   s_message handover_x2ap_handover_request;
   memset(&handover_x2ap_handover_request, 0, sizeof(handover_x2ap_handover_request));
   handover_x2ap_handover_request.message_type = x2ap_handover_request;
@@ -264,11 +264,11 @@ void handle_x2ap_resource_status_response(int client_socket) {
   if (send_thread_safe(server.target_socket, &handover_x2ap_handover_request, sizeof(handover_x2ap_handover_request), 0) == -1) {
     error("send in handle_x2ap_resource_status_response");
   }
-   add_logf(server_log_filename, LOG_INFO, "send x2ap_handover_request to target server");
+   add_logf(server_log_file, LOG_INFO, "send x2ap_handover_request to target server");
 }
 
 void handle_x2ap_handover_request(int client_socket) {
-  add_logf(server_log_filename, LOG_INFO, "received x2ap_handover_request from source server");
+  add_logf(server_log_file, LOG_INFO, "received x2ap_handover_request from source server");
   s_message handover_request_acknowledge;
   memset(&handover_request_acknowledge, 0, sizeof(handover_request_acknowledge));
   handover_request_acknowledge.message_type = x2ap_handover_request_acknowledge;
@@ -276,11 +276,11 @@ void handle_x2ap_handover_request(int client_socket) {
   if (send_thread_safe(server.target_socket, &handover_request_acknowledge, sizeof(handover_request_acknowledge), 0) == -1) {
     error("send in handle_x2ap_resource_status_response");
   }
-  add_logf(server_log_filename, LOG_INFO, "send x2ap_handover_request_acknowledge to source server");
+  add_logf(server_log_file, LOG_INFO, "send x2ap_handover_request_acknowledge to source server");
 }
 
 void handle_x2ap_handover_request_acknowledge(int client_socket) {
-  add_logf(server_log_filename, LOG_INFO, "received x2ap_handover_request_acknowledge from target server");
+  add_logf(server_log_file, LOG_INFO, "received x2ap_handover_request_acknowledge from target server");
   s_message rrc_connection_reconfiguration_request_message;
   memset(&rrc_connection_reconfiguration_request_message, 0, sizeof(rrc_connection_reconfiguration_request_message));
   rrc_connection_reconfiguration_request_message.message_type = rrc_connection_reconfiguration_request;
@@ -293,14 +293,14 @@ void handle_x2ap_handover_request_acknowledge(int client_socket) {
   if (send_thread_safe(client_socket, &rrc_connection_reconfiguration_request_message, sizeof(rrc_connection_reconfiguration_request_message), 0) == -1) {
     error("handle_x2ap_handover_request_acknowledge");
   }
-  add_logf(server_log_filename, LOG_INFO, "sent rrc_connection_reconfiguration_request to client to handover");
+  add_logf(server_log_file, LOG_INFO, "sent rrc_connection_reconfiguration_request to client to handover");
 }
 
 int broadcast_sample(void *arg, const char *key, void *value) {
   client_t* current_client = (client_t*) value;
 
   char* filename = (char*) arg;
-  add_logf(server_log_filename, LOG_INFO, "File to be sent: %s\n", filename);
+  add_logf(server_log_file, LOG_INFO, "File to be sent: %s\n", filename);
 
   FILE* file_to_be_sent = fopen(filename, "rb");
   if (file_to_be_sent == NULL) {
@@ -315,7 +315,7 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   long file_size = ftell(file_to_be_sent);
   fseek(file_to_be_sent, 0, SEEK_SET);
 
-  add_logf(server_log_filename, LOG_INFO, "Size of file (bytes): %lu\nReal size of file: %lu\n", file_size, real_size);
+  add_logf(server_log_file, LOG_INFO, "Size of file (bytes): %lu\nReal size of file: %lu\n", file_size, real_size);
 
   s_message data_message_tag;
   data_message_tag.message_type = data_start;
@@ -324,7 +324,7 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   if (send_thread_safe(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
     error("Error sending data start");
   } else {
-    add_logf(server_log_filename, LOG_SUCCESS, "START SEND DATA");
+    add_logf(server_log_file, LOG_SUCCESS, "START SEND DATA");
   }
 
   sleep(1);
@@ -356,7 +356,7 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   if (send_thread_safe(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
     error ("Error sending data start");
   } else {
-    add_logf(server_log_filename, LOG_SUCCESS, "File transfered! Packets sent: %d", packets_sent);
+    add_logf(server_log_file, LOG_SUCCESS, "File transfered! Packets sent: %d", packets_sent);
   }
 
   return 0;

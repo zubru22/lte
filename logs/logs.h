@@ -48,4 +48,5 @@ enum logs {
     LOG_INFO
 } type_of_log;
 void add_logf(FILE*, int, const char*, ...);
+FILE* log_init(const char* filename, const char* mode);
 #endif

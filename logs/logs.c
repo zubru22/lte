@@ -41,3 +41,7 @@ void add_logf(FILE* log_file, int log, const char *str, ...)
     fprintf(log_file, "\n");
     va_end(args);
 }
+
+FILE* log_init(const char* filename, const char* mode) {
+    return fopen(filename, mode);
+}

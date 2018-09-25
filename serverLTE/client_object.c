@@ -12,7 +12,7 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
     void* searched_client;
     pthread_mutex_lock(&server.hashmap_lock);
     if (hashmap_get(server.clients, key, &searched_client) == -1) {
-        add_logf(server_log_filename, LOG_ERROR, "error retrieving data from clients hashmap - no client %s found", key);
+        add_logf(server_log_file, LOG_ERROR, "error retrieving data from clients hashmap - no client %s found", key);
         pthread_mutex_unlock(&server.hashmap_lock);
         return NULL;
     } else {
