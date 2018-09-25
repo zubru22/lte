@@ -1,8 +1,7 @@
 /* This functionality is about handling default client server communication like pings and stuff */
 #include "handle_messages.h"
 
-static char client_log_filename[] = "../logs/client.log";
-
+extern FILE* log_file;
 int bytes_received = 0;
 
 // This function receives ping message from eNodeB. Function returns -1 on error, 0 on success.
@@ -36,7 +35,7 @@ int send_ue_off_signal(int socketfd, s_message* message) {
 bool receive_measurement_control_request(int socketfd, s_message* message) {
     assert(message != NULL);
     
-    add_logf(client_log_filename, LOG_SUCCESS, "Successfuly received Measurement Control request.");
+    add_logf(log_file, LOG_SUCCESS, "Successfuly received Measurement Control request.");
     return true;    
 }
 
@@ -46,9 +45,9 @@ void send_measurement_report(int socketfd, s_message* message, s_cells* cells) {
     message->message_value.events = cells->current_event;
     
     if(-1 == write(socketfd, (s_message*) message, sizeof(*message)))
-        add_logf(client_log_filename, LOG_ERROR, "Failed to send Measurement Report!");
+        add_logf(log_file, LOG_ERROR, "Failed to send Measurement Report!");
     else
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfuly sent Measurement Report!");
+        add_logf(log_file, LOG_SUCCESS, "Successfuly sent Measurement Report!");
 }
 
 void download_data(int socketfd, s_message* message, FILE* fp) {

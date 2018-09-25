@@ -4,7 +4,7 @@ CC = gcc
 CFLAGS=-g -Wall -c
 SFLAGS=-g -Wall 
 
-DEPS= handle_messages.h init_connection.h random_access.h rrc.h shutdown.h user_equipment.h ../logs/logs.h
+DEPS= handle_messages.h init_connection.h random_access.h rrc.h shutdown.h user_equipment.h ../logs/logs.h display.h
 
 all: client
 
@@ -19,8 +19,8 @@ valgrind:
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(SFLAGS)
 
-client: main.o handle_messages.o init_connection.o random_access.o rrc.o shutdown.o user_equipment.o logs.o $(DEPS)
-		$(CC) $(SFLAGS) main.o handle_messages.o init_connection.o random_access.o rrc.o shutdown.o user_equipment.o logs.o -o client -lpthread
+client: main.o handle_messages.o init_connection.o random_access.o rrc.o shutdown.o user_equipment.o logs.o display.o $(DEPS)
+		$(CC) $(SFLAGS) main.o handle_messages.o init_connection.o random_access.o rrc.o shutdown.o user_equipment.o logs.o display.o -o client -lpthread
 
 main.o: main.c
 		$(CC) $(CFLAGS) main.c
@@ -46,3 +46,6 @@ user_equipment.o: user_equipment.c
 
 logs.o: ../logs/logs.c
 	$(CC) $(CFLAGS) ../logs/logs.c
+
+display.o: display.c
+	$(CC) $(CFLAGS) display.c

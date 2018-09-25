@@ -8,7 +8,7 @@
 #endif
 #include <assert.h>
 
-static char client_log_filename[] = "../logs/client.log";
+extern FILE* log_file;
 
 // This function initializes battery. Should only be used once.
 void initialize_battery_life(ue_battery* battery) {
@@ -28,7 +28,7 @@ void check_battery_status(int socketfd, int step, s_message* message, ue_battery
         if(battery->sent_notification == false) {
             if(send_low_battery_notification(socketfd, message) == 0)
                 battery->sent_notification = true;
-            add_logf(client_log_filename, LOG_INFO, "Send low bettery note!");
+            add_logf(log_file, LOG_INFO, "Send low bettery note!");
         }
     }
     else if (battery->power_percentage >= low_battery_threshold && (low_battery_threshold+step) > battery->power_percentage && battery->charging) {
@@ -36,7 +36,7 @@ void check_battery_status(int socketfd, int step, s_message* message, ue_battery
         if(battery->sent_notification == false) {
             if(send_high_battery_notification(socketfd, message) == 0)
                 battery->sent_notification = true;
-            add_logf(client_log_filename, LOG_INFO, "Send high bettery note!");
+            add_logf(log_file, LOG_INFO, "Send high bettery note!");
         }
     }
 }
@@ -136,8 +136,8 @@ void initialize_cells(s_cells* cells) {
             cells->cells_signals[i].signal_course = -signal_course_value;
     }
 
-    while(cells->cells_signals[1].signal_course == cells->cells_signals[0].signal_course)
-        cells->cells_signals[1].signal_course = rand() % max_rsrp;
+    while(cells->cells_signals[1].rsrp == cells->cells_signals[0].rsrp)
+        cells->cells_signals[1].rsrp = rand() % max_rsrp;
 
     time(&cells->starting_time);
 }
@@ -164,7 +164,7 @@ void update_rsrps(s_cells* cells) {
             if((cells->cells_signals[i].rsrp >= max_rsrp) || (cells->cells_signals[i].rsrp <= 0)) {
                 cells->cells_signals[i].signal_course *= -1; // Change sign of course (velocity) of signal's power change
             }
-            printf("Signal power (%d): %d\n", i+1, cells->cells_signals[i].rsrp);
+            // printf("Signal power (%d): %d\n", i+1, cells->cells_signals[i].rsrp);
         }
 
         time(&cells->starting_time); // Actualise starting time
