@@ -89,6 +89,7 @@ void init_server(int port, int target_port) {
     printf("Unable to open log file, exiting\n");
     exit(EXIT_FAILURE);
   }
+  set_console_logging(true);
 }
 
 void receive_packets() {
