@@ -208,7 +208,6 @@ int main(int argc, char* argv[])
 
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
-        printf("Socked fd: %i", socket_fd);
         recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
         switch (message.message_type) {
             case ping:
