@@ -22,6 +22,9 @@
 #ifndef PTHREAD_H
 #include <pthread.h>
 #endif
+#ifndef DISPLAY_H
+#include "display.h"
+#endif
 #ifndef STDIO_H
 #include <stdio.h>
 #endif
@@ -38,6 +41,7 @@ s_message received;
 ue_battery battery;
 pthread_mutex_t lock[2];
 const char* localhost = "127.0.0.1";
+FILE* log_file;
 char message_buff[100] = "";
 bool isMessage = false;
 
@@ -76,6 +80,7 @@ void* keyboard_thread() {
                 if(!send_resource_request(socket_fd, &message)) {
 
                 }
+               // display_menu_options();
             }
             else if (isMessage) {
                 if(send_SMS(socket_fd, &message, message_buff) == 0)
@@ -97,8 +102,12 @@ double what_time_is_it()
 
 int main(int argc, char* argv[])
 {
+    // Open the file for appending
+    if((log_file = fopen(client_log_filename, "rw")) == NULL)
+        puts("Couldn't open log file!\n");
+
     if(argc < 2){
-        add_logf(client_log_filename, LOG_ERROR, "You need to pass port number as an argument!");
+        add_logf(log_file, LOG_ERROR, "You need to pass port number as an argument!");
         return 0;
     }
     int port_number = atoi(argv[1]);
@@ -120,67 +129,66 @@ int main(int argc, char* argv[])
     s_signal.sa_flags = 0;
 
     // INITIALIZATION BLOCK /////////////////////////////////////
-
     initialize_battery_life(&battery);
     initialize_cells(&cells);
 
     if(pthread_mutex_init(&lock[0], NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Mutex initialization failed!");
+        add_logf(log_file, LOG_ERROR, "Mutex initialization failed!");
         exit(1);
     }
 
     if(pthread_mutex_init(&lock[1], NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Mutex initialization failed!");
+        add_logf(log_file, LOG_ERROR, "Mutex initialization failed!");
         exit(1);
     }
 
     //init_connection returns 0 on error, else function returns 1
     if (init_connection(&socket_fd, &server, port_number, localhost)) {
-        add_logf(client_log_filename, LOG_SUCCESS, "Connected!");
+        add_logf(log_file, LOG_SUCCESS, "Connected!");
     }
     else {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to connect!");
+        add_logf(log_file, LOG_ERROR, "Failed to connect!");
         return 0;
     }
 
     //returns -1 on error, else 0
     if (send_prach_preamble(socket_fd, &message, generate_ra_rnti) == -1) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to send preamble!");
+        add_logf(log_file, LOG_ERROR, "Failed to send preamble!");
         return 0;
     }
     else {
-        add_logf(client_log_filename, LOG_SUCCESS, "Message sent!");
+        add_logf(log_file, LOG_SUCCESS, "Message sent!");
 
         if (message.message_type == random_access_request) {
-            add_logf(client_log_filename, LOG_INFO, "Message type: RA_RNTI.");
+            add_logf(log_file, LOG_INFO, "Message type: RA_RNTI.");
         }
         else {
-            add_logf(client_log_filename, LOG_WARNING, "Message type: NOT RA_RNTI.");
+            add_logf(log_file, LOG_WARNING, "Message type: NOT RA_RNTI.");
         }
-        add_logf(client_log_filename, LOG_INFO, "RA_RNTI VALUE: %d", message.message_value.message_preamble.ra_rnti);
+        add_logf(log_file, LOG_INFO, "RA_RNTI VALUE: %d", message.message_value.message_preamble.ra_rnti);
     }
 
     int prach_response_func_status = receive_prach_response(socket_fd, &received, &message);
 
     if(-1 == prach_response_func_status) {
-        add_logf(client_log_filename, LOG_ERROR, "Error on recv()!");
+        add_logf(log_file, LOG_ERROR, "Error on recv()!");
         return 0;
     }
     else if(1 == prach_response_func_status) {
-        add_logf(client_log_filename, LOG_ERROR, "Response not OK!");
+        add_logf(log_file, LOG_ERROR, "Response not OK!");
         return 0;
     }
     else {
-        add_logf(client_log_filename, LOG_SUCCESS, "Response type OK.");
-        add_logf(client_log_filename, LOG_SUCCESS, "RACH Success!");
+        add_logf(log_file, LOG_SUCCESS, "Response type OK.");
+        add_logf(log_file, LOG_SUCCESS, "RACH Success!");
     }
 
     if(send_rrc_connection_request(socket_fd, &message, generate_ue_identity) == -1) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to send RRC connection request!");
+        add_logf(log_file, LOG_ERROR, "Failed to send RRC connection request!");
         return 0;
     }
     else {
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfully sent RRC connection request.");
+        add_logf(log_file, LOG_SUCCESS, "Successfully sent RRC connection request.");
     }
 
     receive_rrc_setup(socket_fd, &received, &message);
@@ -188,13 +196,13 @@ int main(int argc, char* argv[])
 
     // Create another thread for battery
     if(pthread_create(&thread_id[0], NULL, battery_thread, NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to create a thread!");
+        add_logf(log_file, LOG_ERROR, "Failed to create a thread!");
         exit(1);
     }
 
     // Create another thread for battery
     if(pthread_create(&thread_id[1], NULL, keyboard_thread, NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to create a thread!");
+        add_logf(log_file, LOG_ERROR, "Failed to create a thread!");
         exit(1);
     }
 
@@ -206,16 +214,16 @@ int main(int argc, char* argv[])
             case ping:
                 if (receive_ping(socket_fd, &message) == 0) {
                     if (send_pong(socket_fd, &message) == -1)
-                            add_logf(client_log_filename, LOG_ERROR, "Failed to response to server ping!");
+                            add_logf(log_file, LOG_ERROR, "Failed to response to server ping!");
                         else {
                             decrease_after_ping(socket_fd, &message, &battery);
-                            add_logf(client_log_filename, LOG_SUCCESS, "Successfully handled server ping!");
+                            add_logf(log_file, LOG_SUCCESS, "Successfully handled server ping!");
                         }
                 }
                 break;
             case data_start:
                 file_to_recv = fopen(message.message_value.buffer,"ab+");
-                add_logf(client_log_filename, LOG_INFO, "\n\n----------------------\nStarted downloading data!\n----------------------\n\n");
+                add_logf(log_file, LOG_INFO, "\n\n----------------------\nStarted downloading data!\n----------------------\n\n");
                 diff_time = what_time_is_it();
                 break;
             case data:
@@ -223,11 +231,11 @@ int main(int argc, char* argv[])
                 packets_received++;
                 break;
             case data_end:
-                add_logf(client_log_filename, LOG_INFO, "\n\n----------------------\nFinished downloading data!\n----------------------\n\n");
+                add_logf(log_file, LOG_INFO, "\n\n----------------------\nFinished downloading data!\n----------------------\n\n");
                 printf("\n-------------packets received: %d ----------------\n",packets_received);
                 packets_received = 0;
                 fclose(file_to_recv);
-                add_logf(client_log_filename, LOG_INFO, "Downloaded in %.3lf seconds\n", what_time_is_it() - diff_time);
+                add_logf(log_file, LOG_INFO, "Downloaded in %.3lf seconds\n", what_time_is_it() - diff_time);
                 downloading = false;
                 break;
             case measurement_control_request:
@@ -235,20 +243,20 @@ int main(int argc, char* argv[])
                 break;
             case resource_response:
                 if (message.message_value.resource_state) {
-                    add_logf(client_log_filename, LOG_INFO, "Resource avaliable.");
+                    add_logf(log_file, LOG_INFO, "Resource avaliable.");
                 }
                 else
-                    add_logf(client_log_filename, LOG_WARNING, "Resource unavailable. Download won't be conducted.");
+                    add_logf(log_file, LOG_WARNING, "Resource unavailable. Download won't be conducted.");
                 break;
             case rrc_connection_reconfiguration_request:
-                add_logf(client_log_filename, LOG_WARNING, "rrc_connection_reconfiguration_request SUCCESS");
+                add_logf(log_file, LOG_WARNING, "rrc_connection_reconfiguration_request SUCCESS");
                 send_ue_off_signal(socket_fd, &message);
                 close(socket_fd);
                 if (init_connection(&socket_fd, &server, message.message_value.handover_request.port, message.message_value.handover_request.ip_address)) {
-                    add_logf(client_log_filename, LOG_SUCCESS, "Connected!");
+                    add_logf(log_file, LOG_SUCCESS, "Connected!");
                 }
                 else {
-                    add_logf(client_log_filename, LOG_ERROR, "Failed to connect!");
+                    add_logf(log_file, LOG_ERROR, "Failed to connect!");
                     return 0;
                 }
                 break;
@@ -260,17 +268,17 @@ int main(int argc, char* argv[])
         sleep(1);
         set_current_signal_event(&cells);
 
-        printf("\nCurrent event: %d\n", (int)cells.current_event+1);
+        // printf("\nCurrent event: %d\n", (int)cells.current_event+1);
         //printf("Battery power: %i\n", battery.power_percentage);
         message.message_type = -1;
     }
     // Join thread
     if(pthread_join(thread_id[0], NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread!");
+        add_logf(log_file, LOG_ERROR, "Failed to join a thread!");
         exit(1);
     }
     if(pthread_join(thread_id[1], NULL) != 0) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to join a thread!");
+        add_logf(log_file, LOG_ERROR, "Failed to join a thread!");
         exit(1);
     }
     for(int i = 0; i < 2; i++)
@@ -279,9 +287,10 @@ int main(int argc, char* argv[])
     if (message.message_type != enb_off)
     {
         if(-1 == send_ue_off_signal(socket_fd, &message))
-            add_logf(client_log_filename, LOG_ERROR, "Client failed to send ue_off notification!");
+            add_logf(log_file, LOG_ERROR, "Client failed to send ue_off notification!");
         else
-            add_logf(client_log_filename, LOG_SUCCESS, "Client successfully disconnected from server!");
+            add_logf(log_file, LOG_SUCCESS, "Client successfully disconnected from server!");
     }
+    fclose(log_file);
     return 0;
 }

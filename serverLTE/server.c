@@ -23,7 +23,9 @@ int servet_t__socket(server_t* self) {
 
 void server_t__destroy(server_t* self) {
   close_clients_sockets();
+  pthread_mutex_lock(&server.hashmap_lock);
   hashmap_destroy(self->clients);
+  pthread_mutex_unlock(&server.hashmap_lock);
   close(self->socket);
 }
 
@@ -41,8 +43,8 @@ void init_server(int port, int target_port) {
   }
   // reuse old socket if still exists in kernel
   // see https://stackoverflow.com/a/10651048
-  int true_value = 1;
-  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &true_value, sizeof(int));
+  int value_set = 1;
+  setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &value_set, sizeof(int));
 
   struct sockaddr_in server_address;
   init_server_address(&server_address, port);
@@ -76,6 +78,17 @@ void init_server(int port, int target_port) {
   //char* file_to_be_sent = "piksel.bmp";
 
   pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
+
+  if (pthread_mutex_init(&server.hashmap_lock, NULL) != 0)
+    {
+        error("Hashmap mutex init failed");
+    }
+  
+  server_log_file = log_init(server_log_filename, "w+");
+  if(server_log_file == NULL) {
+    printf("Unable to open log file, exiting\n");
+    exit(EXIT_FAILURE);
+  }
 }
 
 void receive_packets() {
@@ -101,6 +114,9 @@ void handle_connection(int number_of_file_descriptors_ready) {
 
 void accept_client() {
   client_t* client = (client_t*)malloc(sizeof(client_t));
+  if (pthread_mutex_init(&client->socket_lock, NULL) != 0) {
+        error("Client mutex init failed");
+    }
   struct sockaddr_in client_address;
   socklen_t client_length;
   client_length = sizeof(client_address);
@@ -112,7 +128,7 @@ void accept_client() {
   if (client->socket == -1) {
     error("accept in accept_client");
   }
-  add_logf(server_log_filename, LOG_INFO, "ACCEPTED SOCK: %d", client->socket);
+  add_logf(server_log_file, LOG_INFO, "ACCEPTED SOCK: %d", client->socket);
   server.event.events = EPOLLIN;
   server.event.data.fd = client->socket;
   if (epoll_ctl(
@@ -132,20 +148,22 @@ void remind_about_port() {
 }
 
 void broadcast_shutdown_notification() {
-  add_logf(server_log_filename, LOG_INFO, "Broadcasting shutdown notification");
+  add_logf(server_log_file, LOG_INFO, "Broadcasting shutdown notification");
   hashmap_iter(server.clients, (hashmap_callback) notify_client_of_shutdown, NULL);
 }
 
 void clean() {
     broadcast_shutdown_notification();
-    add_logf(server_log_filename, LOG_INFO, "CLEAN");
+    add_logf(server_log_file, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(pinging_in_thread_id, NULL);
+    pthread_mutex_destroy(&server.hashmap_lock);
     server_t__destroy(&server);
+    close(server_log_file);
 }
 
 void error(const char* error_message) {
-  add_logf(server_log_filename, LOG_ERROR, error_message);
+  add_logf(server_log_file, LOG_ERROR, error_message);
   if (errno != EINTR) {
     clean();
   }

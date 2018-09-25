@@ -4,7 +4,7 @@
 #include "rrc.h"
 #include "../logs/logs.h"
 
-static char client_log_filename[] = "../logs/client.log";
+extern FILE* log_file;
 
 // This function generates ue_identity random key
 void generate_ue_identity(s_stmsi* ue_identity) {
@@ -41,18 +41,18 @@ int send_rrc_setup_complete(int socketfd, s_message* message) {
     rrc_setup type 0 is returned */
 int receive_rrc_setup(int socketfd, s_message* received, s_message* message) {
    if(-1 == recv(socketfd, (s_message*) received, sizeof(*received), 0)) {
-        add_logf(client_log_filename, LOG_ERROR, "Error on recv() rrc_setup.");
+        add_logf(log_file, LOG_ERROR, "Error on recv() rrc_setup.");
         return -1;
     }
     else
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfully received rrc setup!");
+        add_logf(log_file, LOG_SUCCESS, "Successfully received rrc setup!");
 
     //after properly receiving rrc setup we call func to sent rrc setup_complete
     if(send_rrc_setup_complete(socketfd, received) == -1) {
-        add_logf(client_log_filename, LOG_ERROR, "Failed to send rrc setup!");
+        add_logf(log_file, LOG_ERROR, "Failed to send rrc setup!");
         return -1;
     }
     else
-        add_logf(client_log_filename, LOG_SUCCESS, "Successfully send rcc setup complete!");
+        add_logf(log_file, LOG_SUCCESS, "Successfully send rcc setup complete!");
     return 0;
 }

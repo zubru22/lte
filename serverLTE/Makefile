@@ -53,5 +53,5 @@ logs.o: ../logs/logs.c
 
 .PHONY : clean
 clean: 
-	rm server client_handler.o client_object.o MurmurHash3.o hashmap.o \
+	rm -f server client_handler.o client_object.o MurmurHash3.o hashmap.o \
 	packet_handler.o server.o main.o logs.o 

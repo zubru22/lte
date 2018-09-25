@@ -28,7 +28,7 @@ int notify_client_of_shutdown(void *data, const char *key, void *value) {
   memset(&shutdown_notification, 0, sizeof(shutdown_notification));
   shutdown_notification.message_type = enb_off;
 
-  if (send(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0) == -1) {
+  if (send_thread_safe(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0) == -1) {
     error ("send in notify_client_of_shutdown");
   }
   return 0;
@@ -41,9 +41,17 @@ int handle_client_inactivity(void *data, const char *key, void *value) {
   bool should_kick = (time_since_last_activity > PING_TIMEOUT);
 
   if (should_kick && current_client->is_server == false) {
-    add_logf(server_log_filename, LOG_INFO, "Timeout - kicking client on socket %d", current_client->socket);
+    add_logf(server_log_file, LOG_INFO, "Timeout - kicking client on socket %d", current_client->socket);
     close(current_client->socket);
     delete_client_from_hashmap(server.clients, current_client->socket);
   }
   return 0;
+}
+
+ssize_t send_thread_safe(int client_socket, const void *buf, size_t size_of_buffer, int flags) {
+  client_t* current_client = get_client_by_socket(server.clients, client_socket);
+  pthread_mutex_lock(&current_client->socket_lock);
+  int bytes_sent = send(client_socket, buf, size_of_buffer, flags);
+  pthread_mutex_unlock(&current_client->socket_lock);
+  return bytes_sent;
 }
