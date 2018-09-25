@@ -76,7 +76,7 @@ void parse_packet(int number_of_event) {
       handle_x2ap_handover_request_acknowledge(message.message_value.handover.client_socket);
       break;
     case SMS:
-      forward_sms_message(client_socket);
+      forward_sms_message(message);
     default:
       break;
   }
