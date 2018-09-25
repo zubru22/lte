@@ -11,12 +11,19 @@ void generate_ra_rnti(preamble* s_preamble) {
     s_preamble->ra_rnti = (1 + ( rand() % max_t_id) + 10 * (rand() % max_f_id) );
 }
 
+int generate_phone_number() {
+    return (int)(rand() % 899999999 + 100000000);
+}
+
+
 // This function sends prach preamble to eNodeB. Function returns -1 on error and 0 on success
 int send_prach_preamble(int sockfd, s_message* message, void (*ra_rnti_generator_func)(preamble*)) {
     // First we need to fill preamble structure
     ra_rnti_generator_func(&message->message_value.message_preamble);
     //Then we need to set message type to random_access_request
     message->message_type = random_access_request;
+    message->message_value.message_preamble.phone_number = generate_phone_number();
+    printf("\n\n %i \n\n", message->message_value.message_preamble.phone_number);
     //Send struct
     if(-1 == write(sockfd, (s_message*)message, sizeof(*message)))
         return -1;
