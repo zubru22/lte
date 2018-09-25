@@ -102,7 +102,9 @@ void send_rrc_setup(int socket) {
   memset(&response, 0, sizeof(response));
   response.message_type = rrc_setup;
   response.message_value.rrc_response = generate_rrc_config(client_rnti);
-  send(socket, &response, sizeof(response), 0);
+  if(send(socket, &response, sizeof(response), 0) == -1) {
+    error("send in send_rrc_setup");
+  }
   add_logf(server_log_filename, LOG_INFO, "Sent RRC setup");
 }
 
@@ -304,8 +306,7 @@ int broadcast_sample(void *arg, const char *key, void *value) {
 
   FILE* file_to_be_sent = fopen(filename, "rb");
   if (file_to_be_sent == NULL) {
-    add_logf(server_log_filename, LOG_ERROR, "Error opening file %s", strerror(errno));
-    exit(EXIT_FAILURE);
+    error("Error opening file");
   }
 
   struct stat st;
@@ -323,8 +324,7 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   memset(data_message_tag.message_value.buffer, 0, BUFFER_SIZE);
   memcpy(data_message_tag.message_value.buffer, filename, BUFFER_SIZE);
   if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
-    add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
-    exit(EXIT_FAILURE);
+    error("Error sending data start");
   } else {
     add_logf(server_log_filename, LOG_SUCCESS, "START SEND DATA");
   }
@@ -347,10 +347,8 @@ int broadcast_sample(void *arg, const char *key, void *value) {
     bytes_sent = send(current_client->socket, &data_message, sizeof(data_message), 0);
 
     if (bytes_sent == -1) {
-      add_logf(server_log_filename, LOG_ERROR, "Error sending data");
-      exit(EXIT_FAILURE);
+      error("Error sending data");
     } else {
-      //add_logf(server_log_filename, LOG_INFO, "Bytes sent: %d", bytes_sent);
       packets_sent++;
     }
 
@@ -358,8 +356,7 @@ int broadcast_sample(void *arg, const char *key, void *value) {
 
   data_message_tag.message_type = data_end;
   if (send(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
-    add_logf(server_log_filename, LOG_ERROR, "Error sending data start");
-    exit(EXIT_FAILURE);
+    error ("Error sending data start");
   } else {
     add_logf(server_log_filename, LOG_SUCCESS, "File transfered! Packets sent: %d", packets_sent);
   }

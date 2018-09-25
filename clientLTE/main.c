@@ -25,6 +25,12 @@
 #ifndef DISPLAY_H
 #include "display.h"
 #endif
+#ifndef STDIO_H
+#include <stdio.h>
+#endif
+#ifndef STDLIB_H
+#include <stdlib.h>
+#endif
 
 static char client_log_filename[] = "../logs/client.log";
 
@@ -36,6 +42,8 @@ ue_battery battery;
 pthread_mutex_t lock[2];
 const char* localhost = "127.0.0.1";
 FILE* log_file;
+char message_buff[100] = "";
+bool isMessage = false;
 
 bool downloading = false;
 
@@ -57,8 +65,16 @@ void* keyboard_thread() {
     while(running && !check_for_shutdown(socket_fd, &received)) {
             pthread_mutex_lock(&lock[1]);
 
-            int key = getchar();
-            if(key == 'd' && false == downloading) {
+            fgets(message_buff, sizeof(message_buff), stdin);
+            for (int i = 0; i <= 8; i++) {
+                if(isdigit((unsigned char)message_buff[i]))
+                    isMessage = true;
+                else {
+                    isMessage = false;
+                    break;
+                }
+            }
+            if(strcmp(message_buff,"d\n") == 0 && false == downloading) {
                 downloading = true;
 
                 if(!send_resource_request(socket_fd, &message)) {
@@ -66,7 +82,12 @@ void* keyboard_thread() {
                 }
                // display_menu_options();
             }
-
+            else if (isMessage) {
+                if(send_SMS(socket_fd, &message, message_buff) == 0)
+                    add_logf(client_log_filename, LOG_INFO, "Message sent!");
+                else
+                    add_logf(client_log_filename, LOG_INFO, "Couldn't send message!");
+            }
             pthread_mutex_unlock(&lock[1]);
     }
 
@@ -187,6 +208,7 @@ int main(int argc, char* argv[])
 
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
+        printf("Socked fd: %i", socket_fd);
         recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
         switch (message.message_type) {
             case ping:
@@ -237,6 +259,10 @@ int main(int argc, char* argv[])
                     add_logf(log_file, LOG_ERROR, "Failed to connect!");
                     return 0;
                 }
+                break;
+            case SMS:
+                add_logf(client_log_filename, LOG_INFO, "Received message: %s", message.message_value.text_message);
+                    
                 break;
         }
         sleep(1);

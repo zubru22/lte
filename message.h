@@ -41,7 +41,8 @@ typedef enum type_of_message {
     data,
     data_end,
     resource_request,
-    resource_response
+    resource_response,
+    SMS
 } e_message_type;
 
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
@@ -109,6 +110,7 @@ typedef union message_value {
         handover_t handover;
         handover_request_t handover_request;
         bool resource_state;
+        char text_message[100];
 } u_message_value;
 
 typedef struct message {

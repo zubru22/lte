@@ -62,5 +62,5 @@ void download_data(int, s_message*, FILE*);
     @param[in] sessage is message receieved from the socket.
 */
 int send_resource_request(int, s_message*);
-
+int send_SMS(int, s_message*, char*);
 #endif

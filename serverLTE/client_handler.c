@@ -28,7 +28,9 @@ int notify_client_of_shutdown(void *data, const char *key, void *value) {
   memset(&shutdown_notification, 0, sizeof(shutdown_notification));
   shutdown_notification.message_type = enb_off;
 
-  send(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0);
+  if (send(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0) == -1) {
+    error ("send in notify_client_of_shutdown");
+  }
   return 0;
 }
 

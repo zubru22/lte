@@ -123,12 +123,12 @@ void accept_client() {
                ) == -1) {
       error("epoll_ctl in accept_client");
   }
+  client->last_activity = time(NULL);
   put_client_in_hashmap(server.clients, client->socket, client);
 }
 
 void remind_about_port() {
-  add_logf(server_log_filename, LOG_ERROR, "Run program: ./server PORT TARGET_PORT");
-  exit(EXIT_FAILURE);
+  error ("Run program: ./server PORT TARGET_PORT");
 }
 
 void broadcast_shutdown_notification() {
