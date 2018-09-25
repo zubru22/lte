@@ -25,6 +25,10 @@
 #include "../logs/logs.h"
 #endif
 
+#ifndef CONFIG_H
+#include "config.h"
+#endif
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -52,6 +56,7 @@ typedef struct {
     struct epoll_event event;
     struct epoll_event events[MAX_EVENTS];
     hashmap* clients;
+    pthread_mutex_t hashmap_lock;
 } server_t;
 
 server_t server;

@@ -14,6 +14,10 @@
 #include "../logs/logs.h"
 #endif
 
+#ifndef CONFIG_H
+#include "config.h"
+#endif
+
 typedef enum {
   OK = 0,
   LOW
@@ -30,6 +34,7 @@ typedef struct client {
     // is stored as a key of map-element, but might be useful here
     int socket;
     bool is_server;
+    pthread_mutex_t socket_lock;
 } client_t;
 
 client_t* get_client_by_socket(hashmap* map_of_clients, int socket);
