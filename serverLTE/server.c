@@ -5,7 +5,6 @@
 bool threads_done = false;
 pthread_t pinging_in_thread_id;
 pthread_t send_measurement_control_requests_id;
-pthread_t transferring_thread;
 
 void server_t__init(server_t* self, int socket, int target_port, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
@@ -76,8 +75,6 @@ void init_server(int port, int target_port) {
   char* file_to_be_sent = "obrazek.png";
   //char* file_to_be_sent = "piesel.jpg";
   //char* file_to_be_sent = "piksel.bmp";
-
-  pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
 
   if (pthread_mutex_init(&server.hashmap_lock, NULL) != 0)
     {
@@ -158,6 +155,7 @@ void clean() {
     add_logf(server_log_file, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(pinging_in_thread_id, NULL);
+    pthread_join(send_measurement_control_requests_id, NULL);
     pthread_mutex_destroy(&server.hashmap_lock);
     server_t__destroy(&server);
     fclose(server_log_file);
