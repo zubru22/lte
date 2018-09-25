@@ -93,7 +93,11 @@ void* keyboard_thread() {
             else if(strcmp(message_buff, "1\n") == 0) {
                 printf("\e[1;1H\e[2J");
                 menu_options = DISPLAY_LOGS;
-                display_logs();
+                display_logs(log_file);
+                printf("\nPress 4 - main menu\n");
+            }
+            else if(strcmp(message_buff, "4\n") == 0) {
+                menu_options = DISPLAY_MENU;
             }
             
             pthread_mutex_unlock(&lock[1]);
@@ -111,8 +115,10 @@ double what_time_is_it()
 int main(int argc, char* argv[])
 {
     menu_options = DISPLAY_MENU;
+    // Clear log file from previous session
+    close(fopen(client_log_filename, "w"));
     // Open the file for appending
-    if((log_file = fopen(client_log_filename, "w")) == NULL)
+    if((log_file = fopen(client_log_filename, "a")) == NULL)
         puts("Couldn't open log file!\n");
 
     if(argc < 2){
@@ -277,6 +283,7 @@ int main(int argc, char* argv[])
         set_current_signal_event(&cells);
 
         if(menu_options == DISPLAY_MENU) { 
+            printf("\e[1;1H\e[2J");
             display_menu();
         }
 

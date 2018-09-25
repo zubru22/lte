@@ -6,21 +6,24 @@
 
 static char client_log_filename[] = "../logs/client.log";
 
-void display_logs() {
+void display_logs(FILE* outer_file) {
+    fclose(outer_file);
     FILE* log_file;
+
     if((log_file = fopen(client_log_filename, "r")) == NULL) {
-        printf("Dupa najwieksza");
+        printf("Error reading log file!");
     }
     char line[1024];
-    printf("dupa\n");
     
     fseek(log_file, 0, SEEK_SET); // Just to make sure
-    while(fscanf(log_file, "%s", line) != EOF) {
-        printf("%s", line);
-        printf("dupadupa\n");
+
+    while(fscanf(log_file, "%[^\n]\n", line) != EOF) {
+        printf("%s\n", line);
         memset((char*)line, '\0', sizeof(line));
     }
+
     fclose(log_file);
+    outer_file = fopen(client_log_filename, "a");
 }
 
 void display_menu() {

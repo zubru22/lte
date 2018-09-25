@@ -15,6 +15,6 @@ typedef enum _e_menu_options {
 e_menu_options menu_options;
 
 void display_menu();
-void display_logs();
+void display_logs(FILE*);
 
 #endif
