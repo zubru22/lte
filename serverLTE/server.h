@@ -76,5 +76,6 @@ void clean();
 void error(const char* error_message);
 void broadcast_shutdown_notification();
 void connect_to_target_server();
+void forward_sms_message(int client_socket);
 
 #endif

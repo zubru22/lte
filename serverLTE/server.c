@@ -197,6 +197,13 @@ void connect_to_target_server() {
   printf ("CONNECTED");
 }
 
-void forward_sms_message(int client_socket) {
-
+void forward_sms_message(int phone_number, s_message message_to_send) {
+  client_t* client_to_send_message = get_client_by_MSIN(server.clients, phone_number);
+  if (client_to_send_message) {
+    if (send(client_to_send_message.socket, &message_to_send, sizeof(messsage_to_send), 0) == -1) {
+      error("send in forward_sms_message");
+    }
+  } else {
+    // logic to send number to another eNB
+  }
 }
