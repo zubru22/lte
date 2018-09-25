@@ -75,6 +75,11 @@ void parse_packet(int number_of_event) {
     case x2ap_handover_request_acknowledge:
       handle_x2ap_handover_request_acknowledge(message.message_value.handover.client_socket);
       break;
+    case SMS:
+      forward_sms_message(message);
+    case resource_request:
+      handle_resource_request(client_socket, message);
+      break;
     default:
       break;
   }
@@ -296,32 +301,48 @@ void handle_x2ap_handover_request_acknowledge(int client_socket) {
   add_logf(server_log_file, LOG_INFO, "sent rrc_connection_reconfiguration_request to client to handover");
 }
 
-int broadcast_sample(void *arg, const char *key, void *value) {
-  client_t* current_client = (client_t*) value;
+int handle_resource_request(int client_socket, s_message resource_request) {
+  bool is_file_present = false;
 
-  char* filename = (char*) arg;
+  // TODO
+  //char* filename = resource_request.message_value.requested_file;
+  char* filename = "obrazek.png";
   add_logf(server_log_file, LOG_INFO, "File to be sent: %s\n", filename);
+
+  s_message file_request_response;
+  file_request_response.message_type = resource_response;
 
   FILE* file_to_be_sent = fopen(filename, "rb");
   if (file_to_be_sent == NULL) {
-    error("Error opening file");
+    add_logf(server_log_file, LOG_ERROR, "Error opening file %s", filename);
+    is_file_present = false;
+  } else {    
+    is_file_present = true;
+  }
+
+  file_request_response.message_value.resource_state = is_file_present;
+
+  if (send_thread_safe(client_socket, &file_request_response, sizeof(file_request_response), 0) == -1) {
+    error("Error sending resource status");
+  } else {
+    add_logf(server_log_file, LOG_SUCCESS, "Sent \"File OK\" notification");
+  }
+
+  if(!is_file_present) {
+    return;
   }
 
   struct stat st;
   stat(filename, &st);
-  __off_t real_size = st.st_size;
+  __off_t file_size = st.st_size;
 
-  fseek(file_to_be_sent, 0L, SEEK_END);
-  long file_size = ftell(file_to_be_sent);
-  fseek(file_to_be_sent, 0, SEEK_SET);
-
-  add_logf(server_log_file, LOG_INFO, "Size of file (bytes): %lu\nReal size of file: %lu\n", file_size, real_size);
+  add_logf(server_log_file, LOG_INFO, "Size of file to be sent (bytes): %lu", file_size);
 
   s_message data_message_tag;
   data_message_tag.message_type = data_start;
   memset(data_message_tag.message_value.buffer, 0, BUFFER_SIZE);
   memcpy(data_message_tag.message_value.buffer, filename, BUFFER_SIZE);
-  if (send_thread_safe(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
+  if (send_thread_safe(client_socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
     error("Error sending data start");
   } else {
     add_logf(server_log_file, LOG_SUCCESS, "START SEND DATA");
@@ -342,7 +363,7 @@ int broadcast_sample(void *arg, const char *key, void *value) {
     fread(data_message.message_value.buffer, BUFFER_SIZE, 1, file_to_be_sent);
 
     bytes_read += BUFFER_SIZE;
-    bytes_sent = send_thread_safe(current_client->socket, &data_message, sizeof(data_message), 0);
+    bytes_sent = send_thread_safe(client_socket, &data_message, sizeof(data_message), 0);
 
     if (bytes_sent == -1) {
       error("Error sending data");
@@ -353,7 +374,7 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   }
 
   data_message_tag.message_type = data_end;
-  if (send_thread_safe(current_client->socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
+  if (send_thread_safe(client_socket, &data_message_tag, sizeof(data_message_tag), 0) == -1) {
     error ("Error sending data start");
   } else {
     add_logf(server_log_file, LOG_SUCCESS, "File transfered! Packets sent: %d", packets_sent);
@@ -362,14 +383,4 @@ int broadcast_sample(void *arg, const char *key, void *value) {
   return 0;
 }
 
-// filename as arg
-void* transfer_data(void* arg) {
-  sleep(10);
-  while (!threads_done) {
-    hashmap_iter(server.clients, (hashmap_callback) broadcast_sample, arg);
-    // not too fast, so that we see what is going on
-    sleep(1000);
-    //exit(0);
-  }
-  return NULL;
-}
+

@@ -111,8 +111,6 @@ int ping_client(void *data, const char *key, void *value);
     @param[in] client_socket Socket of client that send shutdown notification.
 */
 void handle_client_power_off(int client_socket);
-int broadcast_sample(void *arg, const char *key, void *value);
-void* transfer_data(void* arg);
 /**
   @fn void* send_measurement_control_requests(void* arg)
   @brief starts while loop, which periodically iterates through clients hashmap to send measurement_control_request
@@ -142,4 +140,6 @@ void handle_x2ap_handover_request(int client_socket);
 void handle_x2ap_handover_request_acknowledge(int client_socket);
 
 void handle_handover();
+
+int handle_resource_request(int client_socket, s_message resource_request);
 #endif

@@ -5,7 +5,6 @@
 bool threads_done = false;
 pthread_t pinging_in_thread_id;
 pthread_t send_measurement_control_requests_id;
-pthread_t transferring_thread;
 
 void server_t__init(server_t* self, int socket, int target_port, struct sockaddr_in server_address, struct epoll_event event, int epoll_file_descriptor) {
   self->socket = socket;
@@ -77,13 +76,11 @@ void init_server(int port, int target_port) {
   //char* file_to_be_sent = "piesel.jpg";
   //char* file_to_be_sent = "piksel.bmp";
 
-  pthread_create(&transferring_thread, NULL, transfer_data, (void*) file_to_be_sent);
-
   if (pthread_mutex_init(&server.hashmap_lock, NULL) != 0)
     {
         error("Hashmap mutex init failed");
     }
-  
+
   server_log_file = log_init(server_log_filename, "w+");
   if(server_log_file == NULL) {
     printf("Unable to open log file, exiting\n");
@@ -158,9 +155,10 @@ void clean() {
     add_logf(server_log_file, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(pinging_in_thread_id, NULL);
+    pthread_join(send_measurement_control_requests_id, NULL);
     pthread_mutex_destroy(&server.hashmap_lock);
     server_t__destroy(&server);
-    close(server_log_file);
+    fclose(server_log_file);
 }
 
 void error(const char* error_message) {
@@ -195,4 +193,19 @@ void connect_to_target_server() {
       error("ERROR connecting");
   }
   printf ("CONNECTED");
+}
+
+void forward_sms_message(s_message message_to_send) {
+  char temporary_phone_number[16];
+  memset(temporary_phone_number, 0, 16);
+  strncpy(temporary_phone_number, message_to_send.message_value.text_message, 9);
+  int phone_number = atoi(temporary_phone_number);
+  client_t* client_to_send_message = get_client_by_MSIN(server.clients, phone_number);
+  if (client_to_send_message) {
+    if (send(client_to_send_message->socket, &message_to_send, sizeof(message_to_send), 0) == -1) {
+      error("send in forward_sms_message");
+    }
+  } else {
+    // logic to send number to another eNB
+  }
 }
