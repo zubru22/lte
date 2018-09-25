@@ -11,6 +11,7 @@
 
 typedef struct prach_preamble {
     int16_t ra_rnti; // 16bit integer sent to server - first 2 bits are PreambleIndex
+    int phone_number;
 } preamble;
 
 typedef struct prach_response {
