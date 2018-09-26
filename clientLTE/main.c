@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 {
     menu_options = DISPLAY_MENU;
     // Clear log file from previous session
-    close(fopen(client_log_filename, "w"));
+    fclose(fopen(client_log_filename, "w"));
     // Open the file for appending
     if((log_file = fopen(client_log_filename, "a")) == NULL)
         puts("Couldn't open log file!\n");
@@ -137,6 +137,7 @@ int main(int argc, char* argv[])
     pthread_t thread_id[2];
     int packets_received = 0;
     double diff_time;
+    should_print_to_console = false;
 
     srand(time(NULL));
 
@@ -217,7 +218,7 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    // Create another thread for battery
+    // Create another thread for keyboard
     if(pthread_create(&thread_id[1], NULL, keyboard_thread, NULL) != 0) {
         add_logf(log_file, LOG_ERROR, "Failed to create a thread!");
         exit(1);
@@ -279,6 +280,8 @@ int main(int argc, char* argv[])
             case SMS:
                 add_logf(log_file, LOG_INFO, "Received message: %s", message.message_value.text_message);
                     
+                break;
+            default:
                 break;
         }
         set_current_signal_event(&cells);
