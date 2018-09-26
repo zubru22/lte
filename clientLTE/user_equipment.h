@@ -122,6 +122,5 @@ int send_high_battery_notification(int, s_message*);
 void check_battery_status(int, int, s_message*, ue_battery*);
 void initialize_cells(s_cells*);
 void set_current_signal_event(s_cells*); 
-void set_current_signal_event(s_cells*);
 
 #endif

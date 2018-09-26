@@ -140,12 +140,6 @@ void initialize_cells(s_cells* cells) {
     while(cells->cells_signals[1].rsrp == cells->cells_signals[0].rsrp)
         cells->cells_signals[1].rsrp = rand() % max_rsrp;
 
-    // Set percentage power of signal in stronger cell
-    if(cells->cells_signals[0].rsrp > cells->cells_signals[1].rsrp)
-        cells->current_cell = 1;
-    else
-        cells->current_cell = 2;
-
     time(&cells->starting_time);
 }
 // This function simulates change of signal power in each cell
@@ -207,11 +201,6 @@ s_event check_events(s_cells* cells) {
         event_change = 5;
         a3_checked = true;
 
-        if(cells->current_cell == 1)
-            cells->current_cell = 2;
-        else
-            cells->current_cell = 1;
-
         return a3;
     }
     // Event A4
@@ -233,8 +222,4 @@ void set_current_signal_event(s_cells* cells) {
 
     update_rsrps(cells);
     cells->current_event = check_events(cells);
-}
-// This function returns 1 or 2 according to used eNodeB number
-int set_current_signal(s_cells* cells) {
-    return cells->current_cell;
 }
