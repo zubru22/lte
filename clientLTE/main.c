@@ -49,7 +49,7 @@ pthread_mutex_t lock[2];
 const char* localhost = "127.0.0.1";
 FILE* log_file;
 FILE* file_to_store_recv_messages;
-char message_buff[100] = "";
+char message_buff[1024] = "";
 bool isMessage = false;
 
 bool downloading = false;
@@ -74,7 +74,7 @@ void* keyboard_thread() {
 
             fgets(message_buff, sizeof(message_buff), stdin);
 
-            if(strcmp(message_buff,"d\n") == 0 && false == downloading) {
+            if(strcmp(message_buff,"~\n") == 0 && false == downloading) {
                 downloading = true;
 
                 if(!send_resource_request(socket_fd, &message)) {
@@ -93,14 +93,15 @@ void* keyboard_thread() {
             else if(strcmp(message_buff, "3\n") == 0) {
                 printf("\e[1;1H\e[2J");
                 menu_options = DISPLAY_RECV_SMS;
-                display_recv_messages();
+                display_message_file("Received_messages.txt");
                 printf("\nPress 5 - main menu\n");
             }
             else if(strcmp(message_buff, "2\n") == 0) {
                 printf("\e[1;1H\e[2J");
-                printf("Your input (phone number + text message):");
+                printf("Your input (phone number + text message): ");
                 menu_options = DISPLAY_SEND_SMS;
                 fgets(message_buff, sizeof(message_buff), stdin);
+
                 if(isdigit((unsigned char)message_buff[0]) && isdigit((unsigned char)message_buff[8]))
                 {    
                     for (int i = 1; i <= 7; i++) {
@@ -111,33 +112,40 @@ void* keyboard_thread() {
                             break;
                         }
                     }
-                if (isMessage) {
-                    if(send_SMS(socket_fd, &message, message_buff) == 0)
-                        add_logf(log_file, LOG_INFO, "Message sent!");
-                    else
-                        add_logf(log_file, LOG_INFO, "Couldn't send message!");
+                    if (isMessage) {
+                        if(send_SMS(socket_fd, &message, message_buff) == 0)
+                            add_logf(log_file, LOG_INFO, "Message sent!");
+                        else
+                            add_logf(log_file, LOG_INFO, "Couldn't send message!");
 
-                    FILE* sent_file;
+                        FILE* sent_file;
 
-                    if((sent_file = fopen(sent_messages, "a")) == NULL)
-                        printf("Failed to open sent messages file!\n");
+                        if((sent_file = fopen(sent_messages, "a")) == NULL)
+                            printf("Failed to open sent messages file!\n");
+                        
+                        add_logf(sent_file, LOG_INFO, "");
+                        fprintf(sent_file, "Phone number: ");
 
-                    fprintf(sent_file, "Phone number: ");
+                        for(int i = 0; i < 8; i++)
+                            fprintf(sent_file, "%c", message_buff[i]);
 
-                    for(int i = 0; i < 8; i++)
-                        fprintf(sent_file, "%c", message_buff[i]);
+                        fprintf(sent_file, "\n");
 
-                    fprintf(sent_file, "\n");
+                        for(int i = 9; i < 1024; i++)
+                            fprintf(sent_file, "%c", message_buff[i]);
 
-                    for(int i = 9; i < 100; i++)
-                        fprintf(sent_file, "%c", message_buff[i]);
+                        fprintf(sent_file, "\n");
 
-                    fprintf(sent_file, "\n");
-
-                    fclose(sent_file);
+                        fclose(sent_file);
+                    }
                 }
-                }
-                display_recv_messages();
+
+                printf("\nPress 5 - main menu\n");
+            }
+            else if(strcmp(message_buff, "4\n") == 0) {
+                printf("\e[1;1H\e[2J");
+                menu_options = DISPLAY_SENT_SMS;
+                display_message_file(sent_messages);
                 printf("\nPress 5 - main menu\n");
             }
             pthread_mutex_unlock(&lock[1]);

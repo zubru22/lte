@@ -9,6 +9,7 @@ typedef enum _e_menu_options {
     DISPLAY_LOGS,
     DISPLAY_SEND_SMS,
     DISPLAY_RECV_SMS,
+    DISPLAY_SENT_SMS,
     DISPLAY_MENU
 } e_menu_options;
 
@@ -16,6 +17,6 @@ e_menu_options menu_options;
 
 void display_menu();
 void display_logs(FILE*);
-void display_recv_messages();
+void display_message_file(const char*);
 
 #endif

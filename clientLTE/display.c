@@ -5,6 +5,7 @@
 #include <string.h>
 
 static char client_log_filename[] = "../logs/client.log";
+static char sent_messages[] = "sent_messages.txt";
 
 void display_logs(FILE* outer_file) {
     fclose(outer_file);
@@ -34,10 +35,10 @@ void display_menu() {
     printf("\t\t\t4) Display sent SMS.\n");
 }
 
-void display_recv_messages() {
+void display_message_file(const char* file_name) {
     FILE* log_file;
 
-    if((log_file = fopen("Received_messages", "r")) == NULL) {
+    if((log_file = fopen(file_name, "r")) == NULL) {
         printf("Error reading log file!");
     }
     char line[1024];
