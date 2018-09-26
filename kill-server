@@ -1,0 +1,3 @@
+#!/bin/bash
+ps -eopid,cmd | grep "\./server" | head -n1 | cut -d " " -f 3 | xargs kill -9
+

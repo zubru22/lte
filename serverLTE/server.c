@@ -93,7 +93,7 @@ void receive_packets() {
   int number_of_file_descriptors_ready;
   while(1) {
       if((number_of_file_descriptors_ready = epoll_wait(server.epoll_file_descriptor, server.events, MAX_EVENTS, -1)) == -1) {
-        error("epoll_wait in init_server");
+        warning("epoll_wait in init_server");
       }
       handle_connection(number_of_file_descriptors_ready);
   }
@@ -167,6 +167,10 @@ void error(const char* error_message) {
     clean();
   }
   exit(EXIT_FAILURE);
+}
+
+void warning(const char* warning_message) {
+  add_logf(server_log_file, LOG_WARNING, warning_message);
 }
 
 void connect_to_target_server() {
