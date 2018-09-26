@@ -136,8 +136,15 @@ void initialize_cells(s_cells* cells) {
             cells->cells_signals[i].signal_course = -signal_course_value;
     }
 
+    // If rsrps of signals is the same, try until it is not 
     while(cells->cells_signals[1].rsrp == cells->cells_signals[0].rsrp)
         cells->cells_signals[1].rsrp = rand() % max_rsrp;
+
+    // Set percentage power of signal in stronger cell
+    if(cells->cells_signals[0].rsrp > cells->cells_signals[1].rsrp)
+        cells->current_cell = 1;
+    else
+        cells->current_cell = 2;
 
     time(&cells->starting_time);
 }
@@ -164,7 +171,6 @@ void update_rsrps(s_cells* cells) {
             if((cells->cells_signals[i].rsrp >= max_rsrp) || (cells->cells_signals[i].rsrp <= 0)) {
                 cells->cells_signals[i].signal_course *= -1; // Change sign of course (velocity) of signal's power change
             }
-            // printf("Signal power (%d): %d\n", i+1, cells->cells_signals[i].rsrp);
         }
 
         time(&cells->starting_time); // Actualise starting time
@@ -200,6 +206,12 @@ s_event check_events(s_cells* cells) {
     if(cells->cells_signals[1].rsrp > cells->cells_signals[0].rsrp && false == a3_checked) {
         event_change = 5;
         a3_checked = true;
+
+        if(cells->current_cell == 1)
+            cells->current_cell = 2;
+        else
+            cells->current_cell = 1;
+
         return a3;
     }
     // Event A4
@@ -215,10 +227,14 @@ s_event check_events(s_cells* cells) {
     //Default event - it actualy means no event whatsoever
     return def;
 }
-// This function sets signal events
+// This function sets signal events and current cell's signal
 void set_current_signal_event(s_cells* cells) {
     assert(cells != NULL);
 
     update_rsrps(cells);
     cells->current_event = check_events(cells);
+}
+// This function returns 1 or 2 according to used eNodeB number
+int set_current_signal(s_cells* cells) {
+    return cells->current_cell;
 }
