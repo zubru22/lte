@@ -147,15 +147,16 @@ void remind_about_port() {
 
 void broadcast_shutdown_notification() {
   add_logf(server_log_file, LOG_INFO, "Broadcasting shutdown notification");
+  sleep(1);
   hashmap_iter(server.clients, (hashmap_callback) notify_client_of_shutdown, NULL);
 }
 
 void clean() {
-    broadcast_shutdown_notification();
     add_logf(server_log_file, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(pinging_in_thread_id, NULL);
     pthread_join(send_measurement_control_requests_id, NULL);
+    broadcast_shutdown_notification();
     pthread_mutex_destroy(&server.hashmap_lock);
     server_t__destroy(&server);
     fclose(server_log_file);
