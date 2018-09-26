@@ -81,34 +81,6 @@ void* keyboard_thread() {
 
                 }
             }
-<<<<<<< HEAD
-            else if (isMessage) {
-                if(send_SMS(socket_fd, &message, message_buff) == 0)
-                    add_logf(log_file, LOG_INFO, "Message sent!");
-                else
-                    add_logf(log_file, LOG_INFO, "Couldn't send message!");
-                
-                FILE* sent_file;
-
-                if((sent_file = fopen(sent_messages, "a")) == NULL)
-                    printf("Failed to open sent messages file!\n");
-
-                fprintf(sent_file, "Phone number: ");
-
-                for(int i = 0; i < 8; i++)
-                    fprintf(sent_file, "%c", message_buff[i]);
-
-                fprintf(sent_file, "\n");
-
-                for(int i = 9; i < 100; i++)
-                    fprintf(sent_file, "%c", message_buff[i]);
-
-                fprintf(sent_file, "\n");
-
-                fclose(sent_file);
-            }
-=======
->>>>>>> 4e0dab7d577371a7587f81bc58268543c00e2e5e
             else if(strcmp(message_buff, "1\n") == 0) {
                 printf("\e[1;1H\e[2J");
                 menu_options = DISPLAY_LOGS;
@@ -118,14 +90,11 @@ void* keyboard_thread() {
             else if(strcmp(message_buff, "5\n") == 0) {
                 menu_options = DISPLAY_MENU;
             }
-<<<<<<< HEAD
-
-=======
             else if(strcmp(message_buff, "3\n") == 0) {
                 printf("\e[1;1H\e[2J");
                 menu_options = DISPLAY_RECV_SMS;
                 display_recv_messages();
-                printf("\nPress 4 - main menu\n");
+                printf("\nPress 5 - main menu\n");
             }
             else if(strcmp(message_buff, "2\n") == 0) {
                 printf("\e[1;1H\e[2J");
@@ -147,12 +116,30 @@ void* keyboard_thread() {
                         add_logf(log_file, LOG_INFO, "Message sent!");
                     else
                         add_logf(log_file, LOG_INFO, "Couldn't send message!");
+
+                    FILE* sent_file;
+
+                    if((sent_file = fopen(sent_messages, "a")) == NULL)
+                        printf("Failed to open sent messages file!\n");
+
+                    fprintf(sent_file, "Phone number: ");
+
+                    for(int i = 0; i < 8; i++)
+                        fprintf(sent_file, "%c", message_buff[i]);
+
+                    fprintf(sent_file, "\n");
+
+                    for(int i = 9; i < 100; i++)
+                        fprintf(sent_file, "%c", message_buff[i]);
+
+                    fprintf(sent_file, "\n");
+
+                    fclose(sent_file);
                 }
                 }
                 display_recv_messages();
-                printf("\nPress 4 - main menu\n");
+                printf("\nPress 5 - main menu\n");
             }
->>>>>>> 4e0dab7d577371a7587f81bc58268543c00e2e5e
             pthread_mutex_unlock(&lock[1]);
     }
 

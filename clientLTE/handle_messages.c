@@ -74,5 +74,6 @@ int send_SMS(int socketfd, s_message* message, char* text_message) {
     if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
         return -1;
 
+    message->message_type = -1;
     return 0;
 }
