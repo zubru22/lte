@@ -37,6 +37,7 @@
 #include <math.h>
 
 static char client_log_filename[] = "../logs/client.log";
+static char sent_messages[] = "sent_messages.txt";
 
 volatile bool refresh = true;
 volatile bool running = true;
@@ -94,16 +95,36 @@ void* keyboard_thread() {
                     add_logf(log_file, LOG_INFO, "Message sent!");
                 else
                     add_logf(log_file, LOG_INFO, "Couldn't send message!");
+                
+                FILE* sent_file;
+
+                if((sent_file = fopen(sent_messages, "a")) == NULL)
+                    printf("Failed to open sent messages file!\n");
+
+                fprintf(sent_file, "Phone number: ");
+
+                for(int i = 0; i < 8; i++)
+                    fprintf(sent_file, "%c", message_buff[i]);
+
+                fprintf(sent_file, "\n");
+
+                for(int i = 9; i < 100; i++)
+                    fprintf(sent_file, "%c", message_buff[i]);
+
+                fprintf(sent_file, "\n");
+
+                fclose(sent_file);
             }
             else if(strcmp(message_buff, "1\n") == 0) {
                 printf("\e[1;1H\e[2J");
                 menu_options = DISPLAY_LOGS;
                 display_logs(log_file);
-                printf("\nPress 4 - main menu\n");
+                printf("\nPress 5 - main menu\n");
             }
-            else if(strcmp(message_buff, "4\n") == 0) {
+            else if(strcmp(message_buff, "5\n") == 0) {
                 menu_options = DISPLAY_MENU;
             }
+
             pthread_mutex_unlock(&lock[1]);
     }
 

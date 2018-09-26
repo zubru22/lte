@@ -30,5 +30,6 @@ void display_menu() {
     printf("\t\t\tMenu:\n");
     printf("\t\t\t1) Display logs.\n");
     printf("\t\t\t2) Send SMS.\n");
-    printf("\t\t\t3) Received SMS.\n");
+    printf("\t\t\t3) Sent SMS.\n");
+    printf("\t\t\t4) Received SMS.\n");
 }
