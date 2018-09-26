@@ -48,6 +48,7 @@ ue_battery battery;
 pthread_mutex_t lock[2];
 const char* localhost = "127.0.0.1";
 FILE* log_file;
+FILE* file_to_store_recv_messages;
 char message_buff[100] = "";
 bool isMessage = false;
 
@@ -72,17 +73,7 @@ void* keyboard_thread() {
             pthread_mutex_lock(&lock[1]);
 
             fgets(message_buff, sizeof(message_buff), stdin);
-            if(isdigit((unsigned char)message_buff[0]) && isdigit((unsigned char)message_buff[8]))
-            {    
-                for (int i = 1; i <= 7; i++) {
-                    if(isdigit((unsigned char)message_buff[i]))
-                        isMessage = true;
-                    else {
-                        isMessage = false;
-                        break;
-                    }
-                }
-            }
+
             if(strcmp(message_buff,"d\n") == 0 && false == downloading) {
                 downloading = true;
 
@@ -90,6 +81,7 @@ void* keyboard_thread() {
 
                 }
             }
+<<<<<<< HEAD
             else if (isMessage) {
                 if(send_SMS(socket_fd, &message, message_buff) == 0)
                     add_logf(log_file, LOG_INFO, "Message sent!");
@@ -115,6 +107,8 @@ void* keyboard_thread() {
 
                 fclose(sent_file);
             }
+=======
+>>>>>>> 4e0dab7d577371a7587f81bc58268543c00e2e5e
             else if(strcmp(message_buff, "1\n") == 0) {
                 printf("\e[1;1H\e[2J");
                 menu_options = DISPLAY_LOGS;
@@ -124,7 +118,41 @@ void* keyboard_thread() {
             else if(strcmp(message_buff, "5\n") == 0) {
                 menu_options = DISPLAY_MENU;
             }
+<<<<<<< HEAD
 
+=======
+            else if(strcmp(message_buff, "3\n") == 0) {
+                printf("\e[1;1H\e[2J");
+                menu_options = DISPLAY_RECV_SMS;
+                display_recv_messages();
+                printf("\nPress 4 - main menu\n");
+            }
+            else if(strcmp(message_buff, "2\n") == 0) {
+                printf("\e[1;1H\e[2J");
+                printf("Your input (phone number + text message):");
+                menu_options = DISPLAY_SEND_SMS;
+                fgets(message_buff, sizeof(message_buff), stdin);
+                if(isdigit((unsigned char)message_buff[0]) && isdigit((unsigned char)message_buff[8]))
+                {    
+                    for (int i = 1; i <= 7; i++) {
+                        if(isdigit((unsigned char)message_buff[i]))
+                            isMessage = true;
+                        else {
+                            isMessage = false;
+                            break;
+                        }
+                    }
+                if (isMessage) {
+                    if(send_SMS(socket_fd, &message, message_buff) == 0)
+                        add_logf(log_file, LOG_INFO, "Message sent!");
+                    else
+                        add_logf(log_file, LOG_INFO, "Couldn't send message!");
+                }
+                }
+                display_recv_messages();
+                printf("\nPress 4 - main menu\n");
+            }
+>>>>>>> 4e0dab7d577371a7587f81bc58268543c00e2e5e
             pthread_mutex_unlock(&lock[1]);
     }
 
@@ -145,6 +173,9 @@ int main(int argc, char* argv[])
     // Open the file for appending
     if((log_file = fopen(client_log_filename, "a")) == NULL)
         puts("Couldn't open log file!\n");
+
+    FILE* file_to_store_recv_messages = fopen("Received_messages", "w");
+    fclose(file_to_store_recv_messages);
 
     if(argc < 2){
         add_logf(log_file, LOG_ERROR, "You need to pass port number as an argument!");
@@ -303,8 +334,9 @@ int main(int argc, char* argv[])
                 }
                 break;
             case SMS:
-                add_logf(log_file, LOG_INFO, "Received message: %s", message.message_value.text_message);
-                    
+                file_to_store_recv_messages = fopen("Received_messages","ab+");
+                add_logf(file_to_store_recv_messages, LOG_INFO, "Received message: %s", message.message_value.text_message);
+                fclose(file_to_store_recv_messages);
                 break;
             default:
                 break;
