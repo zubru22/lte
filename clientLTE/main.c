@@ -72,29 +72,13 @@ void* keyboard_thread() {
             pthread_mutex_lock(&lock[1]);
 
             fgets(message_buff, sizeof(message_buff), stdin);
-            if(isdigit((unsigned char)message_buff[0]) && isdigit((unsigned char)message_buff[8]))
-            {    
-                for (int i = 1; i <= 7; i++) {
-                    if(isdigit((unsigned char)message_buff[i]))
-                        isMessage = true;
-                    else {
-                        isMessage = false;
-                        break;
-                    }
-                }
-            }
+
             if(strcmp(message_buff,"d\n") == 0 && false == downloading) {
                 downloading = true;
 
                 if(!send_resource_request(socket_fd, &message)) {
 
                 }
-            }
-            else if (isMessage) {
-                if(send_SMS(socket_fd, &message, message_buff) == 0)
-                    add_logf(log_file, LOG_INFO, "Message sent!");
-                else
-                    add_logf(log_file, LOG_INFO, "Couldn't send message!");
             }
             else if(strcmp(message_buff, "1\n") == 0) {
                 printf("\e[1;1H\e[2J");
@@ -108,6 +92,31 @@ void* keyboard_thread() {
             else if(strcmp(message_buff, "3\n") == 0) {
                 printf("\e[1;1H\e[2J");
                 menu_options = DISPLAY_RECV_SMS;
+                display_recv_messages();
+                printf("\nPress 4 - main menu\n");
+            }
+            else if(strcmp(message_buff, "2\n") == 0) {
+                printf("\e[1;1H\e[2J");
+                printf("Your input (phone number + text message):");
+                menu_options = DISPLAY_SEND_SMS;
+                fgets(message_buff, sizeof(message_buff), stdin);
+                if(isdigit((unsigned char)message_buff[0]) && isdigit((unsigned char)message_buff[8]))
+                {    
+                    for (int i = 1; i <= 7; i++) {
+                        if(isdigit((unsigned char)message_buff[i]))
+                            isMessage = true;
+                        else {
+                            isMessage = false;
+                            break;
+                        }
+                    }
+                if (isMessage) {
+                    if(send_SMS(socket_fd, &message, message_buff) == 0)
+                        add_logf(log_file, LOG_INFO, "Message sent!");
+                    else
+                        add_logf(log_file, LOG_INFO, "Couldn't send message!");
+                }
+                }
                 display_recv_messages();
                 printf("\nPress 4 - main menu\n");
             }
@@ -131,6 +140,9 @@ int main(int argc, char* argv[])
     // Open the file for appending
     if((log_file = fopen(client_log_filename, "a")) == NULL)
         puts("Couldn't open log file!\n");
+
+    FILE* file_to_store_recv_messages = fopen("Received_messages", "w");
+    fclose(file_to_store_recv_messages);
 
     if(argc < 2){
         add_logf(log_file, LOG_ERROR, "You need to pass port number as an argument!");
