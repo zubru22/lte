@@ -27,8 +27,8 @@ void display_logs(FILE* outer_file) {
 }
 
 void display_menu() {
-    printf("Menu:\n");
-    printf("1) Display logs.\n");
-    printf("2) Send SMS.\n");
-    printf("3) Received SMS.\n");
+    printf("\t\t\tMenu:\n");
+    printf("\t\t\t1) Display logs.\n");
+    printf("\t\t\t2) Send SMS.\n");
+    printf("\t\t\t3) Received SMS.\n");
 }

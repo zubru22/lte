@@ -111,6 +111,7 @@ typedef struct _s_cells {
     s_cell_signal cells_signals[NUMBER_OF_CELLS];
     time_t starting_time;
     s_event current_event;
+    int current_cell;
 } s_cells;
 
 void initialize_battery_life(ue_battery*);

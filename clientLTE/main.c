@@ -34,6 +34,7 @@
 #ifndef CTYPE_H
 #include <ctype.h>
 #endif
+#include <math.h>
 
 static char client_log_filename[] = "../logs/client.log";
 
@@ -287,6 +288,11 @@ int main(int argc, char* argv[])
         set_current_signal_event(&cells);
         if(menu_options == DISPLAY_MENU) { 
             printf("\e[1;1H\e[2J");
+            printf("Battery: %i%%\t\t\t\t\t\t", battery.power_percentage);
+            printf("Signal power eNodeB(1): %d\n", cells.cells_signals[0].rsrp);
+            printf("\t\t\t\t\t\t        Signal power eNodeB(2): %d", cells.cells_signals[1].rsrp);
+
+            printf("\n\n\n");
             display_menu();
         }
 
