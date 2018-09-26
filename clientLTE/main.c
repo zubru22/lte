@@ -38,6 +38,7 @@
 
 static char client_log_filename[] = "../logs/client.log";
 
+volatile bool refresh = true;
 volatile bool running = true;
 int socket_fd;
 s_message message;
@@ -225,6 +226,8 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
+    double time_start = what_time_is_it();
+    double time_end;
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
         recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
@@ -286,14 +289,19 @@ int main(int argc, char* argv[])
                 break;
         }
         set_current_signal_event(&cells);
-        if(menu_options == DISPLAY_MENU) { 
+        if(menu_options == DISPLAY_MENU && refresh) { 
+            refresh = false;
             printf("\e[1;1H\e[2J");
             printf("Battery: %i%%\t\t\t\t\t\t", battery.power_percentage);
             printf("Signal power eNodeB(1): %d\n", cells.cells_signals[0].rsrp);
             printf("\t\t\t\t\t\t        Signal power eNodeB(2): %d", cells.cells_signals[1].rsrp);
-
             printf("\n\n\n");
             display_menu();
+        }
+        time_end = what_time_is_it();
+        if((time_end - time_start) > 1.0) {
+            refresh = true;
+            time_start = time_end;
         }
 
         message.message_type = -1;
