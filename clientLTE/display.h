@@ -16,5 +16,6 @@ e_menu_options menu_options;
 
 void display_menu();
 void display_logs(FILE*);
+void display_recv_messages();
 
 #endif

@@ -46,6 +46,7 @@ ue_battery battery;
 pthread_mutex_t lock[2];
 const char* localhost = "127.0.0.1";
 FILE* log_file;
+FILE* file_to_store_recv_messages;
 char message_buff[100] = "";
 bool isMessage = false;
 
@@ -102,6 +103,12 @@ void* keyboard_thread() {
             }
             else if(strcmp(message_buff, "4\n") == 0) {
                 menu_options = DISPLAY_MENU;
+            }
+            else if(strcmp(message_buff, "3\n") == 0) {
+                printf("\e[1;1H\e[2J");
+                menu_options = DISPLAY_RECV_SMS;
+                display_recv_messages();
+                printf("\nPress 4 - main menu\n");
             }
             pthread_mutex_unlock(&lock[1]);
     }
@@ -279,8 +286,9 @@ int main(int argc, char* argv[])
                 }
                 break;
             case SMS:
-                add_logf(log_file, LOG_INFO, "Received message: %s", message.message_value.text_message);
-                    
+                file_to_store_recv_messages = fopen("Received_messages","ab+");
+                add_logf(file_to_store_recv_messages, LOG_INFO, "Received message: %s", message.message_value.text_message);
+                fclose(file_to_store_recv_messages);
                 break;
             default:
                 break;
