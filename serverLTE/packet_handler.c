@@ -2,7 +2,7 @@
 #include "packet_handler.h"
 #endif
 
-const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 10;
+const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 1;
 
 void handle_random_access_request(int client_socket, s_message message) {
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
@@ -165,7 +165,7 @@ int ping_client(void *data, const char *key, void *value) {
 
 void* send_measurement_control_requests(void* arg) {
   while (!threads_done) {
-    sleep(SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD);
+    interruptible_sleep(SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD);
     hashmap_iter(server.clients, (hashmap_callback) send_measurement_control_request, NULL);
   }
   return NULL;
@@ -348,7 +348,7 @@ int handle_resource_request(int client_socket, s_message resource_request) {
     add_logf(server_log_file, LOG_SUCCESS, "START SEND DATA");
   }
 
-  sleep(1);
+  nanosleep((const struct timespec[]){{0, 100000L}}, NULL);
   s_message data_message;
   data_message.message_type = data;
 
@@ -384,4 +384,9 @@ int handle_resource_request(int client_socket, s_message resource_request) {
   return 0;
 }
 
+void interruptible_sleep(int seconds) {
+  for (int i = 0; i < seconds; i++) {
+    sleep(1);
+  }
+}
 
