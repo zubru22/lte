@@ -77,5 +77,6 @@ void error(const char* error_message);
 void broadcast_shutdown_notification();
 void connect_to_target_server();
 void forward_sms_message(s_message message_to_send);
+void warning(const char* warning_message);
 
 #endif
