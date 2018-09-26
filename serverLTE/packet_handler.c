@@ -94,27 +94,34 @@ void parse_packet(int number_of_event) {
   }
 }
 
-rrc_config generate_rrc_config(int16_t rnti) {
-  rrc_config setup;
-  setup.NULRB = 9;
-  setup.NSubframe = 0;
-  setup.NCellID = 10;
-  setup.RNTI = rnti;
-  setup.cyclic_prefix = Normal;
-  setup.hopping = Off;
-  setup.SegGroup = 0;
-  setup.CyclicShift = 0;
-  setup.ShortEnd = 0;
+json_t* generate_rrc_config(int16_t rnti) {
+  json_t *setup;
+  setup = json_object();
+  json_object_set(setup, "message_type", json_integer(rrc_setup));
+  json_object_set(setup, "NULRB", json_integer(9));
+  json_object_set(setup, "NSubframe", json_integer(0));
+  json_object_set(setup, "NCellID", json_integer(10));
+  json_object_set(setup, "RNTI", json_integer(rnti));
+  json_object_set(setup, "cyclic_prefix", json_integer(Normal));
+  json_object_set(setup, "hopping", json_integer(Off));
+  json_object_set(setup, "SegGroup", json_integer(0));
+  json_object_set(setup, "Cyclic_Shift", json_integer(0));
+  json_object_set(setup, "ShortEnd", json_integer(0));
   return setup;
 }
 
 void send_rrc_setup(int socket) {
+  json_t *rrc_setup_json;
+  size_t json_str_len;
+  char *json_str_outgoing;
   int16_t client_rnti = get_client_rnti(socket);
-  s_message response;
-  memset(&response, 0, sizeof(response));
-  response.message_type = rrc_setup;
-  response.message_value.rrc_response = generate_rrc_config(client_rnti);
-  send(socket, &response, sizeof(response), 0);
+  rrc_setup_json = generate_rrc_config(client_rnti);
+  json_str_outgoing = json_dumps(rrc_setup_json,0);
+  json_str_len = strlen(json_str_outgoing);
+  write(socket, &json_str_len, json_str_len);
+  size_t written = write(socket, json_str_outgoing, json_str_len);
+  assert(json_str_len == written);
+  free(json_str_outgoing);
   add_logf(server_log_filename, LOG_INFO, "Sent RRC setup");
 }
 
@@ -135,8 +142,8 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
     write(socket, &json_str_len, json_str_len);
     //send json_struckt
     size_t written = write(socket, json_str_outgoing, json_str_len);
-    assert(json_str_len==written);
-
+    assert(json_str_len == written);
+    free(json_str_outgoing);
     add_logf(server_log_filename, LOG_INFO, "Sent value: %d", preamble_index);
 }
 
@@ -191,11 +198,29 @@ void* send_measurement_control_requests(void* arg) {
 }
 
 int send_measurement_control_request(void *data, const char *key, void *value) {
-  s_message measurement_control_message;
+  json_t *measurement_control_message;
+  char *json_str_outgoing;
+  size_t json_str_len;
+
+  measurement_control_message = json_object();
+  json_object_set(measurement_control_message, "message_type", json_integer(measurement_control_request));
+  json_str_outgoing = json_dumps(measurement_control_message,0);
+  json_str_len = strlen(json_str_outgoing);
+  
+  client_t* current_client = (client_t*) value;
+  write(current_client->socket, &json_str_len, json_str_len);
+  size_t written = write(current_client->socket, json_str_outgoing, json_str_len);
+
+  assert(json_str_len == written);
+  free(json_str_outgoing);
+
+  //add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
+  // ####################################################### 
+
+  /* s_message measurement_control_message;
   memset(&measurement_control_message, 0, sizeof(measurement_control_message));
   measurement_control_message.message_type = measurement_control_request;
-  client_t* current_client = (client_t*) value;
-  send(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
-  add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
-  return 0;
+  
+  
+  return 0;*/
 }

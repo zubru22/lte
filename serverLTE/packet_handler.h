@@ -45,7 +45,7 @@ extern const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD;
 void handle_random_access_request(int client_socket, json_t *json);
 void handle_pong(int client_socket);
 void parse_packet(int number_of_event);
-rrc_config generate_rrc_config(int16_t rnti);
+json_t* generate_rrc_config(int16_t rnti);
 void send_rrc_setup(int socket);
 int8_t extractPreambleIndex(int16_t ra_rnti);
 void send_random_access_response(int socket, int8_t preamble_index, time_t timestamp);
