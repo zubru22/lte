@@ -2,7 +2,7 @@
 #include "packet_handler.h"
 #endif
 
-const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 5;
+const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 10;
 
 void handle_random_access_request(int client_socket, s_message message) {
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
@@ -365,9 +365,10 @@ int handle_resource_request(int client_socket, s_message resource_request) {
     bytes_read += BUFFER_SIZE;
     bytes_sent = send_thread_safe(client_socket, &data_message, sizeof(data_message), 0);
 
-    if (bytes_sent == -1) {
+    if (bytes_sent == -1 || bytes_sent == 0) {
       error("Error sending data");
     } else {
+      add_logf(server_log_file, LOG_SUCCESS, "(SOCKET: %d) Bytes of file sent: %d", client_socket, bytes_sent);
       packets_sent++;
     }
 

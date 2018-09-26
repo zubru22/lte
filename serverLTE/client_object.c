@@ -60,7 +60,9 @@ void close_clients_sockets() {
 
 void close_client_socket(void *data, const char *key, void *value) {
     int client_socket = atoi(key);
+    pthread_mutex_lock( &((client_t*) value)->socket_lock);
     close(client_socket);
+    pthread_mutex_unlock( &((client_t*) value)->socket_lock);
 }
 
 void delete_client_from_hashmap(hashmap* map_of_clients, int socket) {

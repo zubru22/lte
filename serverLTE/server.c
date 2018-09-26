@@ -152,14 +152,24 @@ void broadcast_shutdown_notification() {
 }
 
 void clean() {
+    // disable "ctrl+c" handling so as not to invoke "clean" multiple times
+    signal(SIGINT, NULL);
+
     add_logf(server_log_file, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(pinging_in_thread_id, NULL);
+    add_logf(server_log_file, LOG_INFO, "Joined pinging thread");
     pthread_join(send_measurement_control_requests_id, NULL);
+    add_logf(server_log_file, LOG_INFO, "Joined measurement-handling thread");    
     broadcast_shutdown_notification();
+    add_logf(server_log_file, LOG_INFO, "Finished broadcasting shutdown notification");    
     pthread_mutex_destroy(&server.hashmap_lock);
+    add_logf(server_log_file, LOG_INFO, "Destroyed hashmap mutex");    
     server_t__destroy(&server);
+    add_logf(server_log_file, LOG_INFO, "Destroyed server");    
+    add_logf(server_log_file, LOG_INFO, "Closing logging file and exiting...");    
     fclose(server_log_file);
+    exit(0);
 }
 
 void error(const char* error_message) {

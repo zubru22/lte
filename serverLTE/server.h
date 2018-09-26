@@ -42,6 +42,7 @@
 #include <limits.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <signal.h>
 
 #define MAX_LISTEN_QUERIED_CONNECTIONS 128 // value suggested as "safe" for most of the systems
 #define MAX_EVENTS 100
