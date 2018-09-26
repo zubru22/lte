@@ -69,12 +69,15 @@ void* keyboard_thread() {
             pthread_mutex_lock(&lock[1]);
 
             fgets(message_buff, sizeof(message_buff), stdin);
-            for (int i = 0; i <= 8; i++) {
-                if(isdigit((unsigned char)message_buff[i]))
-                    isMessage = true;
-                else {
-                    isMessage = false;
-                    break;
+            if(isdigit((unsigned char)message_buff[0]) && isdigit((unsigned char)message_buff[8]))
+            {    
+                for (int i = 1; i <= 7; i++) {
+                    if(isdigit((unsigned char)message_buff[i]))
+                        isMessage = true;
+                    else {
+                        isMessage = false;
+                        break;
+                    }
                 }
             }
             if(strcmp(message_buff,"d\n") == 0 && false == downloading) {
@@ -99,7 +102,6 @@ void* keyboard_thread() {
             else if(strcmp(message_buff, "4\n") == 0) {
                 menu_options = DISPLAY_MENU;
             }
-            
             pthread_mutex_unlock(&lock[1]);
     }
 
@@ -235,7 +237,7 @@ int main(int argc, char* argv[])
                         }
                 }
                 break;
-            case data_start:
+            case data_start:                
                 file_to_recv = fopen(message.message_value.buffer,"ab+");
                 add_logf(log_file, LOG_INFO, "\n\n----------------------\nStarted downloading data!\n----------------------\n\n");
                 diff_time = what_time_is_it();
@@ -279,16 +281,13 @@ int main(int argc, char* argv[])
                     
                 break;
         }
-        sleep(1);
         set_current_signal_event(&cells);
-
+        usleep(50000);
         if(menu_options == DISPLAY_MENU) { 
             printf("\e[1;1H\e[2J");
             display_menu();
         }
 
-        // printf("\nCurrent event: %d\n", (int)cells.current_event+1);
-        //printf("Battery power: %i\n", battery.power_percentage);
         message.message_type = -1;
     }
     // Join thread
