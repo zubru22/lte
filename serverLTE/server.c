@@ -93,7 +93,7 @@ void receive_packets() {
   int number_of_file_descriptors_ready;
   while(1) {
       if((number_of_file_descriptors_ready = epoll_wait(server.epoll_file_descriptor, server.events, MAX_EVENTS, -1)) == -1) {
-        error("epoll_wait in init_server");
+        warning("epoll_wait in init_server");
       }
       handle_connection(number_of_file_descriptors_ready);
   }
@@ -147,18 +147,29 @@ void remind_about_port() {
 
 void broadcast_shutdown_notification() {
   add_logf(server_log_file, LOG_INFO, "Broadcasting shutdown notification");
+  sleep(1);
   hashmap_iter(server.clients, (hashmap_callback) notify_client_of_shutdown, NULL);
 }
 
 void clean() {
-    broadcast_shutdown_notification();
+    // disable "ctrl+c" handling so as not to invoke "clean" multiple times
+    signal(SIGINT, NULL);
+
     add_logf(server_log_file, LOG_INFO, "CLEAN");
     threads_done = true;
     pthread_join(pinging_in_thread_id, NULL);
+    add_logf(server_log_file, LOG_INFO, "Joined pinging thread");
     pthread_join(send_measurement_control_requests_id, NULL);
+    add_logf(server_log_file, LOG_INFO, "Joined measurement-handling thread");    
+    broadcast_shutdown_notification();
+    add_logf(server_log_file, LOG_INFO, "Finished broadcasting shutdown notification");    
     pthread_mutex_destroy(&server.hashmap_lock);
+    add_logf(server_log_file, LOG_INFO, "Destroyed hashmap mutex");    
     server_t__destroy(&server);
+    add_logf(server_log_file, LOG_INFO, "Destroyed server");    
+    add_logf(server_log_file, LOG_INFO, "Closing logging file and exiting...");    
     fclose(server_log_file);
+    exit(0);
 }
 
 void error(const char* error_message) {
@@ -167,6 +178,10 @@ void error(const char* error_message) {
     clean();
   }
   exit(EXIT_FAILURE);
+}
+
+void warning(const char* warning_message) {
+  add_logf(server_log_file, LOG_WARNING, warning_message);
 }
 
 void connect_to_target_server() {
