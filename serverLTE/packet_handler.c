@@ -6,11 +6,13 @@ const int SEND_MEASUREMENT_CONTROL_REQUEST_PERIOD = 1;
 
 void handle_random_access_request(int client_socket, s_message message) {
   int16_t received_ra_rnti = message.message_value.message_preamble.ra_rnti;
+  int new_client_phone_number = message.message_value.message_preamble.phone_number;
+  add_logf(server_log_file, LOG_INFO, "New client's phone number: %d", new_client_phone_number);
   uint8_t preamble_index = extractPreambleIndex(received_ra_rnti);
   time_t current_timestamp = time(NULL);
 
   send_random_access_response(client_socket, preamble_index, current_timestamp);
-  update_client_by_ra_rnti_data(client_socket, preamble_index, current_timestamp, received_ra_rnti);
+  update_client_by_ra_rnti_data(client_socket, preamble_index, current_timestamp, received_ra_rnti, new_client_phone_number);
   add_logf(server_log_file, LOG_INFO, "Random Access response sent");
 }
 

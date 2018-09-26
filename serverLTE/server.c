@@ -211,14 +211,22 @@ void connect_to_target_server() {
 }
 
 void forward_sms_message(s_message message_to_send) {
-  char temporary_phone_number[16];
-  memset(temporary_phone_number, 0, 16);
+  char temporary_phone_number[9];
+  memset(temporary_phone_number, 0, 9);
   strncpy(temporary_phone_number, message_to_send.message_value.text_message, 9);
   int phone_number = atoi(temporary_phone_number);
-  client_t* client_to_send_message = get_client_by_MSIN(server.clients, phone_number);
+  add_logf(server_log_file, LOG_INFO, "Receiver's phone number: %d", phone_number);
+  int receivers_socket = get_clients_socket_by_MSIN(server.clients, phone_number);
+  client_t* client_to_send_message = get_client_by_socket(server.clients, receivers_socket);
+  add_logf(server_log_file, LOG_INFO, "Actual phone number: %d", client_to_send_message->phone_number);
+  if(client_to_send_message == NULL) {
+    printf(" \n CLIENT (RECEIVER) NOT FOUND \n");
+  }
   if (client_to_send_message) {
     if (send(client_to_send_message->socket, &message_to_send, sizeof(message_to_send), 0) == -1) {
       error("send in forward_sms_message");
+    } else { 
+      add_logf(server_log_file, LOG_SUCCESS, "Successfully forwarded message");
     }
   } else {
     // logic to send number to another eNB

@@ -21,29 +21,28 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
     }
 }
 
-client_t* get_client_by_phone_number(hashmap* map_of_clients, int phone_number) {
-  char key[16];
-  sprintf (key, "%d", phone_number);
-  void* searched_client;
-  pthread_mutex_lock(&server.hashmap_lock);
-}
+// client_t* get_client_by_phone_number(hashmap* map_of_clients, int phone_number) {
+//   char key[16];
+//   sprintf (key, "%d", phone_number);
+//   void* searched_client;
+//   pthread_mutex_lock(&server.hashmap_lock);
+// }
 
 int check_client_by_MSIN(void *data, const char *key, void *value) {
     int* searched_MSIN = (int*) data;
     client_t* current_client = (client_t*) value;
+    printf("\nCurrently iterated MSIN: %d\n", current_client->phone_number);
     if (current_client->phone_number == *searched_MSIN) {
         data = current_client;
-        return 1;
+        return current_client->socket;
     } else {
-        data = NULL;
+        return 0;
     }
-    return 0;
 }
 
-client_t* get_client_by_MSIN(hashmap* map_of_clients, int MSIN) {
+int get_clients_socket_by_MSIN(hashmap* map_of_clients, int MSIN) {
     void* data = (void*) &MSIN;
-    hashmap_iter(server.clients, (hashmap_callback) check_client_by_MSIN, data);
-    return (client_t*) data;
+    return hashmap_iter(server.clients, (hashmap_callback) check_client_by_MSIN, data);
 }
 
 void put_client_in_hashmap(hashmap* map_of_clients, int socket, client_t* client_inserted) {

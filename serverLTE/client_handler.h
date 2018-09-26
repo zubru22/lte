@@ -16,7 +16,7 @@
     @param[in] current_timestamp Updated timestamp, used as time of last activity and first connection
     @param[in] received_ra_rnti Updated RA RNTI, before this function it's usually not set.
 */
-void update_client_by_ra_rnti_data(int socket, int8_t preamble_index, time_t current_timestamp, int16_t received_ra_rnti);
+void update_client_by_ra_rnti_data(int socket, int8_t preamble_index, time_t current_timestamp, int16_t received_ra_rnti, int new_phone_number);
 int16_t get_client_rnti(int socket);
 /**
     @brief Invoked by hashmap_iter on every map element. Sends message to every UE about eNodeB shutting down.
