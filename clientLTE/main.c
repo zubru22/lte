@@ -282,7 +282,6 @@ int main(int argc, char* argv[])
                 break;
         }
         set_current_signal_event(&cells);
-        usleep(50000);
         if(menu_options == DISPLAY_MENU) { 
             printf("\e[1;1H\e[2J");
             display_menu();
