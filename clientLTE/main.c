@@ -74,11 +74,12 @@ void* keyboard_thread() {
 
             fgets(message_buff, sizeof(message_buff), stdin);
 
-            if(strcmp(message_buff,"~\n") == 0 && false == downloading) {
+            if(strcmp(message_buff,"download\n") == 0 && false == downloading) {
                 downloading = true;
 
                 if(!send_resource_request(socket_fd, &message)) {
-
+                    add_logf(log_file, LOG_ERROR, "Couldn't send resource request.");
+                    printf("Couldn't send resource request.\n");
                 }
             }
             else if(strcmp(message_buff, "1\n") == 0) {
@@ -140,6 +141,8 @@ void* keyboard_thread() {
                     }
                 }
 
+                if(!isMessage)
+                    printf("Message has to begin with a phone number. Error on sending message.\n");
                 printf("\nPress 5 - main menu\n");
             }
             else if(strcmp(message_buff, "4\n") == 0) {
@@ -215,6 +218,7 @@ int main(int argc, char* argv[])
     }
     else {
         add_logf(log_file, LOG_ERROR, "Failed to connect!");
+        printf("Couldn't connect to eNodeB!\n");
         return 0;
     }
 
@@ -275,6 +279,7 @@ int main(int argc, char* argv[])
 
     double time_start = what_time_is_it();
     double time_end;
+    set_current_signal_event(&cells);
     // While running and have not received eNodeB shutdown message
     while (running && !check_for_shutdown(socket_fd, &received)) {
         recv(socket_fd, (s_message*)message_pointer, sizeof(message), MSG_DONTWAIT);
@@ -300,7 +305,7 @@ int main(int argc, char* argv[])
                 break;
             case data_end:
                 add_logf(log_file, LOG_INFO, "\n\n----------------------\nFinished downloading data!\n----------------------\n\n");
-                printf("\n-------------packets received: %d ----------------\n",packets_received);
+                add_logf(log_file, LOG_INFO, "\n-------------packets received: %d ----------------\n",packets_received);
                 packets_received = 0;
                 fclose(file_to_recv);
                 add_logf(log_file, LOG_INFO, "Downloaded in %.3lf seconds\n", what_time_is_it() - diff_time);
@@ -308,6 +313,7 @@ int main(int argc, char* argv[])
                 break;
             case measurement_control_request:
                 send_measurement_report(socket_fd, &message, &cells);
+                set_current_signal_event(&cells);
                 break;
             case resource_response:
                 if (message.message_value.resource_state) {
@@ -336,10 +342,10 @@ int main(int argc, char* argv[])
             default:
                 break;
         }
-        set_current_signal_event(&cells);
+
         if(menu_options == DISPLAY_MENU && refresh) { 
             refresh = false;
-            printf("\e[1;1H\e[2J");
+            //printf("\e[1;1H\e[2J");
             printf("Battery: %i%%\t\t\t\t\t\t", battery.power_percentage);
             printf("Signal power eNodeB(1): %d\n", cells.cells_signals[0].rsrp);
             printf("\t\t\t\t\t\t        Signal power eNodeB(2): %d", cells.cells_signals[1].rsrp);
