@@ -187,13 +187,22 @@ int ping_client(void *data, const char *key, void *value) {
   || (current_client->battery_state == LOW && (time_since_last_activity > PING_TIME_LOW_BATTERY));
 
   if (should_ping) {
-    s_message ping_message;
-    memset(&ping_message, 0, sizeof(ping_message));
-    ping_message.message_type = ping;
-    send(current_client->socket, &ping_message, sizeof(ping_message), 0);
-    add_logf(server_log_filename, LOG_INFO, "Sent ping to client on socket: %d", current_client->socket);
+    json_t *ping_message_json;
+    char *json_str_outgoing;
+    size_t json_str_len;
+
+    ping_message_json = json_object();
+    json_object_set(ping_message_json, "message_type", json_integer(ping));
+    json_str_outgoing = json_dumps(ping_message_json,0);
+    json_str_len = strlen(json_str_outgoing);
+
+    write(current_client->socket, &json_str_len, json_str_len);
+    size_t written = write(current_client->socket, json_str_outgoing, json_str_len);
+
+    assert(json_str_len == written);
+    free(json_str_outgoing);
   }
-  return 0;
+
 }
 
 void* send_measurement_control_requests(void* arg) {
@@ -220,14 +229,4 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
 
   assert(json_str_len == written);
   free(json_str_outgoing);
-
-  //add_logf(server_log_filename, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
-  // ####################################################### 
-
-  /* s_message measurement_control_message;
-  memset(&measurement_control_message, 0, sizeof(measurement_control_message));
-  measurement_control_message.message_type = measurement_control_request;
-  
-  
-  return 0;*/
 }
