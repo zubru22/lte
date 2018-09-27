@@ -77,7 +77,7 @@ void* keyboard_thread() {
             if(strcmp(message_buff,"9\n") == 0 && false == downloading) {
                 downloading = true;
 
-                if(!send_resource_request(socket_fd, &message)) {
+                if(-1 == send_resource_request(socket_fd, &message)) {
                     add_logf(log_file, LOG_ERROR, "Couldn't send resource request.");
                     printf("Couldn't send resource request.\n");
                 }
