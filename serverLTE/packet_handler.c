@@ -413,7 +413,22 @@ void handle_message_from_enb(s_message passed_message) {
   char temp_receivers_phone_number[9];
   strncpy(temp_receivers_phone_number, passed_message.message_value.text_message, 9);
   int receivers_phone_number = atoi(temp_receivers_phone_number);
+  int receivers_socket = get_clients_socket_by_MSIN(server.clients, receivers_phone_number);
+  if(receivers_socket == 0) {
+    add_logf(server_log_file, LOG_WARNING, "No client with number %d on this server", receivers_phone_number);
+    return;
+  }
+  char wrapped_message_to_send[MESSAGE_LENGTH];
+  strncpy(wrapped_message_to_send, passed_message.message_value.text_message+9, MESSAGE_LENGTH-9);
+  passed_message.message_type = SMS;
+  memset(passed_message.message_value.text_message, '\0', sizeof(char)*MESSAGE_LENGTH );
+  memcpy(passed_message.message_value.text_message, wrapped_message_to_send, MESSAGE_LENGTH);
 
+  if (send(receivers_socket, &passed_message, sizeof(passed_message), 0) == -1) {
+    warning("Unable to pass message");
+  } else {
+    add_logf(server_log_file, LOG_SUCCESS, "Successfully passed SMS to client");
+  }
 }
 
 

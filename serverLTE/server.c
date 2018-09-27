@@ -254,7 +254,7 @@ void forward_sms_message(s_message message_to_send, int client_socket) {
     sprintf(senders_number, "%d", sender->phone_number);
     //memset( forwarded_to_enb, '\0', sizeof(char)*MESSAGE_LENGTH );
 
-    strncpy(actual_message, message_to_send.message_value.text_message + 18, MESSAGE_LENGTH);
+    strncpy(actual_message, message_to_send.message_value.text_message + 18, MESSAGE_LENGTH-18);
 
     //receiver's number:
     strcpy(forwarded_to_enb, temporary_phone_number);
