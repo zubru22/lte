@@ -22,14 +22,28 @@ int16_t get_client_rnti(int socket) {
 }
 
 int notify_client_of_shutdown(void *data, const char *key, void *value) {
-  client_t* client_notified = (client_t*) value;
+  json_t *shutdown_notification_json;
+  char *json_str_outgoing;
+  size_t json_str_len;
+
+  shutdown_notification_json = json_object();
+  json_object_set(shutdown_notification_json, "message_type", json_integer(enb_off));
+  json_str_outgoing = json_dumps(shutdown_notification_json,0);
+  json_str_len = strlen(json_str_outgoing);
   
-  s_message shutdown_notification;
+  client_t* client_notified = (client_t*) value;
+  write(client_notified->socket, &json_str_len, json_str_len);
+  size_t written = write(client_notified->socket, json_str_outgoing, json_str_len);
+  
+  assert(json_str_len == written);
+  free(json_str_outgoing);
+
+  /* s_message shutdown_notification;
   memset(&shutdown_notification, 0, sizeof(shutdown_notification));
   shutdown_notification.message_type = enb_off;
 
   send(client_notified->socket, &shutdown_notification, sizeof(shutdown_notification), 0);
-  return 0;
+  return 0; */
 }
 
 int handle_client_inactivity(void *data, const char *key, void *value) {
