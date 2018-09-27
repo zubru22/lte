@@ -145,4 +145,7 @@ void handle_resource_request(int client_socket, s_message resource_request);
 
 void interruptible_sleep(int seconds);
 
+void handle_message_from_enb(s_message message);
+
+
 #endif

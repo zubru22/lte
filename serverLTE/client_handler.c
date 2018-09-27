@@ -25,6 +25,9 @@ int16_t get_client_rnti(int socket) {
 int notify_client_of_shutdown(void *data, const char *key, void *value) {
   client_t* client_notified = (client_t*) value;
 
+  if(client_notified->is_server) {
+        return 0;
+  }
   s_message shutdown_notification;
   memset(&shutdown_notification, 0, sizeof(shutdown_notification));
   shutdown_notification.message_type = enb_off;
@@ -40,6 +43,9 @@ int notify_client_of_shutdown(void *data, const char *key, void *value) {
 int handle_client_inactivity(void *data, const char *key, void *value) {
   time_t current_time = time(NULL);
   client_t* current_client = (client_t*) value;
+  if(current_client->is_server) {
+    return 0;
+  }
   time_t time_since_last_activity = current_time - current_client->last_activity;
   bool should_kick = (time_since_last_activity > PING_TIMEOUT);
 
