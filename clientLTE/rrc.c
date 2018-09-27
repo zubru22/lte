@@ -22,16 +22,12 @@ int send_rrc_connection_request(int socketfd, json_t* json_message, void (*gener
     json_str = json_dumps(json_message, 0);
     json_str_len = strlen(json_str);
 
+     // Write json string length to the socket
     write(socketfd, &json_str_len, json_str_len);
 
-    // Write json string length to the socket
-    if(-1 == write(socketfd, &json_str_len, json_str_len))
-        return -1;
-
-    number_of_bytes_read = write(socketfd, json_str, json_str_len);
-
-    if (number_of_bytes_read != json_str_len)
-        return -1;
+    // Write json string
+    write(socketfd, json_str, json_str_len);
+    free(json_str);
 
     return 0;
 }
