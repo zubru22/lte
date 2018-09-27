@@ -200,7 +200,7 @@ s_event check_events(s_cells* cells) {
     if(cells->cells_signals[1].rsrp > cells->cells_signals[0].rsrp && false == a3_checked) {
         event_change = 5;
         a3_checked = true;
-        return def; // tu jest def
+        return a3;
     }
     // Event A4
     if(cells->cells_signals[1].rsrp < cells->cells_signals[1].thresholds[1])

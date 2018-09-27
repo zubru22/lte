@@ -345,7 +345,7 @@ int main(int argc, char* argv[])
 
         if(menu_options == DISPLAY_MENU && refresh) { 
             refresh = false;
-            printf("\e[1;1H\e[2J");
+            //printf("\e[1;1H\e[2J");
             printf("Battery: %i%%\t\t\t\t\t\t", battery.power_percentage);
             printf("Signal power eNodeB(1): %d\n", cells.cells_signals[0].rsrp);
             printf("\t\t\t\t\t\t        Signal power eNodeB(2): %d", cells.cells_signals[1].rsrp);
