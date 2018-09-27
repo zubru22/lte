@@ -215,6 +215,7 @@ int main(int argc, char* argv[])
     }
     else {
         add_logf(log_file, LOG_ERROR, "Failed to connect!");
+        printf("Failed to connect to eNodeB!");
         return 0;
     }
 
