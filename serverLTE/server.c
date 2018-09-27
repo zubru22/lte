@@ -142,7 +142,8 @@ void accept_client() {
 }
 
 void remind_about_port() {
-  error ("Run program: ./server PORT TARGET_PORT");
+  printf("\nRun program: ./server PORT TARGET_PORT\n");
+  exit(EXIT_FAILURE);
 }
 
 void broadcast_shutdown_notification() {
