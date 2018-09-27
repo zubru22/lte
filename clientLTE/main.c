@@ -93,7 +93,7 @@ void* keyboard_thread() {
             else if(strcmp(message_buff, "3\n") == 0) {
                 printf("\e[1;1H\e[2J");
                 menu_options = DISPLAY_RECV_SMS;
-                display_message_file("Received_messages.txt");
+                display_message_file("Received_messages");
                 printf("\nPress 5 - main menu\n");
             }
             else if(strcmp(message_buff, "2\n") == 0) {
