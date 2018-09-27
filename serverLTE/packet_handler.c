@@ -303,7 +303,7 @@ void handle_x2ap_handover_request_acknowledge(int client_socket) {
   add_logf(server_log_file, LOG_INFO, "sent rrc_connection_reconfiguration_request to client to handover");
 }
 
-int handle_resource_request(int client_socket, s_message resource_request) {
+void handle_resource_request(int client_socket, s_message resource_request) {
   bool is_file_present = false;
 
   // TODO
@@ -383,7 +383,6 @@ int handle_resource_request(int client_socket, s_message resource_request) {
     add_logf(server_log_file, LOG_SUCCESS, "File transfered! Packets sent: %d", packets_sent);
   }
 
-  return 0;
 }
 
 void interruptible_sleep(int seconds) {

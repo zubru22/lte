@@ -217,12 +217,16 @@ void forward_sms_message(s_message message_to_send) {
   int phone_number = atoi(temporary_phone_number);
   add_logf(server_log_file, LOG_INFO, "Receiver's phone number: %d", phone_number);
   int receivers_socket = get_clients_socket_by_MSIN(server.clients, phone_number);
+  if (receivers_socket == 0) {
+    add_logf(server_log_file, LOG_WARNING, "Client with given phone number does not exist");
+    return;
+  }
   client_t* client_to_send_message = get_client_by_socket(server.clients, receivers_socket);
-  add_logf(server_log_file, LOG_INFO, "Actual phone number: %d", client_to_send_message->phone_number);
+  //add_logf(server_log_file, LOG_INFO, "Actual phone number: %d", client_to_send_message->phone_number);
   if(client_to_send_message == NULL) {
     printf(" \n CLIENT (RECEIVER) NOT FOUND \n");
   }
-  if (client_to_send_message) {
+  if (client_to_send_message != NULL) {
     if (send(client_to_send_message->socket, &message_to_send, sizeof(message_to_send), 0) == -1) {
       error("send in forward_sms_message");
     } else { 

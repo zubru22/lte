@@ -40,6 +40,7 @@ int check_client_by_MSIN(void *data, const char *key, void *value) {
     }
 }
 
+//returns 0 if not found, client's socket otherwise
 int get_clients_socket_by_MSIN(hashmap* map_of_clients, int MSIN) {
     void* data = (void*) &MSIN;
     return hashmap_iter(server.clients, (hashmap_callback) check_client_by_MSIN, data);
