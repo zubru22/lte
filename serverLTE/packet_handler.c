@@ -202,7 +202,7 @@ int ping_client(void *data, const char *key, void *value) {
     assert(json_str_len == written);
     free(json_str_outgoing);
   }
-
+  return 0;
 }
 
 void* send_measurement_control_requests(void* arg) {
@@ -229,4 +229,5 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
 
   assert(json_str_len == written);
   free(json_str_outgoing);
+  return 0;
 }
