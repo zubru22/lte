@@ -206,34 +206,70 @@ void connect_to_target_server() {
               (struct sockaddr *) &target_server_address,
               sizeof(target_server_address)
               ) == -1) {
-      error("ERROR connecting");
+      error("ERROR connecting\n");
   }
-  printf ("CONNECTED");
+  printf ("CONNECTED\n");
 }
 
-void forward_sms_message(s_message message_to_send) {
+void forward_sms_message(s_message message_to_send, int client_socket) {
+  client_t* sender = get_client_by_socket(server.clients, client_socket);
+
   char temporary_phone_number[9];
   memset(temporary_phone_number, 0, 9);
   strncpy(temporary_phone_number, message_to_send.message_value.text_message, 9);
-  int phone_number = atoi(temporary_phone_number);
-  add_logf(server_log_file, LOG_INFO, "Receiver's phone number: %d", phone_number);
-  int receivers_socket = get_clients_socket_by_MSIN(server.clients, phone_number);
+
+  int receivers_number = atoi(temporary_phone_number);
+  add_logf(server_log_file, LOG_INFO, "Receiver's phone number: %d", receivers_number);
+  
+  int receivers_socket = get_clients_socket_by_MSIN(server.clients, receivers_number);
   if (receivers_socket == 0) {
     add_logf(server_log_file, LOG_WARNING, "Client with given phone number does not exist");
     return;
   }
+  
   client_t* client_to_send_message = get_client_by_socket(server.clients, receivers_socket);
-  //add_logf(server_log_file, LOG_INFO, "Actual phone number: %d", client_to_send_message->phone_number);
   if(client_to_send_message == NULL) {
-    printf(" \n CLIENT (RECEIVER) NOT FOUND \n");
+    add_logf(server_log_file, LOG_WARNING, "Specified client's socket exists, but client's structure NOT found.");
+    return;
   }
+  
   if (client_to_send_message != NULL) {
+    //change receiver's number in SMS header to sender's number
+    char senders_number[9]; 
+    sprintf(senders_number, "%d", sender->phone_number);
+    for(int i = 0; i < 9; i++) {
+      message_to_send.message_value.text_message[i] = senders_number[i];
+    }
+
     if (send(client_to_send_message->socket, &message_to_send, sizeof(message_to_send), 0) == -1) {
       error("send in forward_sms_message");
     } else { 
       add_logf(server_log_file, LOG_SUCCESS, "Successfully forwarded message");
     }
   } else {
-    // logic to send number to another eNB
+    char forwarded_to_enb[MESSAGE_LENGTH];
+    char senders_number[9]; 
+    char actual_message[100];
+
+    sprintf(senders_number, "%d", sender->phone_number);
+    //memset( forwarded_to_enb, '\0', sizeof(char)*MESSAGE_LENGTH );
+
+    strncpy(actual_message, message_to_send.message_value.text_message + 18, MESSAGE_LENGTH);
+
+    //receiver's number:
+    strcpy(forwarded_to_enb, temporary_phone_number);
+    // sender's number:
+    strcat(forwarded_to_enb, senders_number);
+    // actual message:
+    strcat(forwarded_to_enb, actual_message);
+
+    strcpy(forwarded_to_enb, message_to_send.message_value.text_message);
+    message_to_send.message_type = forwarded_message;
+
+    if(send(server.target_socket, &message_to_send, sizeof(message_to_send), 0) == -1) {
+     warning("unable to pass message to target server");
+    }
+
+
   }
 }

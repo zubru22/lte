@@ -8,6 +8,7 @@
 #endif
 
 #define BUFFER_SIZE 16
+#define MESSAGE_LENGTH 118
 
 typedef struct prach_preamble {
     int16_t ra_rnti; // 16bit integer sent to server - first 2 bits are PreambleIndex
@@ -43,7 +44,8 @@ typedef enum type_of_message {
     data_end,
     resource_request,
     resource_response,
-    SMS
+    SMS,
+    forwarded_message
 } e_message_type;
 
 typedef enum establishment_cause {EMERGENCY, HIGH_PRIORITY_ACCESS, MT_ACCESS, MO_SIGNALING, MO_DATA} e_ec;
@@ -111,7 +113,7 @@ typedef union message_value {
         handover_t handover;
         handover_request_t handover_request;
         bool resource_state;
-        char text_message[100];
+        char text_message[MESSAGE_LENGTH];
 } u_message_value;
 
 typedef struct message {

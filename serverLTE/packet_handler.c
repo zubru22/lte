@@ -20,7 +20,7 @@ void handle_pong(int client_socket) {
   //update client's lst activity timestamp
   client_t* to_be_updated = get_client_by_socket(server.clients, client_socket);
   to_be_updated->last_activity = time(NULL);
-  add_logf(server_log_file, LOG_INFO, "Received pong");
+  add_logf(server_log_file, LOG_INFO, "Received pong on socket: %d", client_socket);
 }
 
 void handle_client_power_off(int client_socket) {
@@ -78,7 +78,8 @@ void parse_packet(int number_of_event) {
       handle_x2ap_handover_request_acknowledge(message.message_value.handover.client_socket);
       break;
     case SMS:
-      forward_sms_message(message);
+      forward_sms_message(message, client_socket);
+      break;
     case resource_request:
       handle_resource_request(client_socket, message);
       break;
