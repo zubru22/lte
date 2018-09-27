@@ -83,6 +83,9 @@ void parse_packet(int number_of_event) {
     case resource_request:
       handle_resource_request(client_socket, message);
       break;
+    case forwarded_message:
+      handle_message_from_enb(message);
+      break;
     default:
       break;
   }
@@ -152,6 +155,9 @@ void* ping_and_timeout_in_thread(void* arg) {
 int ping_client(void *data, const char *key, void *value) {
   time_t current_time = time(NULL);
   client_t* current_client = (client_t*) value;
+  if(current_client->is_server) {
+    return 0;
+  }
   time_t time_since_last_activity = current_time - current_client->last_activity;
   bool should_ping = (current_client->battery_state == OK && (time_since_last_activity > PING_TIME_NORMAL))
   || (current_client->battery_state == LOW && (time_since_last_activity > PING_TIME_LOW_BATTERY));
@@ -176,6 +182,9 @@ void* send_measurement_control_requests(void* arg) {
 
 int send_measurement_control_request(void *data, const char *key, void *value) {
   client_t* current_client = (client_t*) value;
+  if(current_client->is_server) {
+        return 0;
+    }
   if (current_client->is_server == false) {
     s_message measurement_control_message;
     memset(&measurement_control_message, 0, sizeof(measurement_control_message));
@@ -183,6 +192,7 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
     send_thread_safe(current_client->socket, &measurement_control_message, sizeof(measurement_control_message), 0);
     add_logf(server_log_file, LOG_INFO, "Send measurement control request on socket: %d", current_client->socket);
   }
+  return 0;
 }
 
 void log_event(const char* event, int client_socket) {
@@ -398,4 +408,12 @@ void interruptible_sleep(int seconds) {
     sleep(1);
   }
 }
+
+void handle_message_from_enb(s_message passed_message) {
+  char temp_receivers_phone_number[9];
+  strncpy(temp_receivers_phone_number, passed_message.message_value.text_message, 9);
+  int receivers_phone_number = atoi(temp_receivers_phone_number);
+
+}
+
 

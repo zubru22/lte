@@ -25,6 +25,9 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
 int check_client_by_MSIN(void *data, const char *key, void *value) {
     int* searched_MSIN = (int*) data;
     client_t* current_client = (client_t*) value;
+    if(current_client->is_server) {
+        return 0;
+    }
     printf("\nCurrently iterated MSIN: %d\n", current_client->phone_number);
     if (current_client->phone_number == *searched_MSIN) {
         data = current_client;
@@ -53,6 +56,9 @@ void close_clients_sockets() {
 }
 
 void close_client_socket(void *data, const char *key, void *value) {
+    if(&((client_t*) value)->is_server) {
+        return;
+    }
     int client_socket = atoi(key);
     pthread_mutex_lock( &((client_t*) value)->socket_lock);
     close(client_socket);

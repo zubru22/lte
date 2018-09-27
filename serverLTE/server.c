@@ -266,6 +266,7 @@ void forward_sms_message(s_message message_to_send, int client_socket) {
     strcpy(forwarded_to_enb, message_to_send.message_value.text_message);
     message_to_send.message_type = forwarded_message;
 
+    add_logf(server_log_file, LOG_INFO, "Message to pass to target eNb: %s", message_to_send.message_value.text_message);
     if(send(server.target_socket, &message_to_send, sizeof(message_to_send), 0) == -1) {
      warning("unable to pass message to target server");
     }
