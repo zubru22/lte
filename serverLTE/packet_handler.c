@@ -52,19 +52,16 @@ void parse_packet(int number_of_event) {
   }
 
   // Allocate memory for json string
-  json_str_incoming = (char*) malloc(json_str_len);
+  json_str_incoming = (char*) calloc(json_str_len, sizeof(char));
 
   // Read json string from socket - repeat in case it's needed
   do {
     number_of_bytes_read = read(client_socket, json_str_incoming, json_str_len);
   } while (number_of_bytes_read != json_str_len);
-  
-  printf("should read: %lu, read: %d\n", json_str_len, number_of_bytes_read);
-  printf("%s\n", json_str_incoming);
-
   // Decode json string to json object
   json_obj = json_loads(json_str_incoming, 0, 0);
   // String not needed any more
+  printf("String: %s\n", json_str_incoming);
   free(json_str_incoming);
 
   // Exctract message type value from json
@@ -121,6 +118,7 @@ void send_rrc_setup(int socket) {
   write(socket, &json_str_len, json_str_len);
   size_t written = write(socket, json_str_outgoing, json_str_len);
   assert(json_str_len == written);
+  printf("String: %s\n", json_str_outgoing);
   free(json_str_outgoing);
   add_logf(server_log_filename, LOG_INFO, "Sent RRC setup");
 }
@@ -140,17 +138,16 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
     json_object_set(response_json, "timestamp", json_integer(timestamp));
     
     json_str_outgoing = json_dumps(response_json,0);
-    printf("Write: %s\n", json_str_outgoing);
     
     json_str_len = strlen(json_str_outgoing);
     write(socket, &json_str_len, json_str_len);
     //send json_struckt
     size_t written = write(socket, json_str_outgoing, json_str_len);
-    
-    printf("Should write: %ld, written: %ld\n", json_str_len, written);
+    printf("String: %s\n", json_str_outgoing);
+    free(json_str_outgoing);
+
     assert(json_str_len == written);
     
-    free(json_str_outgoing);
     add_logf(server_log_filename, LOG_INFO, "Sent value: %d", preamble_index);
 }
 
@@ -200,6 +197,7 @@ int ping_client(void *data, const char *key, void *value) {
     size_t written = write(current_client->socket, json_str_outgoing, json_str_len);
 
     assert(json_str_len == written);
+    printf("String: %s\n", json_str_outgoing);
     free(json_str_outgoing);
   }
   return 0;
@@ -228,6 +226,7 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
   size_t written = write(current_client->socket, json_str_outgoing, json_str_len);
 
   assert(json_str_len == written);
+  printf("String: %s\n", json_str_outgoing);
   free(json_str_outgoing);
   return 0;
 }
