@@ -78,7 +78,8 @@ void* keyboard_thread() {
                 downloading = true;
 
                 if(!send_resource_request(socket_fd, &message)) {
-
+                    add_logf(log_file, LOG_ERROR, "Couldn't send resource request.");
+                    printf("Couldn't send resource request.\n");
                 }
             }
             else if(strcmp(message_buff, "1\n") == 0) {
@@ -140,6 +141,8 @@ void* keyboard_thread() {
                     }
                 }
 
+                if(!isMessage)
+                    printf("Message has to begin with a phone number. Error on sending message.\n");
                 printf("\nPress 5 - main menu\n");
             }
             else if(strcmp(message_buff, "4\n") == 0) {
@@ -215,7 +218,7 @@ int main(int argc, char* argv[])
     }
     else {
         add_logf(log_file, LOG_ERROR, "Failed to connect!");
-        printf("Failed to connect to eNodeB!");
+        printf("Couldn't connect to eNodeB!\n");
         return 0;
     }
 
