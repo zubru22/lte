@@ -31,7 +31,7 @@ void handle_client_power_off(int client_socket) {
 void parse_packet(int number_of_event) {
   int client_socket = server.events[number_of_event].data.fd;
 
-  add_logf(server_log_file, LOG_INFO, "Parsing packet from socket: %d", client_socket);
+  //add_logf(server_log_file, LOG_INFO, "Parsing packet from socket: %d", client_socket);
   s_message message;
   memset(&message, 0, sizeof(message));
   int number_of_bytes_read = read(client_socket, &message, sizeof(message));
@@ -184,27 +184,34 @@ int send_measurement_control_request(void *data, const char *key, void *value) {
   }
 }
 
+void log_event(const char* event, int client_socket) {
+  add_logf(server_log_file, LOG_INFO, "Received event %s on socket %d", event, client_socket);
+}
+
 void handle_measurement_report(int client_socket, s_message measurement_report_message) {
+  char* event;
   switch (measurement_report_message.message_value.events) {
     case a1:
-      printf ("a1\n");
+      log_event("A1", client_socket);
       break;
     case a2:
-      printf ("a2\n");
+      log_event("A2", client_socket);
       break;
     case a3:
-      printf ("a3\n");
+      log_event("A3", client_socket);
       handle_a3_event(client_socket);
       break;
     case a4:
-      printf ("a4\n");
+      log_event("A4", client_socket);
       break;
     case a5:
-      printf ("a5\n");
-    default:
-      printf ("a6\n");
+      log_event("A5", client_socket);
+      break;
+    case def:
+      log_event("DEF", client_socket);
       break;
   }
+
 }
 
 void handle_a3_event(int client_socket) {
