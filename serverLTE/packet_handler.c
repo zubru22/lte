@@ -133,16 +133,23 @@ void send_random_access_response(int socket, int8_t preamble_index, time_t times
     json_t *response_json;
     char *json_str_outgoing;
     size_t json_str_len;
+
     response_json = json_object();
     json_object_set(response_json, "message_type", json_integer(random_access_response));
     json_object_set(response_json, "rapid", json_integer(preamble_index));
     json_object_set(response_json, "timestamp", json_integer(timestamp));
+    
     json_str_outgoing = json_dumps(response_json,0);
+    printf("Write: %s\n", json_str_outgoing);
+    
     json_str_len = strlen(json_str_outgoing);
     write(socket, &json_str_len, json_str_len);
     //send json_struckt
     size_t written = write(socket, json_str_outgoing, json_str_len);
+    
+    printf("Should write: %ld, written: %ld\n", json_str_len, written);
     assert(json_str_len == written);
+    
     free(json_str_outgoing);
     add_logf(server_log_filename, LOG_INFO, "Sent value: %d", preamble_index);
 }

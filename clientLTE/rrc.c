@@ -5,19 +5,34 @@
 #include "../logs/logs.h"
 
 // This function generates ue_identity random key
-void generate_ue_identity(s_stmsi* ue_identity) {
-    ue_identity->mme_code = rand() % (int)pow(2, 8);
-    ue_identity->mtmsi = rand() % (int)pow(2, 32);
+void generate_ue_identity(json_t* ue_identity) {
+    json_object_set(ue_identity, "mme_code", json_integer(rand() % (int)pow(2, 8)));
+    json_object_set(ue_identity, "mtmsi", json_integer(rand() % (int)pow(2, 32)));
 }
 
 // This function sends rrc request from UE to eNodeB. Function returns -1 on error and 0 on success
-int send_rrc_connection_request(int socketfd, s_message* message, void (*generate_ue_identity_func)(s_stmsi*)) {
-    message->message_type = rrc_request;
-    generate_ue_identity_func(&message->message_value.message_request.ue_identity);
-    message->message_value.message_request.establishment_cause = MO_SIGNALING;
+int send_rrc_connection_request(int socketfd, json_t* json_message, void (*generate_ue_identity_func)(json_t*)) {
+    char *json_str;
+    size_t json_str_len;
+    int number_of_bytes_read;
 
-    if(-1 == write(socketfd, (s_message*)message, sizeof(*message)))
+    json_object_set(json_message, "message_type", json_string("rrc_request"));
+    generate_ue_identity_func(json_message);
+    json_object_set(json_message, "establishment_cause", json_integer(MO_SIGNALING));
+    json_str = json_dumps(json_message, 0);
+    json_str_len = strlen(json_str);
+
+    write(socketfd, &json_str_len, json_str_len);
+
+    // Write json string length to the socket
+    if(-1 == write(socketfd, &json_str_len, json_str_len))
         return -1;
+
+    number_of_bytes_read = write(socketfd, json_str, json_str_len);
+
+    if (number_of_bytes_read != json_str_len)
+        return -1;
+
     return 0;
 }
 

@@ -12,10 +12,8 @@
 #ifndef UNISTD_H
 #include <unistd.h>
 
-#ifndef JANSSON_H
 #include <string.h>
 #include <jansson.h>
-#endif
 
 #ifndef STDBOOL_H
 #include <stdbool.h>
