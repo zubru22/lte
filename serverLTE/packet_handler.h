@@ -141,7 +141,7 @@ void handle_x2ap_handover_request_acknowledge(int client_socket);
 
 void handle_handover();
 
-int handle_resource_request(int client_socket, s_message resource_request);
+void handle_resource_request(int client_socket, s_message resource_request);
 
 void interruptible_sleep(int seconds);
 
