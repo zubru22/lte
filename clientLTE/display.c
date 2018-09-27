@@ -33,6 +33,7 @@ void display_menu() {
     printf("\t\t\t2) Send SMS.\n");
     printf("\t\t\t3) Received SMS.\n");
     printf("\t\t\t4) Display sent SMS.\n");
+    printf("\t\t\t9) Request for file.\n");
 }
 
 void display_message_file(const char* file_name) {
