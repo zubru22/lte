@@ -21,13 +21,7 @@ client_t* get_client_by_socket(hashmap* map_of_clients, int socket) {
     }
 }
 
-// client_t* get_client_by_phone_number(hashmap* map_of_clients, int phone_number) {
-//   char key[16];
-//   sprintf (key, "%d", phone_number);
-//   void* searched_client;
-//   pthread_mutex_lock(&server.hashmap_lock);
-// }
-
+// used as hashmap-callback iterating function
 int check_client_by_MSIN(void *data, const char *key, void *value) {
     int* searched_MSIN = (int*) data;
     client_t* current_client = (client_t*) value;
